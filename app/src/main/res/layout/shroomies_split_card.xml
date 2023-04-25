@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:elevation="5dp"
+    android:padding="3dp"
+    android:layout_marginBottom="0.3dp"
+    app:cardCornerRadius="1dp"
+  >
+
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent">
+
+            <ImageView
+                android:elevation="3dp"
+                android:src="@drawable/ic_user_profile_svgrepo_com"
+                android:layout_margin="10dp"
+                android:id="@+id/shroomie_split_pic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:adjustViewBounds="true"
+                />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/shroomie_split_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:gravity="start"
+                android:layout_toLeftOf="@id/split_amount_edit_text"
+                android:lines="1"
+
+                android:layout_marginRight="5dp"
+                android:layout_toRightOf="@+id/shroomie_split_pic"
+                />
+            <kz.devs.aiturm.FloatSeekBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/shroomie_split_pic"
+                android:progress="50"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/shroomie_split_name"
+                android:progressDrawable="@drawable/custom_seekbar"
+                android:thumb="@drawable/seekbar_thumb"
+                android:id="@+id/shroomie_split_seekbar"
+                />
+
+            <EditText
+                android:id="@+id/split_amount_edit_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignBottom="@id/shroomie_split_name"
+                android:layout_marginRight="20dp"
+                android:background="@android:color/transparent"
+                android:inputType="numberSigned"
+                android:digits="1234567890"
+                android:maxLength="5"
+
+
+                android:text="0" />
+
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>

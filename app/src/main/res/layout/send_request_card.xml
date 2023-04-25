@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <androidx.cardview.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:cardCornerRadius="0dp"
+        android:elevation="1dp"
+        android:layout_marginTop="0.3dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:background="@android:color/transparent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_height="50dp"
+                android:layout_width="wrap_content"
+                android:adjustViewBounds="true"
+                android:layout_margin="10dp"
+                android:id="@+id/request_member_photo"
+                android:elevation="3dp"
+                android:src="@drawable/ic_user_profile_svgrepo_com_40x40"
+                />
+
+            <TextView
+                android:id="@+id/request_member_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/jetBlack"
+                android:layout_toEndOf="@+id/request_member_photo"
+                android:layout_toStartOf="@id/msg_member"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/send_request_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"
+               android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:text="Request"
+                android:textAllCaps="false"
+                android:textColor="@color/jetBlack"
+                android:visibility="gone"
+                app:cornerRadius="30dp"
+                app:icon="@drawable/ic_request"
+                app:iconGravity="textStart"
+                app:iconPadding="4dp"
+                app:iconSize="15dp"
+                app:iconTint="@color/jetBlack"
+                />
+
+            <ImageButton
+                android:id="@+id/msg_member"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/remove_member"
+                android:layout_marginEnd="30dp"
+                android:background="@color/white"
+                android:src="@drawable/ic_message"
+                android:visibility="visible"
+                android:padding="10dp"
+               />
+
+            <ImageButton
+                android:id="@+id/remove_member"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_remove"
+                android:background="@android:color/transparent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="20dp"
+                android:visibility="visible"
+                android:padding="10dp"
+                />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>

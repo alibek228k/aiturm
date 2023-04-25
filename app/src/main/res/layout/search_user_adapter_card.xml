@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:background="@drawable/rectangle_with_border"
+    android:foreground="?selectableItemBackground"
+    android:layout_marginTop="0.2dp"
+    android:paddingBottom="5dp"
+    android:paddingTop="5dp"
+    android:id="@+id/user_card"
+     >
+
+    <ImageView
+        android:id="@+id/user_image_search_card"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:elevation="3dp"
+
+        android:src="@drawable/ic_user_profile_svgrepo_com_40x40" />
+    <TextView
+        android:id="@+id/user_name_search_card"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/user_image_search_card"
+        android:textColor="@android:color/black"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:text="Aruba "
+        />
+    <TextView
+        android:id="@+id/user_bio_search_card"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/user_image_search_card"
+        android:layout_below="@id/user_name_search_card"
+        android:paddingStart="5dp"
+        android:textColor="@color/jetBlack"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,97 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_height="match_parent"
+    tools:context="kz.devs.aiturm.ChattingActivity">
+    <include
+        android:id="@+id/include"
+        layout="@layout/toolbar_chatting_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+    <RelativeLayout
+        android:id="@+id/bottom_chatting_layout"
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/LogoYellow"
+        android:elevation="3dp"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/messeg_body_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:layout_toLeftOf="@id/send_message_button"
+            android:layout_toRightOf="@id/choose_file_button"
+            android:background="@drawable/background_text_white"
+            android:elevation="1dp"
+            android:inputType="textMultiLine"
+            android:padding="5dp"
+            android:scrollbars="vertical" />
+
+        <ImageButton
+            android:id="@+id/choose_file_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@null"
+            android:src="@drawable/ic_photo_camera"
+            />
+        <TextView
+            android:id="@+id/image_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/selected_image_view"
+            android:layout_margin="10dp"
+            android:text="Image"
+            android:visibility="gone"
+            />
+        <ImageView
+            android:layout_centerVertical="true"
+            android:id="@+id/selected_image_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
+            android:visibility="gone"
+            />
+
+        <ImageButton
+            android:id="@+id/send_message_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:background="@drawable/circle_white_button_small"
+            android:elevation="3dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_send" />
+
+    </RelativeLayout>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_group_chatting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_chatting_layout"
+        android:layout_below="@id/include"
+        android:background="@drawable/chatting_background"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+
+        app:stackFromEnd="true" />
+</RelativeLayout>

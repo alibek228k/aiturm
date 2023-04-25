@@ -1,0 +1,120 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 33
+
+    defaultConfig {
+        applicationId "kz.devs.aiturm"
+        minSdkVersion 26
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        Properties properties = new Properties()
+        if (rootProject.file("local.properties").exists()) {
+            properties.load(rootProject.file("local.properties").newDataInputStream())
+        }
+        manifestPlaceholders = [ mapsApiKey : properties.getProperty("MAPS_API_KEY", "") ]
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildToolsVersion '29.0.2'
+
+    repositories {
+        jcenter()
+    }
+    ndkVersion '24.0.8215888'
+
+}
+
+dependencies {
+    implementation 'com.google.android.material:material:1.5.0-alpha01'
+    implementation 'androidx.wear:wear:1.2.0'
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'androidx.preference:preference:1.2.0'
+    compileOnly 'com.google.android.wearable:wearable:2.9.0'
+    def nav_version = '2.5.3'
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.recyclerview:recyclerview:1.3.0"
+    implementation 'com.cepheuen.elegant-number-button:lib:1.0.3'
+    implementation 'com.aurelhubert:ahbottomnavigation:2.3.4'
+    implementation 'androidx.biometric:biometric:1.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    implementation 'com.google.maps.android:maps-utils-ktx:2.3.0'
+    implementation "com.airbnb.android:lottie:3.5.0"
+    implementation "com.google.android.gms:play-services-location:21.0.1"
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'jp.wasabeef:picasso-transformations:2.0.0'
+    implementation 'com.github.tizisdeepan:dots:1.0.1'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation "com.android.volley:volley:1.2.1"
+    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation 'com.factor:bouncy:1.8'
+    implementation 'com.google.android.libraries.places:places:3.1.0'
+    implementation "com.hendraanggrian.appcompat:socialview:0.2" // base library
+    implementation "com.hendraanggrian.appcompat:socialview-commons:0.2"
+    implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.3'
+    implementation 'com.nfx.android:range-bar-preference:0.0.6'
+    implementation 'com.xw.repo:bubbleseekbar:3.20'
+    implementation 'com.karumi:dexter:6.2.2'
+    implementation "com.github.abhishekti7:UnicornFilePicker:1.0.1"
+    implementation 'com.virgilsecurity:ethree:2.0.10'
+    implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    implementation "com.github.skydoves:powerspinner:1.1.7"
+    implementation 'com.github.barteksc:pdfium-android:1.9.0'
+    implementation 'com.mxn.soul:flowingdrawer-core:2.1.0'
+    implementation 'com.nineoldandroids:library:2.4.0'
+    implementation 'com.otaliastudios:zoomlayout:1.8.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0-rc1'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+    implementation 'io.github.everythingme:overscroll-decor-android:1.1.1'
+    implementation 'id.zelory:compressor:2.1.1'
+    implementation 'android.arch.persistence.room:runtime:1.1.1'
+    implementation 'com.github.omadahealth:swipy:1.2.3@aar'
+    annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
+
+    //firebase
+    implementation platform('com.google.firebase:firebase-bom:31.5.0')
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-storage'
+    implementation 'com.google.firebase:firebase-database'
+    implementation  'com.google.firebase:firebase-auth:21.3.0'
+    implementation 'com.firebaseui:firebase-ui-auth:4.3.1'
+    implementation 'com.google.firebase:firebase-functions:20.2.2'
+    implementation 'com.google.firebase:firebase-firestore'
+    implementation 'com.firebase:geofire-android-common:3.1.0'
+    implementation 'com.google.firebase:firebase-messaging:23.1.2'
+    implementation 'com.firebaseui:firebase-ui-storage:6.4.0'
+    implementation 'com.firebaseui:firebase-ui-database:6.0.2'
+
+    //google sing in
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
+
+}

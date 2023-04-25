@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/archive_root_layout"
+    android:background="@color/y"
+    tools:context="kz.devs.aiturm.ArchiveFragment">
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/my_tablayout_archive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollIndicators="none"
+        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+        android:elevation="6dp"
+        app:tabIndicatorColor="@color/white"
+        app:tabIndicatorHeight="2dp"
+        android:background="@color/LogoYellow"
+        app:tabSelectedTextColor="@color/white">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/my_archive_expense_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Expenses" />
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/my_archive_task_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tasks" />
+    </com.google.android.material.tabs.TabLayout>
+
+    <LinearLayout
+        android:id="@+id/drag_down_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/my_tablayout_archive"
+        android:layout_centerHorizontal="true"
+        >
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_rawRes="@raw/drag_down"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="-20dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="drag for updates"
+            android:layout_marginTop="-30dp"
+            />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/archive_recyclerview_expenses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/my_tablayout_archive"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+
+        />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/archive_recyclerview_task"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/my_tablayout_archive"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:background="@color/white"
+        />
+
+    <TextView
+        android:id="@+id/no_archive_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="No archived cards to display"
+        android:layout_margin="20dp"
+        android:textColor="@color/lightGrey"
+        android:textSize="20sp"
+        android:visibility="gone"
+
+        />
+
+
+
+
+</RelativeLayout>

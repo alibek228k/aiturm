@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "418643223911",
+    "project_id": "aiturm-c0f1b",
+    "storage_bucket": "aiturm-c0f1b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:418643223911:android:b7aaba9bc4aa32c4bafbc2",
+        "android_client_info": {
+          "package_name": "kz.devs.aiturm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "418643223911-o7iejnafb7ntm4lics49mlgk29ke9586.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPDbOa7DOWC0j1VusYXguoBCzzPrz6Po8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "418643223911-o7iejnafb7ntm4lics49mlgk29ke9586.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.shroomies">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:name="kz.devs.aiturm.Home"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name="kz.devs.aiturm.PasswordSignUp"
+            android:parentActivityName="kz.devs.aiturm.SignUpActivity"></activity>
+        <activity
+            android:name="kz.devs.aiturm.GroupChatting"
+            android:parentActivityName="kz.devs.aiturm.MyShroomiesActivity"></activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
+
+        <activity
+            android:name="kz.devs.aiturm.SearchSettingActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName="kz.devs.aiturm.MainActivity" />
+        <activity
+            android:name="kz.devs.aiturm.FavouritesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.PublishPostActivity"
+            android:screenOrientation="portrait"
+            android:parentActivityName="kz.devs.aiturm.MainActivity" />
+        <activity
+            android:name="kz.devs.aiturm.MyShroomiesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.ImageViewPage"
+            android:screenOrientation="portrait" />
+        <activity android:name="kz.devs.aiturm.AddUsername" />
+        <!--
+               Set to true if your app is Standalone, that is, it does not require the handheld
+               app to run.
+        -->
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
+
+        <service
+            android:name="kz.devs.aiturm.notifications.MyFirebaseMessaging"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name="kz.devs.aiturm.RequestActivity"
+            android:parentActivityName="kz.devs.aiturm.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.ChattingActivity"
+            android:parentActivityName="kz.devs.aiturm.MessageInbox"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.ResetPasswordActivity"
+            android:parentActivityName="kz.devs.aiturm.LoginPassword"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="kz.devs.aiturm.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.SignUpActivity"
+            android:parentActivityName="kz.devs.aiturm.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="kz.devs.aiturm.ApartmentViewPage"
+            android:parentActivityName="kz.devs.aiturm.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.MessageInbox"
+            android:parentActivityName="kz.devs.aiturm.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.LoginPassword"
+            android:parentActivityName="kz.devs.aiturm.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="kz.devs.aiturm.LoginActivity"
+            android:screenOrientation="portrait"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBxsKC0T7r-jozZk-mZUScW7wPN5zB_7pg" />
+    </application>
+
+</manifest>

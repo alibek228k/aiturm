@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sliding_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    sothree:umanoPanelHeight="28dp"
+    app:umanoDragView="@id/expand_button"
+    sothree:umanoOverlay="true"
+    app:umanoShadowHeight="0dp"
+ >
+
+    <FrameLayout
+        android:id="@+id/my_shroomies_frame_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollIndicators="none"
+        android:gravity="center"
+        >
+        <RelativeLayout
+            android:id="@+id/no_cards_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:elevation="10dp"
+            android:visibility="gone"
+            android:orientation="vertical">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/empty_animation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:lottie_rawRes="@raw/empty_animation"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No cards to show, drag for updates or add some cards."
+                android:layout_below="@id/empty_animation"
+                android:textColor="@color/lightGrey"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:textSize="16sp"
+                android:layout_marginTop="-200dp"
+
+                android:gravity="center"
+                />
+
+        </RelativeLayout>
+
+        <com.google.android.material.tabs.TabLayout
+
+            android:id="@+id/my_shroomies_tablayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollIndicators="none"
+            app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
+            android:elevation="6dp"
+            app:tabIndicatorColor="@color/white"
+            app:tabIndicatorHeight="2dp"
+            android:background="@color/LogoYellow"
+            app:tabSelectedTextColor="@color/white"
+
+            >
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/my_shroomie_expense_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expenses" />
+
+            <com.google.android.material.tabs.TabItem
+                android:id="@+id/my_shroomie_task_tab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tasks" />
+        </com.google.android.material.tabs.TabLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/drag_down_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@id/my_shroomies_tablayout"
+            android:layout_centerHorizontal="true"
+            >
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:lottie_rawRes="@raw/drag_down"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                android:layout_gravity="center"
+                android:layout_marginTop="-20dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="drag for updates"
+                android:layout_marginTop="-30dp"
+                />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:background="@color/white"
+            android:id="@+id/my_expenses_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/my_shroomies_tablayout"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:paddingBottom="30dp"
+            android:clipToPadding="false"
+            android:layoutAnimation="@anim/recycler_view_anim"
+
+            />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/my_tasks_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:layout_below="@+id/my_shroomies_tablayout"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"
+            android:paddingBottom="30dp"
+            android:clipToPadding="false"
+            android:layoutAnimation="@anim/recycler_view_anim"
+
+            />
+
+
+
+
+    </RelativeLayout>
+
+    </FrameLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:background="@drawable/yellow_rectangle_round_top_corners"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/expand_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@android:color/transparent"
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp"
+                android:paddingRight="15dp"
+                android:paddingBottom="10dp"
+                android:src="@drawable/ic_expand"
+                android:contentDescription="expand"
+                />
+
+            <LinearLayout
+                android:id="@+id/shroomie_linearlayout_filter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:layout_marginStart="20dp"
+
+                    android:layout_gravity="center_vertical"
+                    android:textStyle="bold"
+                    android:textColor="@color/jetBlack"
+                    android:text="Sort by:"
+                    android:drawableStart="@drawable/ic_sort_by_icon"
+                    android:drawablePadding="10dp"/>
+
+
+                <com.skydoves.powerspinner.PowerSpinnerView
+                    android:id="@+id/shroomie_spinner_filter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
+                    android:padding="10dp"
+                    android:hint="None"
+                    android:textColor="@color/jetBlack"
+                    android:textColorHint="@color/jetBlack"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:textStyle="bold"
+                    app:spinner_arrow_padding="8dp"
+                    app:spinner_arrow_tint="@color/jetBlack"
+                    app:spinner_arrow_gravity="end"
+                    app:spinner_divider_color="@color/jetBlack"
+                    app:spinner_divider_show="true"
+                    app:spinner_divider_size="0.1dp"
+                    app:spinner_item_array="@array/spinner_options"
+                    app:spinner_popup_animation="dropdown"
+                    app:spinner_popup_background="#E3E3E3"
+                    app:spinner_popup_elevation="14dp"
+                    app:drawableRightCompat="@drawable/ic_filter"
+                    />
+
+
+            </LinearLayout>
+
+
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:id="@+id/my_shroomies_log"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:padding="20dp"
+            android:text="Activity Logs"
+            android:gravity="center_vertical"
+            android:textColor="@color/jetBlack"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_log_icon"
+            app:iconGravity="start"
+            app:iconTint="@color/jetBlack"
+            android:insetBottom="0dp"
+            android:insetTop="0dp"
+            android:stateListAnimator="@null"
+
+            />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/my_shroomies_add_member_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="Add a Shroomie"
+                android:textStyle="bold"
+                android:textColor="@color/jetBlack"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_add_member_icon"
+                app:iconGravity="start"
+                app:iconTint="@color/jetBlack"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                android:stateListAnimator="@null"
+
+                />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/my_shroomies_archive_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="Archive"
+                android:textStyle="bold"
+                android:textColor="@color/jetBlack"
+                android:lines="1"
+                android:drawablePadding="10dp"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_archive_icon"
+                app:iconTint="@color/jetBlack"
+                app:iconGravity="start"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                app:elevation="0dp"
+                android:stateListAnimator="@null"
+
+                />
+            <FrameLayout
+                android:id="@+id/frame_layout_message_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foreground="@color/LogoYellow"
+                android:elevation="0dp"
+                android:clipChildren="false"
+                android:outlineProvider="none">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/my_shroomies_group_message_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="20dp"
+                    android:text="Group messaging"
+                    android:textStyle="bold"
+                    android:textColor="@color/jetBlack"
+                    android:textAllCaps="false"
+                    app:icon="@drawable/ic_message"
+                    app:iconGravity="start"
+                    app:elevation="0dp"
+                    android:background="@null"
+                    android:elevation="0dp"
+                    android:outlineProvider="none"
+                    app:iconTint="@color/jetBlack"
+                    android:insetBottom="0dp"
+                    android:insetTop="0dp"
+                    />
+            </FrameLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/my_shroomies_member_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:padding="20dp"
+                android:text="Members"
+                android:textStyle="bold"
+                android:textColor="@color/jetBlack"
+                android:textAllCaps="false"
+                app:icon="@drawable/ic_members_icon"
+                app:iconGravity="start"
+                app:iconTint="@color/jetBlack"
+                android:insetBottom="0dp"
+                android:insetTop="0dp"
+                />
+
+
+
+        </LinearLayout>
+
+
+
+
+
+
+
+
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+

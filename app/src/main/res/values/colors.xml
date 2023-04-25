@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="LogoYellow">#F5CB5C</color>
+    <color name="logo_yellow_50_alpha">#80F5CB5C</color>
+    <color name="very_light_grey_70_alpha">#B3E3E3E3</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+    <color name="colorAccent">#03DAC5</color>
+    <color name="white">#FFFFFF</color>
+    <color name="Alabaster">#E8EDDF</color>
+    <color name="Timeberwolf">#CFDBD5</color>
+    <color name="lowerGradientColorForLoginBackground">#FFF5E58A</color>
+    <color name="okGreen">#5ABE07</color>
+    <color name="purple">#794C74</color>
+    <color name="darkBlue">#3A0CA3</color>
+    <color name="mentionBlue">#0091EA</color>
+    <color name="Black">#000000</color>
+    <color name="pink">#F72585</color>
+    <color name="jetBlack">#333533</color>
+    <color name="veryLightGrey">#E3E3E3</color>
+    <color name="dim_background">#8000</color>
+    <color name="lightGrey">#A4A6A4</color>
+    <color name="canceRed">#F25454</color>
+    <color name="orange">#FF7915</color>
+    <color name="y">#FEFCF8</color>
+    <color name="red">#F13030</color>
+    <color name="brownishlight">#ddcdc0</color>
+    <color name="grayishTimberWolf">#AFB3A8</color>
+    <color name="place_autocomplete_search_text">@android:color/primary_text_dark</color>
+    <color name="place_autocomplete_search_hint">@android:color/secondary_text_dark</color>
+    <color name="place_autocomplete_search_">@android:color/primary_text_dark</color>
+    <color name="cream">#F7F4ED</color>
+
+    <color name="greyTabLayout"> #CCD0C5</color>
+
+
+
+
+</resources>

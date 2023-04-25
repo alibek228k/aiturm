@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+ <androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/task_card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    app:cardCornerRadius="5dp">
+
+        <RelativeLayout
+            android:id="@+id/r1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <View
+                android:id="@+id/task_importance_view"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:background="@color/okGreen"
+                />
+
+            <TextView
+                android:textStyle="bold"
+                android:textColor="@color/jetBlack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/title_card"
+                android:textSize="20sp"
+                android:layout_alignParentStart="true"
+                android:lines="1"
+                android:layout_marginLeft="10dp"
+                android:layout_toStartOf="@id/dueDate_card"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/amiko"
+                />
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@+id/task_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/task_card_divider"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="5dp"
+                android:text="Mark as done"
+                android:textColor="@color/lightGrey"
+                android:minHeight="0dp"
+                android:padding="0dp"
+                android:buttonTint="@color/lightGrey"
+                android:layout_marginBottom="5dp"
+                />
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/card_description"
+                android:layout_below="@+id/title_card"
+
+                />
+
+<!--            <ImageButton-->
+<!--                android:id="@+id/archive_card_btn"-->
+<!--                android:src="@drawable/ic_archive"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignBottom="@id/expense_done"-->
+<!--                android:layout_marginBottom="5dp"-->
+<!--                android:layout_marginRight="10dp"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:padding="5dp"-->
+<!--                android:elevation="5dp"-->
+<!--                />-->
+
+            <ImageButton
+                android:id="@+id/task_card_menu_image_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="20dp"
+                android:background="@android:color/transparent"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/task_card_divider"
+                android:src="@drawable/ic_menu_icon"
+
+                />
+
+            <TextView
+                android:id="@+id/dueDate_card"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+               android:layout_alignBottom="@id/title_card"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:text="Due date"
+                android:textSize="12sp"
+                android:gravity="center"
+                android:elevation="3dp"
+                android:padding="5dp"
+                android:drawablePadding="5dp"
+                android:textColor="@color/jetBlack"
+                android:drawableStart="@drawable/ic_calendar_day"
+
+                />
+
+
+            <HorizontalScrollView
+                android:id="@+id/task_mention_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:visibility="gone"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/card_description"
+                android:minHeight="40dp"
+                >
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/task_mention_chip_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleLine="true"
+                    android:overScrollMode="ifContentScrolls"
+                    app:chipSpacingHorizontal="3dp">
+
+
+
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+            <View
+                android:id="@+id/task_card_divider"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/task_mention_et"
+                android:background="@color/veryLightGrey"/>
+        </RelativeLayout>
+</androidx.cardview.widget.CardView>
