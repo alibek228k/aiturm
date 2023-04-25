@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -39,6 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -178,6 +180,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
         groupMessageButton.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @SuppressLint({"ResourceAsColor", "UnsafeExperimentalUsageError"})
             @Override
+            @OptIn(markerClass = ExperimentalBadgeUtils.class)
             public void onGlobalLayout() {
                 badgeDrawable.setNumber(unSeenMessagesNo);
                 badgeDrawable.setBackgroundColor(getActivity().getColor(R.color.red));
@@ -432,6 +435,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
 
     }
     private void getUnseenMessageNo(String apartmentID, String userID){
+        System.out.println("getUnseenMessageNo() -> " + apartmentID + " " + userID);
         DatabaseReference rootRef= FirebaseDatabase.getInstance().getReference();
         rootRef.child("groupMessages").child(apartmentID).child("unSeenMessageCount")
                 .child(userID).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -34,8 +34,6 @@ public class SignUpActivity extends AppCompatActivity{
         setContentView(R.layout.activity_sign_up);
         usernameEditText = findViewById(R.id.username_sign_up);
         emailEditText = findViewById(R.id.email_sign_up);
-        usernameEditText.getEditText().setText("joldybayev_02");
-        emailEditText.getEditText().setText("alibek228kz@gmail.com");
         ImageButton nextButton = findViewById(R.id.next_button_sign_up);
         helpCardView = findViewById(R.id.help_card_view);
         Toolbar toolbar = findViewById(R.id.sign_up_tool_bar);
@@ -58,16 +56,12 @@ public class SignUpActivity extends AppCompatActivity{
             String enteredEmail = Objects.requireNonNull(emailEditText.getEditText()).getText().toString().trim();
             String enteredUsername = Objects.requireNonNull(usernameEditText.getEditText()).getText().toString().toLowerCase().trim();
             if(eligibaleToContinue(enteredEmail,enteredUsername)) {
-                System.out.println("SignUpActivity() -> correct");
                     checkDuplicateUserName(enteredUsername).addOnCompleteListener(task -> {
 //                        System.out.println("SignUpActivity() -> correct1 " + task.getResult().getValue().toString());
                         if(task.isSuccessful()){
-                            System.out.println("SignUpActivity() -> correct2");
                             if(task.getResult().getValue()!=null){
-                                System.out.println("SignUpActivity() -> incorrect1");
                                 usernameEditText.setError(enteredUsername + " is taken");
                             }else{
-                                System.out.println("SignUpActivity() -> correct3");
                                 usernameEditText.setError(null);
                                 emailEditText.setError(null);
                                 usernameEditText.setError(null);

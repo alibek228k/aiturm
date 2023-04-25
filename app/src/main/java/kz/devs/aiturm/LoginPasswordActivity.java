@@ -17,7 +17,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 
-public class LoginPassword extends AppCompatActivity {
+public class LoginPasswordActivity extends AppCompatActivity {
     private String bundledEmail;
     private TextInputLayout passwordEditText;
     private FirebaseAuth mAuth;
@@ -59,7 +59,7 @@ public class LoginPassword extends AppCompatActivity {
 //                getE3Token(bundledEmail,enteredPassword);
             }
         });
-        forgotPasswordButton.setOnClickListener(view -> startActivity(new Intent(LoginPassword.this, ResetPasswordActivity.class)));
+        forgotPasswordButton.setOnClickListener(view -> startActivity(new Intent(LoginPasswordActivity.this, ResetPasswordActivity.class)));
 
     }
     private void login(String enteredEmail,String password){
@@ -70,7 +70,7 @@ public class LoginPassword extends AppCompatActivity {
                 FirebaseUser firebaseUser=mAuth.getCurrentUser();
                 if(firebaseUser!=null){
 //                    if(firebaseUser.isEmailVerified()){
-                        Intent intent = new Intent(LoginPassword.this, MainActivity.class);
+                        Intent intent = new Intent(LoginPasswordActivity.this, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
                         finish();
@@ -90,7 +90,7 @@ public class LoginPassword extends AppCompatActivity {
                 }else{
                     loginButton.setClickable(true);
                     loadingAnimationView.setVisibility(View.GONE);
-                    new CustomToast(LoginPassword.this , "We encountered a problem authenticating your account" ,R.drawable.ic_error_icon).showCustomToast();
+                    new CustomToast(LoginPasswordActivity.this , "We encountered a problem authenticating your account" ,R.drawable.ic_error_icon).showCustomToast();
                 }
             }else{
                 loginButton.setClickable(true);
@@ -101,7 +101,7 @@ public class LoginPassword extends AppCompatActivity {
                     emailEditText.setError(" ");
                     passwordEditText.setError("The email or password is incorrect");
                 } catch(Exception e) {
-                    new CustomToast(LoginPassword.this , "We encountered an unexpected problem" ,R.drawable.ic_error_icon).showCustomToast();
+                    new CustomToast(LoginPasswordActivity.this , "We encountered an unexpected problem" ,R.drawable.ic_error_icon).showCustomToast();
 
                 }
             }

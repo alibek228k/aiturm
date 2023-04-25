@@ -41,9 +41,9 @@
         <ImageView
             android:layout_below="@+id/join_image_view"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
+            android:layout_height="45dp"
             android:layout_marginStart="10dp"
-            android:src="@drawable/ic_shroomies_text"
+            android:src="@drawable/ic_aiturm_text"
             android:layout_gravity="start"
             android:layout_centerHorizontal="true"
             />

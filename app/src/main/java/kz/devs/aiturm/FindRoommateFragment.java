@@ -44,7 +44,7 @@
  import java.util.List;
  import java.util.Set;
 
- public class FindRoommate extends Fragment {
+ public class FindRoommateFragment extends Fragment {
     MotionLayout motionLayout;
     private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
     private static final String  PERSONAL_SEARCH = "PERSONAL_SEARCH";
@@ -52,7 +52,6 @@
     FirebaseAuth mAuth;
 
     public static final int APARTMENT_PER_PAGINATION =20;
-    private View v;
     private BouncyRecyclerView recyclerView;
     private FirebaseFirestore mDocRef;
     private List<Apartment> apartmentList;
@@ -85,7 +84,7 @@
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-         v = inflater.inflate(R.layout.fragment_find_roommate, container, false);
+         View v = inflater.inflate(R.layout.fragment_find_roommate, container, false);
          mDocRef = FirebaseFirestore.getInstance();
          mAuth = FirebaseAuth.getInstance();
          apartmentPostReference = mDocRef.collection("postApartment");
@@ -118,16 +117,16 @@
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        motionLayout  = v.findViewById(R.id.find_roomMate_Motion_Layout);
+        motionLayout  = view.findViewById(R.id.find_roomMate_Motion_Layout);
         customLoadingProgressBar= new CustomLoadingProgressBar(getActivity(), "Searching..." , R.raw.search_anim);
         customLoadingProgressBar.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         apartmentList = new ArrayList<>();
 
-        recyclerView = v.findViewById(R.id.apartment_recycler_view);
+        recyclerView = view.findViewById(R.id.apartment_recycler_view);
         toolbar  = getActivity().findViewById(R.id.toolbar);
         searchView = toolbar.findViewById(R.id.SVsearch_disc);
         optionsButton = toolbar.findViewById(R.id.search_settings);
-        tabLayout = v.findViewById(R.id.tabLayout);
+        tabLayout = view.findViewById(R.id.tabLayout);
 
         staggeredGridLayoutManager =  new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
         staggeredGridLayoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);

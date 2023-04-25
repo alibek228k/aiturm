@@ -88,7 +88,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="kz.devs.aiturm.ResetPasswordActivity"
-            android:parentActivityName="kz.devs.aiturm.LoginPassword"
+            android:parentActivityName="kz.devs.aiturm.LoginPasswordActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
         <activity
@@ -108,7 +108,7 @@
             android:parentActivityName="kz.devs.aiturm.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="kz.devs.aiturm.LoginPassword"
+            android:name="kz.devs.aiturm.LoginPasswordActivity"
             android:parentActivityName="kz.devs.aiturm.LoginActivity"
             android:screenOrientation="portrait" />
         <activity

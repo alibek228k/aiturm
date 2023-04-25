@@ -30,7 +30,7 @@
                 android:layout_height="30dp"
                 android:layout_gravity="start"
                 android:layout_marginStart="20dp"
-                android:src="@drawable/ic_shroomies_text"
+                android:src="@drawable/ic_aiturm_text"
                 />
 
         <androidx.cardview.widget.CardView
@@ -95,20 +95,16 @@
 
 
         <SearchView
-                android:id="@+id/SVsearch_disc"
-                android:layout_width="match_parent"
+            android:id="@+id/SVsearch_disc"
+            android:layout_width="match_parent"
             android:layout_height="40dp"
             android:background="@android:color/transparent"
             android:elevation="5dp"
-                android:iconifiedByDefault="false"
-                android:queryHint="Search.."
-                android:queryBackground="@android:color/transparent"
-
-                android:layout_margin="10dp"
-                android:visibility="gone"
-
-
-                />
+            android:layout_margin="10dp"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Search.."
+            android:visibility="gone" />
 
 
 

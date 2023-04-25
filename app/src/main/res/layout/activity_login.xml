@@ -32,7 +32,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/black_mashroom_logo"
 
-        app:srcCompat="@drawable/ic_shroomies_text" />
+        app:srcCompat="@drawable/ic_aiturm_text" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_login"
@@ -139,9 +139,7 @@
         android:background="@color/jetBlack"
         app:layout_constraintEnd_toStartOf="@id/continue_with_text_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/login_button_card_view"
-
-        />
+        app:layout_constraintTop_toBottomOf="@id/login_button_card_view" />
 
     <TextView
         android:id="@+id/continue_with_text_view"
@@ -164,18 +162,17 @@
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/continue_with_text_view"
-        app:layout_constraintTop_toBottomOf="@id/login_button_card_view"
-
-        />
+        app:layout_constraintTop_toBottomOf="@id/login_button_card_view" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="24dp"
         android:backgroundTint="@color/jetBlack"
         app:cardCornerRadius="50dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.58"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/continue_with_text_view">
 
@@ -188,6 +185,31 @@
             android:padding="10dp"
             android:src="@drawable/ic_google_icon_svg"
             android:textAllCaps="false" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="@color/jetBlack"
+        app:cardCornerRadius="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.41"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/continue_with_text_view">
+
+        <ImageButton
+            android:id="@+id/microsoft_sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:foreground="?selectableItemBackground"
+            android:padding="10dp"
+            android:src="@drawable/ic_microsoft"
+            android:textAllCaps="false" />
+
     </androidx.cardview.widget.CardView>
 
 

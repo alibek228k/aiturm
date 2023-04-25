@@ -67,13 +67,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        android:layout_gravity="start"
-
-        >
+        android:layout_gravity="start">
         <include
             android:id="@id/include"
-            layout="@layout/drawer_header"
-            />
+            layout="@layout/drawer_header"/>
 
 
 
