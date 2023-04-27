@@ -345,7 +345,7 @@ public class ViewCardsDialogFragment extends DialogFragment {
     public void download(String imagePath) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReferenceFromUrl(imagePath);
-        final File rootPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "Shroomies downloads");
+        final File rootPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "Aiturm downloads");
         if (!rootPath.exists()) {
             rootPath.mkdirs();
         }

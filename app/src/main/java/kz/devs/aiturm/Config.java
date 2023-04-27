@@ -1,7 +1,7 @@
 package kz.devs.aiturm;
 
 public class Config {
-    //myShroomies Activity and its fragments
+    // Activity and its fragments
     public static final String apartmentID="apartmentID";
     public static final String adminID="adminID";
     public static final String userID="userID";

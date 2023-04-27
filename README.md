@@ -1,4 +1,4 @@
-# Shroomies-Android-App-project
+# AITUrm-Android-App-project
 
 ## To build and Run the App
 ### Method 1 (Prefered method)

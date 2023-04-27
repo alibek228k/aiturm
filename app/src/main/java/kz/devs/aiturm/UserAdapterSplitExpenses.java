@@ -32,11 +32,11 @@ public class UserAdapterSplitExpenses extends RecyclerView.Adapter<UserAdapterSp
    private ArrayList<User> shroomieList;
    private final HashMap<String, Integer> sharesHashmap=new HashMap<>();
 
-   ShroomiesShares shares;
+   Shares shares;
 
 
-   public UserAdapterSplitExpenses(ShroomiesShares shroomiesShares){
-       this.shares=shroomiesShares;
+   public UserAdapterSplitExpenses(Shares shares){
+       this.shares= shares;
    }
 
     public UserAdapterSplitExpenses(Context context , ArrayList<User> shroomieList , String amount, Fragment targetedFragment) {
@@ -185,14 +185,14 @@ public class UserAdapterSplitExpenses extends RecyclerView.Adapter<UserAdapterSp
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         try {
-            shares = (ShroomiesShares) targetedFragment;
+            shares = (Shares) targetedFragment;
         }catch(ClassCastException e){
 
         }
     }
 
 
-    public interface ShroomiesShares {
+    public interface Shares {
         void sendInput(HashMap<String, Integer> sharesHash);
     }
 

@@ -48,17 +48,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
    private FirebaseAuth mAuth;
    private boolean fromSearchMember =false;
    private RequestQueue requestQueue;
-   private final ShroomiesApartment apartment;
+   private final AiturmApartment apartment;
    private View parentView;
 
 
-    public UserAdapter(ArrayList<User> userList, Context context,ShroomiesApartment apartment,View parentView) {
+    public UserAdapter(ArrayList<User> userList, Context context, AiturmApartment apartment, View parentView) {
         this.userList = userList;
         this.context = context;
         this.apartment=apartment;
         this.parentView=parentView;
     }
-    public UserAdapter(ArrayList<User> userList, Context context, Boolean fromSearchMember,ShroomiesApartment apartment) {
+    public UserAdapter(ArrayList<User> userList, Context context, Boolean fromSearchMember, AiturmApartment apartment) {
         this.userList = userList;
         this.context = context;
         this.fromSearchMember=fromSearchMember;

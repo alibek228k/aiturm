@@ -253,7 +253,10 @@ public class EditProfileFragment extends DialogFragment implements ChangeBioDial
         byte[] byteArray = stream.toByteArray();
         customLoadingProgressBar.show();
         if (imageUri !=null){
-            final StorageReference fileRef = storageRef.child("profile pictures").child(user.getUserID()).child(imageUri.getLastPathSegment());
+            final StorageReference fileRef = storageRef
+                    .child("profile pictures")
+                    .child(user.getUserID())
+                    .child(imageUri.getLastPathSegment());
             uploadTask = fileRef.putBytes(byteArray);
             uploadTask.continueWithTask((Continuation<UploadTask.TaskSnapshot, Task<Uri>>) task -> {
                 if(!task.isSuccessful()){

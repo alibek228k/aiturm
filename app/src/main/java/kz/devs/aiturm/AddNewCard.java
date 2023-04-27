@@ -114,7 +114,7 @@ public class AddNewCard extends DialogFragment implements SplitExpensesDialogFra
     private final HashMap<String, String> nameAndIdHashMap =new HashMap<>(), apartmentMembersHashMap =new HashMap<>();
     private HashMap<String, Integer> sharedAmountsHashMap;
     //variables
-    private ShroomiesApartment apartment;
+    private AiturmApartment apartment;
     private boolean  expensesCardSelected;
     private String fileExtension,captureFileName , fileType , dueDate ;
     private Uri chosenImageUri = null;
@@ -456,8 +456,6 @@ public class AddNewCard extends DialogFragment implements SplitExpensesDialogFra
                 }
 
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ADD_TASK_CARDS, data, response -> {
-                    //send the card back to the list in my shroomies fragment
-                    //create a task card and add the card id from the response
                     try {
                         boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
                         String message = response.getJSONObject(Config.result).getString(Config.message);

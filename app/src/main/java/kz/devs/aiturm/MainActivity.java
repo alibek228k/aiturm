@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ConstraintLayout rootLayout;
     private Toolbar toolbar;
     private FlowingMenuLayout navigationView;
-    private ImageButton myShroomies, inboxButton;
+    private ImageButton myAiturm, inboxButton;
     private TextView usernameDrawer;
     private Button logoutButton , requestsButton, favoriteButton;
     private ImageView profilePic;
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout =  findViewById(R.id.drawerLayout);
         toolbar =  findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.navigationView);
-        myShroomies=findViewById(R.id.logo_toolbar);
+        myAiturm =findViewById(R.id.logo_toolbar);
         inboxButton = findViewById(R.id.inbox_button);
         usernameDrawer = findViewById(R.id.drawer_nav_profile_name);
         profilePic = findViewById(R.id.drawer_nav_profile_pic);
@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        myShroomies.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MyShroomiesActivity.class)));
+        myAiturm.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MyAiturmActivity.class)));
 
         inboxButton.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MessageInbox.class)));
         getFragment(new FindRoomFragment());

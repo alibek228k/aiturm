@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddShroomieMember extends DialogFragment {
+public class AddRoomMember extends DialogFragment {
     //views
     private View v;
     private SearchView memberSearchView;
@@ -61,7 +61,7 @@ public class AddShroomieMember extends DialogFragment {
     //data
     private UserAdapter userRecyclerAdapter;
     private ArrayList<User> suggestedUser;
-    private ShroomiesApartment apartment;
+    private AiturmApartment apartment;
 
 
     //TODO add users from the  inbox
@@ -248,7 +248,7 @@ public class AddShroomieMember extends DialogFragment {
                 .setMessage(message)
                 .setCancelable(false)
                 .setNeutralButton("Return", (dialog, which) -> {
-                    AddShroomieMember.this.getActivity().onBackPressed();
+                    AddRoomMember.this.getActivity().onBackPressed();
                     dialog.dismiss();
                 })
                 .create()

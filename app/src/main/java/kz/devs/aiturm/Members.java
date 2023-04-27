@@ -68,7 +68,7 @@ public class Members extends Fragment {
     private ArrayList<User> membersList;
     private UserAdapter userAdapter;
    //model
-    private ShroomiesApartment apartment;
+    private AiturmApartment apartment;
 
 
     @Nullable
@@ -236,17 +236,17 @@ public class Members extends Fragment {
     }
 
 
-    private void getMemberDetail(ShroomiesApartment shroomiesApartment) {
+    private void getMemberDetail(AiturmApartment aiturmApartment) {
 
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
         firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 ArrayList<String> members = new ArrayList<>();
                 //add the the admin to the members
-                if(shroomiesApartment.getApartmentMembers()!=null){
-                    members.addAll(shroomiesApartment.getApartmentMembers().values());
+                if(aiturmApartment.getApartmentMembers()!=null){
+                    members.addAll(aiturmApartment.getApartmentMembers().values());
                 }
-                members.add(shroomiesApartment.getAdminID());
+                members.add(aiturmApartment.getAdminID());
 
                 membersList = new ArrayList<>();
                 userAdapter = new UserAdapter(membersList, getContext(),apartment,getView());

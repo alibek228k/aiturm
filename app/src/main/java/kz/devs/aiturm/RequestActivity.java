@@ -82,14 +82,14 @@ RequestActivity extends AppCompatActivity {
         rootLayout = findViewById(R.id.request_fragment_root_layout);
         noSentRequestsLayout = findViewById(R.id.no_sent_request_Layout);
         catAnimationView = findViewById(R.id.empty_animation_req);
-        MaterialButton goToMyShroomiesButton = findViewById(R.id.go_to_shroomies_button);
+        MaterialButton goToMyAiturmButton = findViewById(R.id.go_to_shroomies_button);
 //        Todo add go to publish post
         Toolbar reqToolbar = findViewById(R.id.request_toolbar);
         setSupportActionBar(reqToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("");
         noReceivedRequestsLayout = findViewById(R.id.no_received_request_Layout);
-        goToMyShroomiesButton.setOnClickListener(v -> startActivity(new Intent(this, MyShroomiesActivity.class)));
+        goToMyAiturmButton.setOnClickListener(v -> startActivity(new Intent(this, MyAiturmActivity.class)));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext() , RecyclerView.VERTICAL,false);
         requestRecyclerView.setHasFixedSize(true);

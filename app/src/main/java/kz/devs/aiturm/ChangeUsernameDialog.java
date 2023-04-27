@@ -105,6 +105,7 @@ public class ChangeUsernameDialog extends DialogFragment {
         Bundle bundle=this.getArguments();
         if (bundle!=null) {
             user=bundle.getParcelable("USER");
+            System.out.println("User is " + " userID:" + user.getUserID()+ " username:" + user.getUsername() + " user BIO:" + user.getBio() + " image:" + user.getImage());
             newUsernameEditText.getEditText().setText(user.getUsername());
             newUsernameEditText.getEditText().setSelection(newUsernameEditText.getEditText().getText().length());
         } else {
@@ -175,7 +176,10 @@ public class ChangeUsernameDialog extends DialogFragment {
     private void updateUsername(String txtName) {
         HashMap<String, Object> updateDetails = new HashMap<>();
         updateDetails.put("username", txtName);
-        rootRef.child(Config.users).child(user.getUserID()).updateChildren(updateDetails).addOnCompleteListener(task -> {
+        rootRef.child(Config.users)
+                .child(user.getUserID())
+                .updateChildren(updateDetails)
+                .addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 changedUserUsername.sendUserNameBack(txtName);
                 Toast.makeText(getActivity(), "Updated username successfully", Toast.LENGTH_SHORT).show();

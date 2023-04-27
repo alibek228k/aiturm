@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/no_req_txt_rec"
-                android:text="Go to My Shroomies"
+                android:text="Go to My Aiturm"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/jetBlack"

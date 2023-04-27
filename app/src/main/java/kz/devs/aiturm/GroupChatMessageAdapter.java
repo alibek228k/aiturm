@@ -145,7 +145,7 @@ public class GroupChatMessageAdapter extends RecyclerView.Adapter<GroupChatMessa
                     holder.senderCardDate.setText(messageDateFormatted);
                     String finalBundledCardType = bundledCardType;
                     holder.senderCardView.setOnClickListener(view -> {
-                        Intent intent=new Intent(context,MyShroomiesActivity.class);
+                        Intent intent=new Intent(context, MyAiturmActivity.class);
                         intent.putExtra("CARDID",groupMessage.getCardID());
                         intent.putExtra("CARDTYPE",finalBundledCardType);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -167,7 +167,7 @@ public class GroupChatMessageAdapter extends RecyclerView.Adapter<GroupChatMessa
                     holder.receiverCardType.setText(cardType);
                     holder.receiverCardImportance.setBackgroundColor(color);
                     holder.receiverCardView.setOnClickListener(view -> {
-                        Intent intent=new Intent(context,MyShroomiesActivity.class);
+                        Intent intent=new Intent(context, MyAiturmActivity.class);
                         intent.putExtra("CARDID",groupMessage.getCardID());
                         intent.putExtra("CARDTYPE",finalBundledCardType1);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

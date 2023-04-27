@@ -31,7 +31,7 @@
             android:parentActivityName="kz.devs.aiturm.SignUpActivity"></activity>
         <activity
             android:name="kz.devs.aiturm.GroupChatting"
-            android:parentActivityName="kz.devs.aiturm.MyShroomiesActivity"></activity>
+            android:parentActivityName="kz.devs.aiturm.MyAiturmActivity"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -55,7 +55,7 @@
             android:screenOrientation="portrait"
             android:parentActivityName="kz.devs.aiturm.MainActivity" />
         <activity
-            android:name="kz.devs.aiturm.MyShroomiesActivity"
+            android:name="kz.devs.aiturm.MyAiturmActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="kz.devs.aiturm.ImageViewPage"

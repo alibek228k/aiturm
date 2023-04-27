@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ShroomiesApartment implements Parcelable {
+public class AiturmApartment implements Parcelable {
     String apartmentID, adminID;
     HashMap<String,String> apartmentMembers;
     Map<String , ExpensesCard > expensesCard;
@@ -38,11 +38,11 @@ public class ShroomiesApartment implements Parcelable {
         this.taskCard = taskCard;
     }
 
-    public ShroomiesApartment() {
+    public AiturmApartment() {
 
     }
 
-    public ShroomiesApartment(String apartmentID, String adminID, HashMap<String, String> apartmentMembers, Map<String ,TasksCard> taskCard, Map<String,ExpensesCard> expensesCard) {
+    public AiturmApartment(String apartmentID, String adminID, HashMap<String, String> apartmentMembers, Map<String ,TasksCard> taskCard, Map<String,ExpensesCard> expensesCard) {
         this.apartmentID = apartmentID;
         this.adminID = adminID;
         this.apartmentMembers = apartmentMembers;
@@ -75,7 +75,7 @@ public class ShroomiesApartment implements Parcelable {
         this.apartmentMembers = apartmentMembers;
     }
 
-    protected ShroomiesApartment(Parcel in) {
+    protected AiturmApartment(Parcel in) {
         apartmentID = in.readString();
         adminID = in.readString();
         apartmentMembers=in.readHashMap(HashMap.class.getClassLoader());
@@ -84,15 +84,15 @@ public class ShroomiesApartment implements Parcelable {
 
     }
 
-    public static final Creator<ShroomiesApartment> CREATOR = new Creator<ShroomiesApartment>() {
+    public static final Creator<AiturmApartment> CREATOR = new Creator<AiturmApartment>() {
         @Override
-        public ShroomiesApartment createFromParcel(Parcel in) {
-            return new ShroomiesApartment(in);
+        public AiturmApartment createFromParcel(Parcel in) {
+            return new AiturmApartment(in);
         }
 
         @Override
-        public ShroomiesApartment[] newArray(int size) {
-            return new ShroomiesApartment[size];
+        public AiturmApartment[] newArray(int size) {
+            return new AiturmApartment[size];
         }
     };
 

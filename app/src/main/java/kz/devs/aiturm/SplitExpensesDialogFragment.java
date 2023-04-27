@@ -32,7 +32,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SplitExpensesDialogFragment extends DialogFragment implements UserAdapterSplitExpenses.ShroomiesShares {
+public class SplitExpensesDialogFragment extends DialogFragment implements UserAdapterSplitExpenses.Shares {
   //views
   private View v;
   private TextView totalAmountTextView;
@@ -42,7 +42,7 @@ public class SplitExpensesDialogFragment extends DialogFragment implements UserA
   private RecyclerView splitExpensesRecyclerView;
   private Fragment splitExpenses;
   //model
-  private ShroomiesApartment apartment;
+  private AiturmApartment apartment;
   //data structures
   private ArrayList<User> memebersList =new ArrayList<>();
   private HashMap<String, Integer> sharedSplitMap = new HashMap<>();
@@ -108,7 +108,7 @@ public class SplitExpensesDialogFragment extends DialogFragment implements UserA
         if(bundle!=null){
             apartment=bundle.getParcelable("APARTMENT_DETAILS");
             memebersList =bundle.getParcelableArrayList("MEMBERS");
-            setShroomiesToRecycler(memebersList,enteredAmount);
+            setRecycler(memebersList,enteredAmount);
         }
 
         closeImageButton.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +193,7 @@ public class SplitExpensesDialogFragment extends DialogFragment implements UserA
     public interface membersShares{
         void sendInput(HashMap<String, Integer> sharedSplit);
     }
-    private void setShroomiesToRecycler(ArrayList<User> shroomies,String amount){
+    private void setRecycler(ArrayList<User> shroomies, String amount){
         splitAdapter= new UserAdapterSplitExpenses(getContext(),shroomies,amount,this);
         splitExpensesRecyclerView.setAdapter(splitAdapter);
         splitAdapter.notifyDataSetChanged();

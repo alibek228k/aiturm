@@ -19,7 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class MyShroomiesActivity extends AppCompatActivity {
+public class MyAiturmActivity extends AppCompatActivity {
 
     FragmentManager fm;
     FragmentTransaction ft;
@@ -35,7 +35,7 @@ public class MyShroomiesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_shroomies);
         //load myshroomies fragment
         Bundle bundle = getIntent().getExtras();
-        myshroomiesFragment = new MyShroomiesFragment();
+        myshroomiesFragment = new MyAiturmFragment();
 
         if (bundle != null) {
             String cardID = bundle.getString("CARDID");

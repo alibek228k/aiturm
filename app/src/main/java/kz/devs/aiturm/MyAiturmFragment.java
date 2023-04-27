@@ -73,10 +73,10 @@ import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 
-public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshroomies , CardUploaded  {
+public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomies , CardUploaded  {
     //views
     private View v;
-    private TabLayout myShroomiesTablayout;
+    private TabLayout myAiturmTablayout;
     private RecyclerView myExpensesRecyclerView,myTasksRecyclerView;
     private ImageButton expandButton;
     private SlidingUpPanelLayout slidingLayout;
@@ -99,7 +99,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
     //final static
     private static final int RESULT_CODE=500;
     //model
-    private ShroomiesApartment apartment;
+    private AiturmApartment apartment;
     //firebase
     private FirebaseAuth mAuth;
     private RequestQueue requestQueue;
@@ -149,7 +149,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
 
         myTasksRecyclerView = v.findViewById(R.id.my_tasks_recycler_view);
 
-        myShroomiesTablayout = v.findViewById(R.id.my_shroomies_tablayout);
+        myAiturmTablayout = v.findViewById(R.id.my_shroomies_tablayout);
         myExpensesRecyclerView = v.findViewById(R.id.my_expenses_recycler_view);
         PowerSpinnerView shroomieSpinnerFilter = v.findViewById(R.id.shroomie_spinner_filter);
         expandButton = v.findViewById(R.id.expand_button);
@@ -256,7 +256,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
         });
 
 
-        myShroomiesTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        myAiturmTablayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
 
@@ -274,7 +274,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
                 }
 
                 else if(tab.getPosition()==1){
-                    myShroomiesTablayout.setSelectedTabIndicator(R.drawable.tab_indicator_right);
+                    myAiturmTablayout.setSelectedTabIndicator(R.drawable.tab_indicator_right);
                     myTasksRecyclerView.setVisibility(View.VISIBLE);
                     myExpensesRecyclerView.setVisibility(View.GONE);
                     if(tasksCardsList!=null){
@@ -299,7 +299,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
         });
 
         shroomieSpinnerFilter.setOnSpinnerItemSelectedListener((i, o, i1, t1) -> {
-            int selectedTab=  myShroomiesTablayout.getSelectedTabPosition();
+            int selectedTab=  myAiturmTablayout.getSelectedTabPosition();
             switch (i) {
                 case 0:
                     sortAccordingtoImportance(selectedTab);
@@ -325,7 +325,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
                 AddNewCard addNewCard = new AddNewCard();
                 addNewCard.setTargetFragment(this, 0);
                 Bundle bundle = new Bundle();
-                bundle.putBoolean("Expenses", myShroomiesTablayout.getSelectedTabPosition() == 0);
+                bundle.putBoolean("Expenses", myAiturmTablayout.getSelectedTabPosition() == 0);
                 bundle.putParcelable("APARTMENT_DETAILS", apartment);
 
                 addNewCard.setArguments(bundle);
@@ -338,7 +338,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
         addMemberButton.setOnClickListener(v -> {
             if(apartment!=null){
                 slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                AddShroomieMember add=new AddShroomieMember();
+                AddRoomMember add=new AddRoomMember();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("APARTMENT_DETAILS",apartment);
                 add.setArguments(bundle1);
@@ -397,7 +397,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
                 members.add(apartment.getAdminID());
                 bundle.putStringArrayList("MEMBERS", members);
                 logFragment.setArguments(bundle);
-                logFragment.setTargetFragment(MyShroomiesFragment.this, RESULT_CODE);
+                logFragment.setTargetFragment(MyAiturmFragment.this, RESULT_CODE);
                 fm = getParentFragmentManager();
                 ft = fm.beginTransaction();
                 ft.addToBackStack(null);
@@ -488,8 +488,8 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
                     membersHashMap.put(user.getUserID() , user);
                 }
 
-                apartment = new ShroomiesApartment();
-                apartment = mapper.readValue(apartmentJsonObject.toString(), ShroomiesApartment.class);
+                apartment = new AiturmApartment();
+                apartment = mapper.readValue(apartmentJsonObject.toString(), AiturmApartment.class);
 
                 //initialize an empty list and
                 //if the user add a new card the new card will be sent to this fragment
@@ -585,7 +585,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
             @Override
             public void onChanged() {
                 super.onChanged();
-                if(myShroomiesTablayout.getSelectedTabPosition()==1){
+                if(myAiturmTablayout.getSelectedTabPosition()==1){
                     if(tasksCardsList.isEmpty()){
                         displayNoCards();
                     }else{
@@ -601,7 +601,7 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
             @Override
             public void onChanged() {
                 super.onChanged();
-                if(myShroomiesTablayout.getSelectedTabPosition()==0){
+                if(myAiturmTablayout.getSelectedTabPosition()==0){
                     if(expensesCardsList.isEmpty()){
                         displayNoCards();
                     }else{
@@ -621,8 +621,8 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
         sendInput(selectedCardID,selectedCardType);
         if(selectedCardType.equals(Config.task)){
             if(cardFound){
-                myShroomiesTablayout.getTabAt(1).select();
-                myShroomiesTablayout.setSelectedTabIndicator(R.drawable.tab_indicator_right);
+                myAiturmTablayout.getTabAt(1).select();
+                myAiturmTablayout.setSelectedTabIndicator(R.drawable.tab_indicator_right);
                 myTasksRecyclerView.setVisibility(View.VISIBLE);
                 myExpensesRecyclerView.setVisibility(View.GONE);
                 myTasksRecyclerView.post(() -> myTasksRecyclerView.smoothScrollToPosition(recyclerPosition));
@@ -634,8 +634,8 @@ public class MyShroomiesFragment extends Fragment  implements LogAdapterToMyshro
         if(selectedCardType.equals(Config.expenses)){
 
             if(cardFound){
-                myShroomiesTablayout.getTabAt(0).select();
-                myShroomiesTablayout.setSelectedTabIndicator(R.drawable.tab_indicator_left);
+                myAiturmTablayout.getTabAt(0).select();
+                myAiturmTablayout.setSelectedTabIndicator(R.drawable.tab_indicator_left);
                 myTasksRecyclerView.setVisibility(View.GONE);
                 myExpensesRecyclerView.setVisibility(View.VISIBLE);
                 myExpensesRecyclerView.smoothScrollToPosition(recyclerPosition);

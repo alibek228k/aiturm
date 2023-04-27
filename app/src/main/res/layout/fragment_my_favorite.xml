@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Find Shroomies"
+            android:text="Find AITUrm"
             android:textStyle="bold"
             android:textColor="@color/jetBlack"
             android:textAllCaps="false"
