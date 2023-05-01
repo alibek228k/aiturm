@@ -28,7 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import kz.devs.aiturm.Config;
 import kz.devs.aiturm.CustomToast;
 import kz.devs.aiturm.LoginActivity;
-import kz.devs.aiturm.PasswordSignUp;
+import kz.devs.aiturm.PasswordSignUpActivity;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 
@@ -63,6 +63,7 @@ public class FillOutDataActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
+    private GoogleSignInOptions gso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +100,11 @@ public class FillOutDataActivity extends AppCompatActivity {
                 firstNameInputLayout.setVisibility(View.GONE);
                 lastNameInputLayout.setVisibility(View.GONE);
                 patronymicNameInputLayout.setVisibility(View.GONE);
+
+                gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
                 break;
         }
     }
@@ -231,7 +237,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                     user.setPhoneNumber(phoneNumberInputLayout.getEditText().getText().toString());
                     user.setSpecialization(specialityInputLayout.getEditText().getText().toString());
                     user.setGroup(groupInputLayout.getEditText().getText().toString());
-                    Intent intent = new Intent(FillOutDataActivity.this, PasswordSignUp.class);
+                    Intent intent = new Intent(FillOutDataActivity.this, PasswordSignUpActivity.class);
                     intent.putExtra("USER", user);
                     intent.putExtra("SIGN_UP_METHOD", method);
                     isRegistrationFinished = true;
@@ -268,7 +274,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                         user.setSpecialization(specialityInputLayout.getEditText().getText().toString());
                         user.setGroup(groupInputLayout.getEditText().getText().toString());
 
-                        Intent intent = new Intent(FillOutDataActivity.this, PasswordSignUp.class);
+                        Intent intent = new Intent(FillOutDataActivity.this, PasswordSignUpActivity.class);
                         intent.putExtra("USER", user);
                         intent.putExtra("SIGN_UP_METHOD", method);
                         isRegistrationFinished = true;
@@ -289,30 +295,30 @@ public class FillOutDataActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (!isRegistrationFinished) {
             onBackButtonClicked();
+            isRegistrationFinished = true;
         }
         super.onBackPressed();
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onResume() {
+        isRegistrationFinished = false;
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
         if (!isRegistrationFinished) {
             registrationAborted();
         }
-        super.onDestroy();
-
+        super.onPause();
     }
 
     private void registrationAborted() {
         if (method == SignInMethod.GOOGLE || method == SignInMethod.MICROSOFT) {
-            Toast.makeText(FillOutDataActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
             mAuth.signOut();
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(getString(R.string.default_web_client_id))
-                    .requestEmail()
-                    .build();
             GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(FillOutDataActivity.this, gso);
             mGoogleSignInClient.signOut();
-            startActivity(LoginActivity.getInstance(FillOutDataActivity.this));
         }
     }
 

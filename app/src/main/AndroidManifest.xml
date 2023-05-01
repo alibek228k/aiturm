@@ -30,7 +30,7 @@
             android:name="kz.devs.aiturm.presentaiton.authorization.FillOutDataActivity"
             android:exported="false" />
         <activity
-            android:name="kz.devs.aiturm.PasswordSignUp"
+            android:name="kz.devs.aiturm.PasswordSignUpActivity"
             android:parentActivityName="kz.devs.aiturm.SignUpActivity" />
         <activity
             android:name="kz.devs.aiturm.GroupChatting"

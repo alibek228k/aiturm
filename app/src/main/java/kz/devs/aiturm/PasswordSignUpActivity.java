@@ -28,7 +28,7 @@ import java.util.Objects;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 
-public class PasswordSignUp extends AppCompatActivity {
+public class PasswordSignUpActivity extends AppCompatActivity {
     //views
     private boolean isRegistrationFinished = false;
     private TextInputLayout passwordEditText;
@@ -73,7 +73,7 @@ public class PasswordSignUp extends AppCompatActivity {
                         }
                     } else {
                         if (!termsCond.isChecked()) {
-                            new CustomToast(PasswordSignUp.this, "Please read and accept the our policy terms and condition", R.drawable.ic_error_icon).showCustomToast();
+                            new CustomToast(PasswordSignUpActivity.this, "Please read and accept the our policy terms and condition", R.drawable.ic_error_icon).showCustomToast();
                         }
                         if (!enteredPassword.equals(repeatedPassword)) {
                             repPasswordEditText.setError("Password do not match");
@@ -98,6 +98,9 @@ public class PasswordSignUp extends AppCompatActivity {
 
     private void setupToolbar() {
         setSupportActionBar(toolbar);
+        toolbar.setNavigationOnClickListener(view -> {
+            onBackPressed();
+        });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(null);
     }
@@ -120,15 +123,15 @@ public class PasswordSignUp extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             loadingAnimation.setVisibility(View.GONE);
                             loadingAnimation.pauseAnimation();
-                            new CustomToast(PasswordSignUp.this, "Registered Successfully", R.drawable.ic_accept_check).showCustomToast();
-                            Intent intent = new Intent(PasswordSignUp.this, LoginActivity.class);
+                            new CustomToast(PasswordSignUpActivity.this, "Registered Successfully", R.drawable.ic_accept_check).showCustomToast();
+                            Intent intent = new Intent(PasswordSignUpActivity.this, LoginActivity.class);
                             isRegistrationFinished = true;
                             startActivity(intent);
                         }
                     }).addOnFailureListener(e -> {
                         loadingAnimation.setVisibility(View.GONE);
                         loadingAnimation.pauseAnimation();
-                        new CustomToast(PasswordSignUp.this , "We encountered an unexpected error" ,R.drawable.ic_error_icon).showCustomToast();
+                        new CustomToast(PasswordSignUpActivity.this , "We encountered an unexpected error" ,R.drawable.ic_error_icon).showCustomToast();
                     });
                 }
             }
@@ -136,7 +139,7 @@ public class PasswordSignUp extends AppCompatActivity {
         }).addOnFailureListener(e -> {
             loadingAnimation.setVisibility(View.GONE);
             loadingAnimation.pauseAnimation();
-            new CustomToast(PasswordSignUp.this, e.getMessage(), R.drawable.ic_error_icon).showCustomToast();
+            new CustomToast(PasswordSignUpActivity.this, e.getMessage(), R.drawable.ic_error_icon).showCustomToast();
         });
     }
 
@@ -159,15 +162,14 @@ public class PasswordSignUp extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 loadingAnimation.setVisibility(View.GONE);
                                 loadingAnimation.pauseAnimation();
-                                new CustomToast(PasswordSignUp.this, "Registered Successfully", R.drawable.ic_accept_check).showCustomToast();
-                                Intent intent = new Intent(PasswordSignUp.this, LoginActivity.class);
+                                new CustomToast(PasswordSignUpActivity.this, "Registered Successfully", R.drawable.ic_accept_check).showCustomToast();
                                 isRegistrationFinished = true;
-                                startActivity(intent);
+                                startActivity(MainActivity.newInstance(PasswordSignUpActivity.this));
                             }
                         }).addOnFailureListener(e -> {
                             loadingAnimation.setVisibility(View.GONE);
                             loadingAnimation.pauseAnimation();
-                            new CustomToast(PasswordSignUp.this, "We encountered an unexpected error", R.drawable.ic_error_icon).showCustomToast();
+                            new CustomToast(PasswordSignUpActivity.this, "We encountered an unexpected error", R.drawable.ic_error_icon).showCustomToast();
                         });
                     }
                 }).addOnFailureListener(e -> {
@@ -184,35 +186,41 @@ public class PasswordSignUp extends AppCompatActivity {
             user.sendEmailVerification().addOnCompleteListener(this, task -> {
                 if (task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Registered Successfully. kindly Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(PasswordSignUp.this, LoginActivity.class);
+                    Intent intent = new Intent(PasswordSignUpActivity.this, LoginActivity.class);
                     startActivity(intent);
-                    Toast.makeText(PasswordSignUp.this, user.getDisplayName() + ", you are a Shroomie now", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PasswordSignUpActivity.this, user.getDisplayName() + ", you are a Shroomie now", Toast.LENGTH_SHORT).show();
                     //get public and private keys for Virgil e3 kit
                 } else {
                     Log.e("Register", "Send Email verification failed!", task.getException());
-                    new CustomToast(PasswordSignUp.this, "Failed to send verification email", R.drawable.ic_error_icon).showCustomToast();
+                    new CustomToast(PasswordSignUpActivity.this, "Failed to send verification email", R.drawable.ic_error_icon).showCustomToast();
                 }
             });
         }
     }
 
     @Override
-    protected void onDestroy() {
+    public void onBackPressed() {
+        isRegistrationFinished = true;
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onPause() {
         if (!isRegistrationFinished) {
             registrationAborted();
         }
-        super.onDestroy();
+        super.onPause();
     }
 
     private void registrationAborted() {
-        Toast.makeText(PasswordSignUp.this, "Failed to register", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PasswordSignUpActivity.this, "Failed to register", Toast.LENGTH_SHORT).show();
         mAuth.signOut();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(PasswordSignUp.this, gso);
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(PasswordSignUpActivity.this, gso);
         mGoogleSignInClient.signOut();
-        startActivity(LoginActivity.getInstance(PasswordSignUp.this));
+        startActivity(LoginActivity.getInstance(PasswordSignUpActivity.this));
     }
 }

@@ -74,7 +74,7 @@ public class SignUpActivity extends AppCompatActivity{
                                 usernameEditText.setError(null);
                                 emailEditText.setError(null);
                                 usernameEditText.setError(null);
-                                Intent intent = new Intent(SignUpActivity.this, PasswordSignUp.class);
+                                Intent intent = new Intent(SignUpActivity.this, PasswordSignUpActivity.class);
                                 intent.putExtra("EMAIL", enteredEmail);
                                 intent.putExtra("USERNAME", enteredUsername);
                                 startActivity(intent);

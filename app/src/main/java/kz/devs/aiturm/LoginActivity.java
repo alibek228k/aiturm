@@ -226,6 +226,7 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
                 startActivity(FillOutDataActivity.getInstance(getApplicationContext(), method));
             } else {
                 startActivity(MainActivity.newInstance(LoginActivity.this));
+                finish();
                 Log.d("MICROSOFT SIGN IN", "not new user");
             }
         } else {
