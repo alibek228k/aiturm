@@ -17,16 +17,23 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.shroomies.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
-public class DeleteUser extends DialogFragment {
+public class DeleteUserDialogDragment extends DialogFragment {
     private FirebaseAuth mAuth;
+    private DatabaseReference rootRef;
     private User user;
     private View v;
     private TextInputLayout userPassword;
@@ -36,6 +43,7 @@ public class DeleteUser extends DialogFragment {
         // Inflate the layout for this fragment
         v= inflater.inflate(R.layout.fragment_delete_user, container, false);
         mAuth=FirebaseAuth.getInstance();
+        rootRef = FirebaseDatabase.getInstance().getReference();
         user=new User();
         return v;
     }
@@ -47,7 +55,7 @@ public class DeleteUser extends DialogFragment {
         Button doneButton = v.findViewById(R.id.delete_account_done);
         TextInputLayout userEmail = v.findViewById(R.id.delete_account_email);
         userPassword=v.findViewById(R.id.delete_account_password);
-        Bundle bundle=this.getArguments();
+        Bundle bundle=getArguments();
         if (bundle!=null) {
             user=bundle.getParcelable("USER");
             if (user!=null) {
@@ -107,8 +115,28 @@ public class DeleteUser extends DialogFragment {
         firebaseUser.delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 userPassword.setError(null);
-                Toast.makeText(getContext(),"You are no longer shroomie",Toast.LENGTH_LONG).show();
-                mAuth.signOut();
+                Toast.makeText(getContext(),"Successfully deleted",Toast.LENGTH_LONG).show();
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
+                GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+                Task<Void> revokeAccess = mGoogleSignInClient.revokeAccess();
+                try {
+                    revokeAccess.addOnCompleteListener(task1 -> {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        rootRef.child(Config.users).child(user.getUid()).removeValue();
+                        mAuth.signOut();
+                        mGoogleSignInClient.signOut();
+                        Toast.makeText(getContext(), "Successfully signed out", Toast.LENGTH_LONG).show();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(getContext(), "Failed to signed out", Toast.LENGTH_LONG).show();
+                    });
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                }
                 this.getTargetFragment().getActivity().finish();
             }
         }).addOnFailureListener(e -> userPassword.setError(e.getMessage()));

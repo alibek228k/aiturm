@@ -8,13 +8,6 @@ import android.graphics.ImageDecoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
-
 import android.provider.MediaStore;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -24,16 +17,20 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.example.shroomies.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,7 +43,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-
 
 import org.jetbrains.annotations.NotNull;
 
@@ -115,37 +111,49 @@ public class EditProfileFragment extends DialogFragment implements ChangeBioDial
         Button done = v.findViewById(R.id.edit_profile_done);
         FirebaseUser firebaseUser=mAuth.getCurrentUser();
             if (firebaseUser!=null) {
-                getUserDetails(firebaseUser.getUid());
+                user.setEmail(firebaseUser.getEmail());
+                user.setUserID(firebaseUser.getUid());
+                user.setName(firebaseUser.getDisplayName());
+                getUserDetails(firebaseUser.getUid(), user);
                 editImage.setOnClickListener(v -> openImage());
                 changeBio.setOnClickListener(v -> {
+                    user.setEmail(firebaseUser.getEmail());
+                    user.setUserID(firebaseUser.getUid());
+                    user.setName(firebaseUser.getDisplayName());
                     ChangeBioDialog changeBioDialog = new ChangeBioDialog();
-                    Bundle bundle=new Bundle();
-                    bundle.putParcelable("USER",user);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("USER", user);
                     changeBioDialog.setArguments(bundle);
-                    changeBioDialog.setTargetFragment(EditProfileFragment.this,DIALOG_FRAGMENT_REQUEST_CODE );
-                    changeBioDialog.show(getParentFragmentManager() ,null);
+                    changeBioDialog.setTargetFragment(EditProfileFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                    changeBioDialog.show(getParentFragmentManager(), null);
                 });
-                changeName.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ChangeNameDialogFragment changeNameDialogFragment=new ChangeNameDialogFragment();
-                        Bundle bundle=new Bundle();
-                        bundle.putParcelable("USER",user);
-                        changeNameDialogFragment.setArguments(bundle);
-                        changeNameDialogFragment.setTargetFragment(EditProfileFragment.this,DIALOG_FRAGMENT_REQUEST_CODE );
-                        changeNameDialogFragment.show(getParentFragmentManager() ,null);
-                    }
+                changeName.setOnClickListener(view1 -> {
+                    user.setEmail(firebaseUser.getEmail());
+                    user.setUserID(firebaseUser.getUid());
+                    user.setName(firebaseUser.getDisplayName());
+                    ChangeNameDialogFragment changeNameDialogFragment = new ChangeNameDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("USER", user);
+                    changeNameDialogFragment.setArguments(bundle);
+                    changeNameDialogFragment.setTargetFragment(EditProfileFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                    changeNameDialogFragment.show(getParentFragmentManager(), null);
                 });
 
                 changeUserNameButton.setOnClickListener(v -> {
+                    user.setEmail(firebaseUser.getEmail());
+                    user.setUserID(firebaseUser.getUid());
+                    user.setName(firebaseUser.getDisplayName());
                     ChangeUsernameDialog changeUsernameDialog = new ChangeUsernameDialog();
-                    Bundle bundle=new Bundle();
-                    bundle.putParcelable("USER",user);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("USER", user);
                     changeUsernameDialog.setArguments(bundle);
-                    changeUsernameDialog.setTargetFragment(EditProfileFragment.this,DIALOG_FRAGMENT_REQUEST_CODE );
-                    changeUsernameDialog.show(getParentFragmentManager() ,null);
+                    changeUsernameDialog.setTargetFragment(EditProfileFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                    changeUsernameDialog.show(getParentFragmentManager(), null);
                 });
                 changeEmail.setOnClickListener(v -> {
+                    user.setEmail(firebaseUser.getEmail());
+                    user.setUserID(firebaseUser.getUid());
+                    user.setName(firebaseUser.getDisplayName());
                     ChangeEmailDialog changeEmailDialog = new ChangeEmailDialog();
                     Bundle bundle=new Bundle();
                     bundle.putParcelable("USER",user);
@@ -155,18 +163,32 @@ public class EditProfileFragment extends DialogFragment implements ChangeBioDial
                 });
 
                 changePassword.setOnClickListener(v ->
-                        resetPass()
+                        new AlertDialog.Builder(getActivity())
+                                .setMessage("A message to reset your password will be sent to your email.")
+                                .setTitle("Change password")
+                                .setPositiveButton("OK", (dialogInterface, i) -> {
+                                    dialogInterface.dismiss();
+                                    resetPass();
+                                })
+                                .setNegativeButton("Cancel", (dialogInterface, i) -> {
+                                    dialogInterface.dismiss();
+                                })
+                                .create()
+                                .show()
                 );
                 deleteAccount.setOnClickListener(v -> {
+                    user.setEmail(firebaseUser.getEmail());
+                    user.setUserID(firebaseUser.getUid());
+                    user.setName(firebaseUser.getDisplayName());
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle("Are you sure want to delete this account?");
                     builder.setPositiveButton("Yes", (dialogInterface, i) -> {
-                        DeleteUser deleteUser=new DeleteUser();
-                        Bundle bundle=new Bundle();
-                        bundle.putParcelable("USER",user);
-                        deleteUser.setArguments(bundle);
-                        deleteUser.setTargetFragment(EditProfileFragment.this,DIALOG_FRAGMENT_REQUEST_CODE);
-                        deleteUser.show(getParentFragmentManager(),null);
+                        DeleteUserDialogDragment deleteUserDialogDragment = new DeleteUserDialogDragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("USER", user);
+                        deleteUserDialogDragment.setArguments(bundle);
+                        deleteUserDialogDragment.setTargetFragment(EditProfileFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                        deleteUserDialogDragment.show(getParentFragmentManager(), null);
                     });
                     builder.setNegativeButton("cancel", (dialogInterface, i) -> dialogInterface.dismiss());
                     builder.show();
@@ -293,14 +315,12 @@ public class EditProfileFragment extends DialogFragment implements ChangeBioDial
 
     }
 
-    private void getUserDetails(String  userUid){
+    private void getUserDetails(String  userUid, User user){
         rootRef.child(Config.users).child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
                 if(snapshot.exists()) {
-                    user= snapshot.getValue(User.class);
                     if (user!=null) {
-                        System.out.println("bio is " + user.getBio());
 //                        if (!user.getBio().equals("")) {
 //                            bioTxt.setText(user.getBio());
 //                        }

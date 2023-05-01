@@ -105,7 +105,6 @@ public class ChangeUsernameDialog extends DialogFragment {
         Bundle bundle=this.getArguments();
         if (bundle!=null) {
             user=bundle.getParcelable("USER");
-            System.out.println("User is " + " userID:" + user.getUserID()+ " username:" + user.getUsername() + " user BIO:" + user.getBio() + " image:" + user.getImage());
             newUsernameEditText.getEditText().setText(user.getUsername());
             newUsernameEditText.getEditText().setSelection(newUsernameEditText.getEditText().getText().length());
         } else {

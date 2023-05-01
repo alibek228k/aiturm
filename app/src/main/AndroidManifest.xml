@@ -27,11 +27,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name="kz.devs.aiturm.presentaiton.authorization.FillOutDataActivity"
+            android:exported="false" />
+        <activity
             android:name="kz.devs.aiturm.PasswordSignUp"
-            android:parentActivityName="kz.devs.aiturm.SignUpActivity"></activity>
+            android:parentActivityName="kz.devs.aiturm.SignUpActivity" />
         <activity
             android:name="kz.devs.aiturm.GroupChatting"
-            android:parentActivityName="kz.devs.aiturm.MyAiturmActivity"></activity>
+            android:parentActivityName="kz.devs.aiturm.MyAiturmActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -45,15 +48,15 @@
 
         <activity
             android:name="kz.devs.aiturm.SearchSettingActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName="kz.devs.aiturm.MainActivity" />
+            android:parentActivityName="kz.devs.aiturm.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="kz.devs.aiturm.FavouritesActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="kz.devs.aiturm.PublishPostActivity"
-            android:screenOrientation="portrait"
-            android:parentActivityName="kz.devs.aiturm.MainActivity" />
+            android:parentActivityName="kz.devs.aiturm.MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name="kz.devs.aiturm.MyAiturmActivity"
             android:screenOrientation="portrait" />
@@ -113,8 +116,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name="kz.devs.aiturm.LoginActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

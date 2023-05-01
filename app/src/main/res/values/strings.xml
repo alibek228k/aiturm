@@ -60,6 +60,17 @@
     <string name="forgot_password"><u>Forgot password?</u></string>
     <string name="search_for_building_name">You must search for the building name</string>
     <string name="search_for_the_nearest_place">Search the nearest place or drag and drop the pin</string>
+    <string name="last_name">Last Name</string>
+    <string name="first_name">First Name</string>
+    <string name="gender">Gender</string>
+    <string name="group">Group</string>
+    <string name="speciality">Speciality</string>
+    <string name="phone_number">Phone number</string>
+    <string name="patronymic_name">Patronymic name</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="gender_select_male">Male</string>
+    <string name="gender_select_female">Female</string>
 
 
 </resources>

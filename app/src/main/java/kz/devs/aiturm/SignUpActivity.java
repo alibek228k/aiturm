@@ -1,5 +1,6 @@
 package kz.devs.aiturm;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -20,6 +21,8 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import kz.devs.aiturm.model.SignInMethod;
+
 
 public class SignUpActivity extends AppCompatActivity{
     private TextInputLayout usernameEditText;
@@ -27,6 +30,13 @@ public class SignUpActivity extends AppCompatActivity{
     private CardView helpCardView;
     private boolean userNameIsTaken;
     private static final Pattern pattern = Pattern.compile(Config.USERNAME_PATTERN);
+
+    private static final String SIGN_IN_METHOD_KEY = "SIGN_IN_METHOD";
+
+    public static Intent getInstance(Context context, SignInMethod method){
+        return new Intent(context, SignUpActivity.class)
+                .putExtra("SIGN_IN_METHOD", method);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +67,6 @@ public class SignUpActivity extends AppCompatActivity{
             String enteredUsername = Objects.requireNonNull(usernameEditText.getEditText()).getText().toString().toLowerCase().trim();
             if(eligibaleToContinue(enteredEmail,enteredUsername)) {
                     checkDuplicateUserName(enteredUsername).addOnCompleteListener(task -> {
-//                        System.out.println("SignUpActivity() -> correct1 " + task.getResult().getValue().toString());
                         if(task.isSuccessful()){
                             if(task.getResult().getValue()!=null){
                                 usernameEditText.setError(enteredUsername + " is taken");
@@ -77,7 +86,6 @@ public class SignUpActivity extends AppCompatActivity{
                     });
 
             }else {
-                System.out.println("SignUpActivity() -> incorrect");
                 if (!validUsername(enteredUsername)) {
                     usernameEditText.setError("Please enter valid username");
                 }else{

@@ -86,19 +86,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-interface CardUploaded{
-     void sendData(TasksCard tasksCard , ExpensesCard expensesCard);
+interface CardUploaded {
+    void sendData(TasksCard tasksCard, ExpensesCard expensesCard);
 
 }
-public class AddNewCard extends DialogFragment implements SplitExpensesDialogFragment.membersShares {
+
+public class AddNewCardDialogFragment extends DialogFragment implements SplitExpensesDialogFragment.membersShares {
     //static
-    private static final long MAX_FILES_SIZE_IN_BYTES =20 ;
+    private static final long MAX_FILES_SIZE_IN_BYTES = 20;
     private static final int CAMERA_REQUEST_CODE = 100, IMAGE_PICK_GALLERY_CODE = 400,
-                     PDF_PICK_CODE =500 ,DIALOG_RESULT=100;
+            PDF_PICK_CODE = 500, DIALOG_RESULT = 100;
     //views
     private View v;
     private TextView addCardTextView;
-    private RelativeLayout imageRelativeLayout , addCardRelativeLayout , rootLayout;
+    private RelativeLayout imageRelativeLayout, addCardRelativeLayout, rootLayout;
     private ImageView selectedImageView;
     private EditText titleEditText, descriptionEditText;
     private SocialAutoCompleteTextView mentionAutoCompleteTextView;
@@ -219,7 +220,7 @@ public class AddNewCard extends DialogFragment implements SplitExpensesDialogFra
                 bundle1.putParcelable("APARTMENT_DETAILS", apartment);
                 bundle1.putParcelableArrayList("MEMBERS", apartmentMembersArrayList);
                 split.setArguments(bundle1);
-                split.setTargetFragment(AddNewCard.this, DIALOG_RESULT);
+                split.setTargetFragment(AddNewCardDialogFragment.this, DIALOG_RESULT);
                 split.show(getParentFragmentManager(), "split expenses");
             }
         });
@@ -227,7 +228,6 @@ public class AddNewCard extends DialogFragment implements SplitExpensesDialogFra
         attachFileButton.setOnClickListener(view15 -> showImagePickDialog());
 
         deleteImageButton.setOnClickListener(v -> {
-            // clear the image uri and set the visibilty  to gone
             chosenImageUri = null;
             imageRelativeLayout.setVisibility(View.GONE);
         });
@@ -882,7 +882,7 @@ public class AddNewCard extends DialogFragment implements SplitExpensesDialogFra
                 .setMessage(message)
                 .setCancelable(false)
                 .setNeutralButton("return", (dialog, which) -> {
-                    AddNewCard.this.dismiss();
+                    AddNewCardDialogFragment.this.dismiss();
                     dialog.dismiss();
                 })
                 .create()

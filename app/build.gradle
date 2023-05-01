@@ -21,8 +21,8 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     buildTypes {
@@ -95,7 +95,7 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0-rc1'
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'io.github.everythingme:overscroll-decor-android:1.1.1'
-    implementation 'id.zelory:compressor:2.1.1'
+    implementation 'id.zelory:compressor:3.0.1'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     implementation 'com.github.omadahealth:swipy:1.2.3@aar'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'

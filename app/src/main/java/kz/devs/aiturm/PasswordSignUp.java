@@ -1,6 +1,4 @@
 package kz.devs.aiturm;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,97 +7,122 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.shroomies.R;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.HashMap;
 import java.util.Objects;
+
+import kz.devs.aiturm.model.SignInMethod;
+import kz.devs.aiturm.model.User;
 
 public class PasswordSignUp extends AppCompatActivity {
     //views
+    private boolean isRegistrationFinished = false;
     private TextInputLayout passwordEditText;
     private TextInputLayout repPasswordEditText;
     private CheckBox termsCond;
     private MaterialButton register;
     private LottieAnimationView loadingAnimation;
+    private Toolbar toolbar;
     //firebase
     private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_password_sign_up);
-        mAuth=FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-        passwordEditText=findViewById(R.id.password_sign_up);
-        repPasswordEditText=findViewById(R.id.confirm_password_sign_up);
+        passwordEditText = findViewById(R.id.password_sign_up);
+        repPasswordEditText = findViewById(R.id.confirm_password_sign_up);
         register = findViewById(R.id.register_button);
-        termsCond=findViewById(R.id.terms_conditions_privacy_check_box);
-        loadingAnimation =  findViewById(R.id.register_animation_view);
+        termsCond = findViewById(R.id.terms_conditions_privacy_check_box);
+        loadingAnimation = findViewById(R.id.register_animation_view);
+        toolbar = findViewById(R.id.sign_up_password_tool_bar);
 
-        Toolbar toolbar = findViewById(R.id.sign_up_password_tool_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle(null);
+        setupToolbar();
 
-        Bundle bundle= getIntent().getExtras();
-        if (bundle!=null) {
-            String enteredEmail=bundle.getString("EMAIL");
-            String enteredUsername=bundle.getString("USERNAME");
-            if (enteredEmail!=null && enteredUsername!=null) {
-                register.setOnClickListener(view -> {
-                    String enteredPassword= Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
-                    String repeatedPassword= Objects.requireNonNull(repPasswordEditText.getEditText()).getText().toString().trim();
-                    if (eligibaleToGetStarted(enteredPassword,repeatedPassword)) {
+
+        register.setOnClickListener(view -> {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
+                User user = (User) bundle.getSerializable("USER");
+                SignInMethod method = (SignInMethod) bundle.getSerializable("SIGN_UP_METHOD");
+                if (user.getEmail() != null && user.getUsername() != null) {
+                    String enteredPassword = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
+                    String repeatedPassword = Objects.requireNonNull(repPasswordEditText.getEditText()).getText().toString().trim();
+                    if (eligibaleToGetStarted(enteredPassword, repeatedPassword)) {
                         passwordEditText.setError(null);
                         repPasswordEditText.setError(null);
-                        registerUser(enteredEmail,enteredPassword,enteredUsername);
-                    }else {
-                        if (!termsCond.isChecked()) {
-                            new CustomToast(PasswordSignUp.this , "Please read and accept the our policy terms and condition" ,R.drawable.ic_error_icon).showCustomToast();
+                        if (method == SignInMethod.DEFAULT) {
+                            registerUser(user, enteredPassword);
+                        } else if (method == SignInMethod.GOOGLE || method == SignInMethod.MICROSOFT) {
+                            registerWithGoogleOrMicrosoft(user, enteredPassword);
                         }
-                        if(!enteredPassword.equals(repeatedPassword)) {
+                    } else {
+                        if (!termsCond.isChecked()) {
+                            new CustomToast(PasswordSignUp.this, "Please read and accept the our policy terms and condition", R.drawable.ic_error_icon).showCustomToast();
+                        }
+                        if (!enteredPassword.equals(repeatedPassword)) {
                             repPasswordEditText.setError("Password do not match");
-                        }else{
+                        } else {
                             repPasswordEditText.setError(null);
                         }
-                        if(enteredPassword.length()<8){
+                        if (enteredPassword.length() < 8) {
                             passwordEditText.setError("Password must contain at least 8 characters");
-                        }else{
+                        } else {
                             passwordEditText.setError(null);
                         }
                     }
-                });
+                }
             }
-        }
+        });
 
     }
-    private boolean eligibaleToGetStarted(String enteredPass,String repPass){
+
+    private boolean eligibaleToGetStarted(String enteredPass, String repPass) {
         return termsCond.isChecked() && enteredPass.equals(repPass) && enteredPass.length() >= 8;
     }
-    private void registerUser(String email,String password,String username){
+
+    private void setupToolbar() {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(null);
+    }
+
+    private void registerUser(User user, String password) {
         register.setClickable(false);
         loadingAnimation.setVisibility(View.VISIBLE);
         loadingAnimation.playAnimation();
-        HashMap<String,Object> usernameHash=new HashMap<>();
-        usernameHash.put("username",username);
-        DatabaseReference rootRef= FirebaseDatabase.getInstance().getReference();
-        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(task -> {
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        mAuth.createUserWithEmailAndPassword(user.getEmail(), password).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                FirebaseUser firebaseUser=mAuth.getCurrentUser();
-                if(firebaseUser!=null) {
-                    rootRef.child(Config.users).child(firebaseUser.getUid()).updateChildren(usernameHash).addOnCompleteListener(task1 -> {
-                        if (task1.isSuccessful()) {
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                if (firebaseUser != null) {
+                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(user.getName())
+                            .build();
+                    firebaseUser.updateProfile(profileChangeRequest);
+
+                    rootRef.child(Config.users).child(firebaseUser.getUid()).setValue(user).addOnCompleteListener(task1 -> {
+                        if (task.isSuccessful()) {
                             loadingAnimation.setVisibility(View.GONE);
                             loadingAnimation.pauseAnimation();
-                            new CustomToast(PasswordSignUp.this , "Registered Successfully" ,R.drawable.ic_accept_check).showCustomToast();
+                            new CustomToast(PasswordSignUp.this, "Registered Successfully", R.drawable.ic_accept_check).showCustomToast();
                             Intent intent = new Intent(PasswordSignUp.this, LoginActivity.class);
+                            isRegistrationFinished = true;
                             startActivity(intent);
                         }
                     }).addOnFailureListener(e -> {
@@ -113,25 +136,83 @@ public class PasswordSignUp extends AppCompatActivity {
         }).addOnFailureListener(e -> {
             loadingAnimation.setVisibility(View.GONE);
             loadingAnimation.pauseAnimation();
-            new CustomToast(PasswordSignUp.this , e.getMessage() ,R.drawable.ic_error_icon).showCustomToast();
+            new CustomToast(PasswordSignUp.this, e.getMessage(), R.drawable.ic_error_icon).showCustomToast();
         });
     }
-    private void sendEmailVerification(){
+
+    private void registerWithGoogleOrMicrosoft(User user, String password) {
+        register.setClickable(false);
+        loadingAnimation.setVisibility(View.VISIBLE);
+        loadingAnimation.playAnimation();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        FirebaseUser firebaseUser = mAuth.getCurrentUser();
+
+        firebaseUser.updatePassword(password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(user.getName())
+                                .build();
+                        firebaseUser.updateProfile(profileChangeRequest);
+
+                        rootRef.child(Config.users).child(firebaseUser.getUid()).setValue(user).addOnCompleteListener(task1 -> {
+                            if (task.isSuccessful()) {
+                                loadingAnimation.setVisibility(View.GONE);
+                                loadingAnimation.pauseAnimation();
+                                new CustomToast(PasswordSignUp.this, "Registered Successfully", R.drawable.ic_accept_check).showCustomToast();
+                                Intent intent = new Intent(PasswordSignUp.this, LoginActivity.class);
+                                isRegistrationFinished = true;
+                                startActivity(intent);
+                            }
+                        }).addOnFailureListener(e -> {
+                            loadingAnimation.setVisibility(View.GONE);
+                            loadingAnimation.pauseAnimation();
+                            new CustomToast(PasswordSignUp.this, "We encountered an unexpected error", R.drawable.ic_error_icon).showCustomToast();
+                        });
+                    }
+                }).addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    registrationAborted();
+                });
+
+
+    }
+
+    private void sendEmailVerification() {
         final FirebaseUser user = mAuth.getCurrentUser();
-        if (user!=null) {
+        if (user != null) {
             user.sendEmailVerification().addOnCompleteListener(this, task -> {
-                if(task.isSuccessful()){
+                if (task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Registered Successfully. kindly Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(PasswordSignUp.this, LoginActivity.class);
                     startActivity(intent);
-                    Toast.makeText(PasswordSignUp.this, user.getDisplayName()+", you are a Shroomie now", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PasswordSignUp.this, user.getDisplayName() + ", you are a Shroomie now", Toast.LENGTH_SHORT).show();
                     //get public and private keys for Virgil e3 kit
-                }
-                else {
-                    Log.e("Register", "Send Email verification failed!",task.getException());
-                    new CustomToast(PasswordSignUp.this , "Failed to send verification email" ,R.drawable.ic_error_icon).showCustomToast();
+                } else {
+                    Log.e("Register", "Send Email verification failed!", task.getException());
+                    new CustomToast(PasswordSignUp.this, "Failed to send verification email", R.drawable.ic_error_icon).showCustomToast();
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (!isRegistrationFinished) {
+            registrationAborted();
+        }
+        super.onDestroy();
+    }
+
+    private void registrationAborted() {
+        Toast.makeText(PasswordSignUp.this, "Failed to register", Toast.LENGTH_SHORT).show();
+        mAuth.signOut();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(PasswordSignUp.this, gso);
+        mGoogleSignInClient.signOut();
+        startActivity(LoginActivity.getInstance(PasswordSignUp.this));
     }
 }

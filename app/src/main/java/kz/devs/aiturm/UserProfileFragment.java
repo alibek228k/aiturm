@@ -111,11 +111,8 @@ public class UserProfileFragment extends Fragment {
 
         }
 
-
-
-
         editProfile.setOnClickListener(v -> {
-            EditProfileFragment editProfileFragmentDialog =new EditProfileFragment();
+            EditProfileFragment editProfileFragmentDialog = new EditProfileFragment();
             editProfileFragmentDialog.setTargetFragment(UserProfileFragment.this,DIALOG_FRAGMENT_REQUEST_CODE);
             editProfileFragmentDialog.show(getParentFragmentManager() ,null);
         });
@@ -181,7 +178,6 @@ public class UserProfileFragment extends Fragment {
                      if (user!=null) {
                          textViewName.setText(user.getName());
                          textViewUsername.setText(user.getUsername());
-                         System.out.println("User bio is " + user.getBio());
 //                         if (!user.getBio().equals("")) {
 //                             viewBio.setText(user.getBio());
 //                         }

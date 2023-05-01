@@ -322,15 +322,15 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 
         addCardButton.setOnClickListener(view1 -> {
             if(apartment!=null) {
-                AddNewCard addNewCard = new AddNewCard();
-                addNewCard.setTargetFragment(this, 0);
+                AddNewCardDialogFragment addNewCardDialogFragment = new AddNewCardDialogFragment();
+                addNewCardDialogFragment.setTargetFragment(this, 0);
                 Bundle bundle = new Bundle();
                 bundle.putBoolean("Expenses", myAiturmTablayout.getSelectedTabPosition() == 0);
                 bundle.putParcelable("APARTMENT_DETAILS", apartment);
 
-                addNewCard.setArguments(bundle);
+                addNewCardDialogFragment.setArguments(bundle);
 
-                addNewCard.show(getActivity().getSupportFragmentManager(), "add new card");
+                addNewCardDialogFragment.show(getActivity().getSupportFragmentManager(), "add new card");
             }
 
         });
@@ -435,7 +435,6 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 
     }
     private void getUnseenMessageNo(String apartmentID, String userID){
-        System.out.println("getUnseenMessageNo() -> " + apartmentID + " " + userID);
         DatabaseReference rootRef= FirebaseDatabase.getInstance().getReference();
         rootRef.child("groupMessages").child(apartmentID).child("unSeenMessageCount")
                 .child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
