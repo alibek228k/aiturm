@@ -34,7 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 
-public class PublishPostFragment extends Fragment implements MapsFragment.OnLocationSet, OnPostTypeChange {
+public class PublishPostFragment extends Fragment implements MapsFragment.OnLocationSet, PostTypeCallback {
     public static final int MAPS_FRAGMENT_REQUEST_CODE = 2;
 
     private MaterialButton nextButton;

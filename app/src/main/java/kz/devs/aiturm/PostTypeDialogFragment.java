@@ -22,12 +22,12 @@ public class PostTypeDialogFragment extends DialogFragment {
 
     private View v;
     private MaterialCheckBox roomCheckBox, roommateCheckBox;
-    private OnPostTypeChange onPostTypeChange;
+    private PostTypeCallback postTypeCallback;
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.onPostTypeChange = (PublishPostFragment) getTargetFragment();
+        this.postTypeCallback = (PublishPostFragment) getTargetFragment();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class PostTypeDialogFragment extends DialogFragment {
                 }
             } else {
                 roommateCheckBox.setChecked(false);
-                onPostTypeChange.onPostTypeChanged(Config.APARTMENT_POST);
+                postTypeCallback.onPostTypeChanged(Config.APARTMENT_POST);
             }
         });
         roommateCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -92,7 +92,7 @@ public class PostTypeDialogFragment extends DialogFragment {
                 }
             } else {
                 roomCheckBox.setChecked(false);
-                onPostTypeChange.onPostTypeChanged(Config.PERSONAL_POST);
+                postTypeCallback.onPostTypeChanged(Config.PERSONAL_POST);
             }
         });
 
@@ -102,6 +102,6 @@ public class PostTypeDialogFragment extends DialogFragment {
 
 }
 
-interface OnPostTypeChange {
+interface PostTypeCallback {
     void onPostTypeChanged(String postType);
 }

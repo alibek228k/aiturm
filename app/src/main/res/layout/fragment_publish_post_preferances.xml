@@ -68,7 +68,7 @@
                     android:backgroundTint="@color/white"
                     android:paddingBottom="15dp"
                     android:paddingTop="15dp"
-                    android:inputType="number"></com.google.android.material.textfield.TextInputEditText>
+                    android:inputType="number"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

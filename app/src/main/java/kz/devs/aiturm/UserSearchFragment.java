@@ -34,7 +34,7 @@ public class UserSearchFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        rootRef =  FirebaseDatabase.getInstance().getReference();
+        rootRef = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -42,6 +42,25 @@ public class UserSearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v =   inflater.inflate(R.layout.fragment_user_search, container, false);
+        Query query = rootRef.child(Config.users).limitToFirst(30).orderByChild(Config.username);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    userList.clear();
+                    for (DataSnapshot dataSnapshot
+                            : snapshot.getChildren()) {
+                        User user = dataSnapshot.getValue(User.class);
+                        userList.add(user);
+                    }
+                    searchUserRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
         return v;
     }
 
@@ -89,7 +108,6 @@ public class UserSearchFragment extends Fragment {
 
     private void getSearch(String personalQuery) {
         Query query;
-            // limit the data to 30 matching users
         query = rootRef.child(Config.users).limitToFirst(30).orderByChild(Config.username).startAt(personalQuery)
                 .endAt(personalQuery + "\uf8ff");
 

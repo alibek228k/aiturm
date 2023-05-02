@@ -59,12 +59,12 @@ public class SearchUserRecyclerViewAdapter extends RecyclerView.Adapter<SearchUs
 
     }
 
-    @Override
-    public long getItemId(int position) {
-        // Lets return in real stable id from here
-        //getting the hash code will make every id unique
-        return (userList.get(position).getUserID()).hashCode();
-    }
+//    @Override
+//    public long getItemId(int position) {
+//        // Lets return in real stable id from here
+//        //getting the hash code will make every id unique
+//        return (userList.get(position).getUserID()).hashCode();
+//    }
 
 
     @Override
