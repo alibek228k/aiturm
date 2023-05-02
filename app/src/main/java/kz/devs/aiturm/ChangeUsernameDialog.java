@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import kz.devs.aiturm.model.User;
+
 public class ChangeUsernameDialog extends DialogFragment {
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
@@ -42,7 +44,7 @@ public class ChangeUsernameDialog extends DialogFragment {
     private TextInputLayout newUsernameEditText;
     private User user;
     private View v;
-    private ChangeUsernameDialog.username changedUserUsername;
+    private UsernameChangeCallback changedUserUsernameChangeCallback;
     private CardView helperTxt;
     private static final Pattern pattern = Pattern.compile(Config.USERNAME_PATTERN);
 
@@ -68,15 +70,15 @@ public class ChangeUsernameDialog extends DialogFragment {
         super.onActivityCreated(savedInstanceState);
         getDialog().getWindow().setWindowAnimations(R.style.EditProfileOptionsAnimation);
     }
-    public interface username {
-        void sendUserNameBack(String nameTxt);
+    public interface UsernameChangeCallback {
+        void onUsernameChanged(String nameTxt);
     }
 
     @Override
     public void onAttach(@NonNull @NotNull Context context) {
         super.onAttach(context);
         try {
-            changedUserUsername =(ChangeUsernameDialog.username) getTargetFragment();
+            changedUserUsernameChangeCallback =(UsernameChangeCallback) getTargetFragment();
 
         } catch (Exception e) {
             Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
@@ -104,7 +106,7 @@ public class ChangeUsernameDialog extends DialogFragment {
         helperTxt=v.findViewById(R.id.help_card_view_edit_username);
         Bundle bundle=this.getArguments();
         if (bundle!=null) {
-            user=bundle.getParcelable("USER");
+            user = (User) bundle.getSerializable("USER");
             newUsernameEditText.getEditText().setText(user.getUsername());
             newUsernameEditText.getEditText().setSelection(newUsernameEditText.getEditText().getText().length());
         } else {
@@ -180,7 +182,7 @@ public class ChangeUsernameDialog extends DialogFragment {
                 .updateChildren(updateDetails)
                 .addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                changedUserUsername.sendUserNameBack(txtName);
+                changedUserUsernameChangeCallback.onUsernameChanged(txtName);
                 Toast.makeText(getActivity(), "Updated username successfully", Toast.LENGTH_SHORT).show();
                 closeKeyboard();
                 dismiss();

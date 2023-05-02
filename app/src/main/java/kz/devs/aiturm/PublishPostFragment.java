@@ -36,6 +36,8 @@ import java.util.ArrayList;
 
 public class PublishPostFragment extends Fragment implements MapsFragment.OnLocationSet, OnPostTypeChange {
     public static final int MAPS_FRAGMENT_REQUEST_CODE = 2;
+
+    private MaterialButton nextButton;
     private View v;
     private TextView searchForNameTextView, selectTypeofUnitTextView;
     private ImageView userImageView;
@@ -89,8 +91,6 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
     }
 
 
-
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -109,7 +109,7 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
         selectTypeofUnitTextView = v.findViewById(R.id.select_type_text_view);
 
 
-        MaterialButton nextButton = v.findViewById(R.id.publish_post_next_button);
+        nextButton = v.findViewById(R.id.publish_post_next_button);
         mainLayout = v.findViewById(R.id.relative_layout);
 
         descriptionEditText = v.findViewById(R.id.post_description);
@@ -199,7 +199,7 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
         });
 
 
-        postTypeChip.setOnCloseIconClickListener(v -> {
+        postTypeChip.setOnClickListener(v -> {
             PostTypeDialogFragment postTypeDialogFragment = new PostTypeDialogFragment();
             Bundle bundle = new Bundle();
             bundle.putString(Config.POST_TYPE, postType);

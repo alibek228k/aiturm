@@ -1,8 +1,5 @@
 package kz.devs.aiturm;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,12 +7,20 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.shroomies.R;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
 
 public class LoginPasswordActivity extends AppCompatActivity {
     private String bundledEmail;
@@ -68,12 +73,20 @@ public class LoginPasswordActivity extends AppCompatActivity {
         mAuth.signInWithEmailAndPassword(enteredEmail, password).addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 FirebaseUser firebaseUser=mAuth.getCurrentUser();
-                if(firebaseUser!=null){
+                if(firebaseUser!=null) {
 //                    if(firebaseUser.isEmailVerified()){
-                        Intent intent = new Intent(LoginPasswordActivity.this, MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
+                    DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+                    rootRef.child(Config.users).child(firebaseUser.getUid()).get().addOnCompleteListener(newTask -> {
+                        kz.devs.aiturm.model.User user = newTask.getResult().getValue(User.class);
+                        user.setUserID(firebaseUser.getUid());
+                        kz.devs.aiturm.presentaiton.SessionManager manager = new SessionManager(LoginPasswordActivity.this);
+                        manager.removeUserData();
+                        Boolean result = manager.saveData(user);
+                    });
+                    Intent intent = new Intent(LoginPasswordActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                    finish();
 //                    }else{
 //                        Toast.makeText(this,"here",Toast.LENGTH_SHORT).show();
 //                        loginButton.setClickable(true);

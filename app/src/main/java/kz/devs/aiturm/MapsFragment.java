@@ -396,7 +396,10 @@ public class MapsFragment extends DialogFragment {
 
     private BitmapDescriptor bitmapDescriptorFromVector() {
 
-        Drawable vectorDrawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_shroomies_yelllow_black_borders);
+        Drawable vectorDrawable = ContextCompat.getDrawable(
+                getContext(),
+                R.drawable.ic_shroomies_yelllow_black_borders
+        );
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);

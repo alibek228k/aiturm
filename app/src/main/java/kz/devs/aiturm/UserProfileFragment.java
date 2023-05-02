@@ -19,11 +19,8 @@ import com.example.shroomies.R;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -31,8 +28,11 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
 
-public class UserProfileFragment extends Fragment {
+
+public class UserProfileFragment extends Fragment implements EditProfileCallback {
     private TextView textViewName;
     private TextView viewBio;
     private TextView numberPosts;
@@ -55,11 +55,12 @@ public class UserProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        rootView =inflater.inflate(R.layout.fragment_user_profile, container, false);
-        mAuth=FirebaseAuth.getInstance();
-        rootRef=FirebaseDatabase.getInstance().getReference();
-        mDocRef= FirebaseFirestore.getInstance();
-        user=new User();
+        rootView = inflater.inflate(R.layout.fragment_user_profile, container, false);
+        mAuth = FirebaseAuth.getInstance();
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        mDocRef = FirebaseFirestore.getInstance();
+        var sessionManager = new SessionManager(getContext());
+        user = sessionManager.getData();
         return rootView;
     }
 
@@ -85,7 +86,7 @@ public class UserProfileFragment extends Fragment {
         FirebaseUser firebaseUser= mAuth.getCurrentUser();
         if (firebaseUser!=null) {
             String userUid=firebaseUser.getUid();
-            getUserInfo(userUid);
+            getUserInfo();
             getApartmentPosts(userUid);
             getNumPosts(userUid);
             profileTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -112,9 +113,9 @@ public class UserProfileFragment extends Fragment {
         }
 
         editProfile.setOnClickListener(v -> {
-            EditProfileFragment editProfileFragmentDialog = new EditProfileFragment();
-            editProfileFragmentDialog.setTargetFragment(UserProfileFragment.this,DIALOG_FRAGMENT_REQUEST_CODE);
-            editProfileFragmentDialog.show(getParentFragmentManager() ,null);
+            EditProfileDialogFragment editProfileDialogFragmentDialog = new EditProfileDialogFragment(this);
+            editProfileDialogFragmentDialog.setTargetFragment(UserProfileFragment.this,DIALOG_FRAGMENT_REQUEST_CODE);
+            editProfileDialogFragmentDialog.show(getParentFragmentManager() ,null);
         });
     }
 
@@ -169,35 +170,26 @@ public class UserProfileFragment extends Fragment {
         });
     }
 
-    private void  getUserInfo(String userUid){
-        rootRef.child(Config.users).child(userUid).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()) {
-                     user = snapshot.getValue(User.class);
-                     if (user!=null) {
-                         textViewName.setText(user.getName());
-                         textViewUsername.setText(user.getUsername());
-//                         if (!user.getBio().equals("")) {
-//                             viewBio.setText(user.getBio());
-//                         }
-                         if (user.getImage() != null) {
-                             GlideApp.with(getActivity().getApplicationContext())
-                                     .load(user.getImage())
-                                     .transform(new CircleCrop())
-                                     .placeholder(R.drawable.ic_user_profile_svgrepo_com)
-                                     .into(profileImage);
-                         }
-                     }
-                }
+    private void  getUserInfo() {
+        if (user != null) {
+            textViewName.setText(user.getName());
+            textViewUsername.setText(user.getUsername());
+            if (user.getBio() != null && !user.getBio().equals("")) {
+                viewBio.setText(user.getBio());
             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            if (user.getImage() != null) {
+                GlideApp.with(getActivity().getApplicationContext())
+                        .load(user.getImage())
+                        .transform(new CircleCrop())
+                        .placeholder(R.drawable.ic_user_profile_svgrepo_com)
+                        .into(profileImage);
             }
-        });
+        }
 
     }
 
+    @Override
+    public void onProfileDataChanged(User user) {
+
+    }
 }

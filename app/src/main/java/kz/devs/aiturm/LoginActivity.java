@@ -16,6 +16,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
@@ -32,11 +34,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import kz.devs.aiturm.model.SignInMethod;
+import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.authorization.FillOutDataActivity;
+import kz.devs.aiturm.presentaiton.SessionManager;
 
 
 public class LoginActivity extends AppCompatActivity implements ValueEventListener {
@@ -115,12 +121,14 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
 
         googleSignInButton.setOnClickListener(v -> {
             customLoadingProgressBar.show();
+            customLoadingProgressBar.setCancelable(false);
             method = SignInMethod.GOOGLE;
             signInWithGoogle();
         });
 
         microsoftSignInButton.setOnClickListener(v -> {
             customLoadingProgressBar.show();
+            customLoadingProgressBar.setCancelable(false);
             method = SignInMethod.MICROSOFT;
             signInWithMicrosoft();
         });
@@ -155,15 +163,18 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
                                 userRef.addListenerForSingleValueEvent(this);
                             } else {
                                 new CustomToast(LoginActivity.this, "We encountered a problem with your account", R.drawable.ic_error_icon).showCustomToast();
+                                customLoadingProgressBar.dismiss();
                             }
                         })
                 .addOnFailureListener(
                         e -> {
+                            e.printStackTrace();
                             new CustomToast(
                                     LoginActivity.this,
                                     "Error occurred during the authorization",
                                     R.drawable.ic_error_icon
                             ).showCustomToast();
+                            customLoadingProgressBar.dismiss();
                         });
     }
 
@@ -185,10 +196,12 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(LoginActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                customLoadingProgressBar.dismiss();
             }
 
         } else {
             Toast.makeText(LoginActivity.this, "authentication failed, try again later" + requestCode, Toast.LENGTH_SHORT).show();
+            customLoadingProgressBar.dismiss();
         }
     }
 
@@ -225,6 +238,31 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
                 Log.d("MICROSOFT SIGN IN", "new user");
                 startActivity(FillOutDataActivity.getInstance(getApplicationContext(), method));
             } else {
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                rootRef.child(Config.users).child(firebaseUser.getUid()).get().addOnCompleteListener(task -> {
+                    User user = task.getResult().getValue(User.class);
+                    user.setUserID(firebaseUser.getUid());
+                    SessionManager manager = new SessionManager(LoginActivity.this);
+                    if (user.getSignInMethod() != method){
+                        HashMap<String, Object> signInMethodMap = new HashMap<>();
+                        signInMethodMap.put("signInMethod", method);
+                        rootRef.child(Config.users).child(firebaseUser.getUid()).updateChildren(signInMethodMap).addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()){
+                                user.setSignInMethod(method);
+                                manager.removeUserData();
+                                manager.saveData(user);
+                            }
+                        }).addOnFailureListener(e -> {
+                            manager.removeUserData();
+                            manager.saveData(user);
+                        });
+                    }else{
+                        user.setSignInMethod(method);
+                        manager.removeUserData();
+                        manager.saveData(user);
+                    }
+                });
+
                 startActivity(MainActivity.newInstance(LoginActivity.this));
                 finish();
                 Log.d("MICROSOFT SIGN IN", "not new user");

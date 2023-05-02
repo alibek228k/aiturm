@@ -3,25 +3,25 @@ package kz.devs.aiturm;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.example.shroomies.R;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import android.view.inputmethod.InputMethodManager;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -30,7 +30,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class ChangeBioDialog extends DialogFragment {
+import kz.devs.aiturm.model.User;
+
+
+public class ChangeBioDialogFragment extends DialogFragment {
 
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
@@ -38,7 +41,8 @@ public class ChangeBioDialog extends DialogFragment {
     private TextInputLayout newBio;
     private User user;
     private View v;
-    private bio changedBio;
+    private BioChangeCallback changedBioChangeCallback;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -46,7 +50,6 @@ public class ChangeBioDialog extends DialogFragment {
             getDialog().getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.MATCH_PARENT);
             getDialog().getWindow().setGravity(Gravity.VERTICAL_GRAVITY_MASK);
             getDialog().getWindow().setBackgroundDrawableResource(R.drawable.create_group_fragment_background);
-
         }
     }
 
@@ -58,21 +61,20 @@ public class ChangeBioDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         v=inflater.inflate(R.layout.dialog_fragment_change_bio, container, false);
         mAuth=FirebaseAuth.getInstance();
         rootRef=FirebaseDatabase.getInstance().getReference();
         return v;
     }
-    public interface bio{
-        void sendBioBack(String bioTxt);
+    public interface BioChangeCallback {
+        void onBioChanged(String bioTxt);
     }
 
     @Override
     public void onAttach(@NonNull @NotNull Context context) {
         super.onAttach(context);
         try {
-            changedBio=(bio) getTargetFragment();
+            changedBioChangeCallback =(BioChangeCallback) getTargetFragment();
 
         } catch (Exception e) {
             Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();
@@ -90,15 +92,14 @@ public class ChangeBioDialog extends DialogFragment {
         ImageButton backButton = v.findViewById(R.id.change_bio_back_button);
         Bundle bundle=this.getArguments();
         if (bundle!=null) {
-            user=bundle.getParcelable("USER");
-            if (!user.getBio().equals("")) {
+            user = (User) bundle.getSerializable("USER");
+            if (!(user.getBio() == null || user.getBio().equals(""))) {
                 newBio.getEditText().setText(user.getBio());
                 newBio.getEditText().setSelection(newBio.getEditText().getText().length());
             } else {
                 newBio.setHint("my bio");
             }
         } else {
-//            todo handle error when bundle is null
             closeKeyboard();
             dismiss();
 
@@ -106,22 +107,22 @@ public class ChangeBioDialog extends DialogFragment {
         newBio.setEndIconOnClickListener(view1 -> newBio.getEditText().setText(""));
         doneButton.setOnClickListener(v -> {
             String txtBio = newBio.getEditText().getText().toString().trim();
-            if(txtBio.equals(user.getBio())){
+            if (txtBio.equals(user.getBio())) {
                 newBio.setError("No changes have been made");
-            } else{
+            } else if (txtBio.isBlank()) {
+                newBio.setError("Bio can not be empty");
+            } else {
                 newBio.setError(null);
-                FirebaseUser firebaseUser= mAuth.getCurrentUser();
-                if (firebaseUser!=null) {
-                        updateBio(txtBio);
-
+                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                if (firebaseUser != null) {
+                    updateBio(txtBio);
                 }
             }
 
         });
         backButton.setOnClickListener(v -> {
-            if (!user.getBio().equals(newBio.getEditText().getText().toString())) {
-//                    todo alert for unsaved changes
-                Toast.makeText(getContext(),"unSaved Changes",Toast.LENGTH_LONG).show();
+            if ((user.getBio() != null && !user.getBio().equals(newBio.getEditText().getText().toString()))) {
+                Toast.makeText(getContext(), "unSaved Changes", Toast.LENGTH_LONG).show();
             } else {
                 closeKeyboard();
                 dismiss();
@@ -136,7 +137,7 @@ public class ChangeBioDialog extends DialogFragment {
 
         rootRef.child(Config.users).child(user.getUserID()).updateChildren(updateDetails).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                changedBio.sendBioBack(txtBio);
+                changedBioChangeCallback.onBioChanged(txtBio);
                 Toast.makeText(getContext(), "Updated your bio", Toast.LENGTH_SHORT).show();
                 closeKeyboard();
                 dismiss();

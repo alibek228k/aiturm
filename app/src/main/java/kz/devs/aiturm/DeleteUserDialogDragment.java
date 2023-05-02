@@ -1,13 +1,6 @@
 package kz.devs.aiturm;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
-
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +8,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -31,6 +30,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
+import kz.devs.aiturm.model.SignInMethod;
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
+
 public class DeleteUserDialogDragment extends DialogFragment {
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
@@ -44,7 +47,6 @@ public class DeleteUserDialogDragment extends DialogFragment {
         v= inflater.inflate(R.layout.fragment_delete_user, container, false);
         mAuth=FirebaseAuth.getInstance();
         rootRef = FirebaseDatabase.getInstance().getReference();
-        user=new User();
         return v;
     }
 
@@ -57,10 +59,16 @@ public class DeleteUserDialogDragment extends DialogFragment {
         userPassword=v.findViewById(R.id.delete_account_password);
         Bundle bundle=getArguments();
         if (bundle!=null) {
-            user=bundle.getParcelable("USER");
+            user = (User) bundle.getSerializable("USER");
             if (user!=null) {
                 userEmail.getEditText().setText(user.getEmail());
-                doneButton.setOnClickListener(view1 -> reAuthenticateUser(user.getEmail(), userPassword.getEditText().getText().toString().trim()));
+                doneButton.setOnClickListener(view1 -> {
+                    if (userPassword.getEditText().getText() != null && !userPassword.getEditText().getText().toString().trim().isBlank()){
+                        reAuthenticateUser(user.getEmail(), userPassword.getEditText().getText().toString().trim());
+                    }else{
+                        Toast.makeText(getContext(), "Password field can not be empty!", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 cancelButton.setOnClickListener(view12 -> dismiss());
             }
 
@@ -115,27 +123,36 @@ public class DeleteUserDialogDragment extends DialogFragment {
         firebaseUser.delete().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 userPassword.setError(null);
-                Toast.makeText(getContext(),"Successfully deleted",Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Successfully deleted", Toast.LENGTH_LONG).show();
                 GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.default_web_client_id))
                         .requestEmail()
                         .build();
                 GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
-                Task<Void> revokeAccess = mGoogleSignInClient.revokeAccess();
-                try {
-                    revokeAccess.addOnCompleteListener(task1 -> {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        rootRef.child(Config.users).child(user.getUid()).removeValue();
-                        mAuth.signOut();
-                        mGoogleSignInClient.signOut();
-                        Toast.makeText(getContext(), "Successfully signed out", Toast.LENGTH_LONG).show();
-                    }).addOnFailureListener(e -> {
-                        Toast.makeText(getContext(), "Failed to signed out", Toast.LENGTH_LONG).show();
-                    });
+                if (user.getSignInMethod() == SignInMethod.GOOGLE) {
+                    Task<Void> revokeAccess = mGoogleSignInClient.revokeAccess();
+                    try {
+                        revokeAccess.addOnCompleteListener(task1 -> {
+                            rootRef.child(Config.users).child(user.getUserID()).removeValue();
+                            rootRef.child("tokens").child(user.getUserID()).removeValue();
+                            mAuth.signOut();
+                            new SessionManager(getContext()).removeUserData();
+                            mGoogleSignInClient.signOut();
+                            Toast.makeText(getContext(), "Successfully signed out", Toast.LENGTH_LONG).show();
+                        }).addOnFailureListener(e -> {
+                            Toast.makeText(getContext(), "Failed to signed out", Toast.LENGTH_LONG).show();
+                        });
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    rootRef.child(Config.users).child(user.getUserID()).removeValue();
+                    rootRef.child("tokens").child(user.getUserID()).removeValue();
+                    mAuth.signOut();
+                    new SessionManager(getContext()).removeUserData();
+                    Toast.makeText(getContext(), "Successfully signed out", Toast.LENGTH_LONG).show();
                 }
                 this.getTargetFragment().getActivity().finish();
             }

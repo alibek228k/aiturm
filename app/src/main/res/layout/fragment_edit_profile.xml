@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="kz.devs.aiturm.EditProfileFragment">
+    tools:context="kz.devs.aiturm.EditProfileDialogFragment">
 
         <RelativeLayout
             android:id="@+id/upper_edit_profile_page"

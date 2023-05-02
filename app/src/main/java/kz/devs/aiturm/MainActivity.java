@@ -3,6 +3,7 @@ package kz.devs.aiturm;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
@@ -42,6 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import kz.devs.aiturm.presentaiton.SessionManager;
 
 public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
@@ -148,6 +151,9 @@ public class MainActivity extends AppCompatActivity {
                 GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
                 mAuth.signOut();
                 mGoogleSignInClient.signOut();
+                SessionManager sessionManager = new SessionManager(MainActivity.this);
+                sessionManager.removeUserData();
+                sessionManager.removeUserData();
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

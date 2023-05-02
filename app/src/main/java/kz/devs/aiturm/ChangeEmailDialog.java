@@ -32,6 +32,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
+import kz.devs.aiturm.model.User;
+
 public class ChangeEmailDialog extends DialogFragment {
 
     private FirebaseAuth mAuth;
@@ -40,7 +42,7 @@ public class ChangeEmailDialog extends DialogFragment {
     private User user;
     private TextInputLayout newEmail;
     private View v;
-    private email changedEmail;
+    private EmailChangeCallback changedEmailChangeCallback;
 
     @Override
     public void onStart() {
@@ -63,7 +65,7 @@ public class ChangeEmailDialog extends DialogFragment {
     public void onAttach(@NonNull @NotNull Context context) {
         super.onAttach(context);
         try {
-            changedEmail=(email) getTargetFragment();
+            changedEmailChangeCallback =(EmailChangeCallback) getTargetFragment();
         }catch (Exception e) {
             Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();
         }
@@ -77,8 +79,8 @@ public class ChangeEmailDialog extends DialogFragment {
         rootRef=FirebaseDatabase.getInstance().getReference();
         return v;
     }
-    public interface email{
-        void sendEmailBack(String emailTxt);
+    public interface EmailChangeCallback {
+        void onEmailChanged(String emailTxt);
     }
     public void showKeyboard(){
         InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
@@ -99,7 +101,7 @@ public class ChangeEmailDialog extends DialogFragment {
         ImageButton backButton = v.findViewById(R.id.change_email_back_button);
         Bundle bundle=this.getArguments();
         if (bundle!=null) {
-            user=bundle.getParcelable("USER");
+            user = (User) bundle.getSerializable("USER");
             newEmail.getEditText().setText(user.getEmail());
             newEmail.getEditText().requestFocus();
             newEmail.getEditText().setSelection(newEmail.getEditText().getText().length());
@@ -107,12 +109,7 @@ public class ChangeEmailDialog extends DialogFragment {
 //            todo error handling when bundle is null
             dismiss();
         }
-        newEmail.setEndIconOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                newEmail.getEditText().setText("");
-            }
-        });
+        newEmail.setEndIconOnClickListener(view1 -> newEmail.getEditText().setText(""));
 
 
         doneButton.setOnClickListener(v -> {
@@ -149,7 +146,8 @@ public class ChangeEmailDialog extends DialogFragment {
         updateDetails.put("email", txtEmail);
         rootRef.child(Config.users).child(user.getUserID()).updateChildren(updateDetails).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                changedEmail.sendEmailBack(txtEmail);
+                mAuth.getCurrentUser().updateEmail(txtEmail);
+                changedEmailChangeCallback.onEmailChanged(txtEmail);
                 closeKeyboard();
                 Toast.makeText(getActivity(), "Updated email successfully", Toast.LENGTH_SHORT).show();
                 dismiss();

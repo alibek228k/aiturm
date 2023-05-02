@@ -7,22 +7,25 @@
     android:background="@color/white"
     tools:context="kz.devs.aiturm.PublishPostFragment">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/post_type_chip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Room post"
-            android:padding="0dp"
-            app:chipBackgroundColor="@color/LogoYellow"
-            android:elevation="3dp"
-            android:textColor="@color/jetBlack"
-            android:textSize="14sp"
-            android:layout_margin="5dp"
-            app:closeIconEnabled="false"
-            app:closeIcon="@drawable/ic_arrow_down"
-            app:closeIconSize="10dp"
-            app:closeIconVisible="true"
-            app:closeIconEndPadding="5dp" />
+    <com.google.android.material.chip.Chip
+        android:id="@+id/post_type_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:elevation="3dp"
+        android:padding="0dp"
+        android:text="Room post"
+        android:textColor="@color/jetBlack"
+        android:textSize="14sp"
+        app:chipBackgroundColor="@color/LogoYellow"
+        app:closeIcon="@drawable/ic_arrow_down"
+        app:closeIconEnabled="false"
+        app:closeIconEndPadding="5dp"
+        app:closeIconSize="10dp"
+        app:closeIconVisible="true" />
 
 
         <RelativeLayout

@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
 
 public class PasswordSignUpActivity extends AppCompatActivity {
     //views
@@ -60,6 +61,7 @@ public class PasswordSignUpActivity extends AppCompatActivity {
             if (bundle != null) {
                 User user = (User) bundle.getSerializable("USER");
                 SignInMethod method = (SignInMethod) bundle.getSerializable("SIGN_UP_METHOD");
+                user.setSignInMethod(method);
                 if (user.getEmail() != null && user.getUsername() != null) {
                     String enteredPassword = Objects.requireNonNull(passwordEditText.getEditText()).getText().toString().trim();
                     String repeatedPassword = Objects.requireNonNull(repPasswordEditText.getEditText()).getText().toString().trim();
@@ -164,6 +166,14 @@ public class PasswordSignUpActivity extends AppCompatActivity {
                                 loadingAnimation.pauseAnimation();
                                 new CustomToast(PasswordSignUpActivity.this, "Registered Successfully", R.drawable.ic_accept_check).showCustomToast();
                                 isRegistrationFinished = true;
+
+                                rootRef.child(Config.users).child(firebaseUser.getUid()).get().addOnCompleteListener(newTask -> {
+                                    User currentUser = newTask.getResult().getValue(User.class);
+                                    currentUser.setUserID(firebaseUser.getUid());
+                                    kz.devs.aiturm.presentaiton.SessionManager manager = new SessionManager(PasswordSignUpActivity.this);
+                                    manager.removeUserData();
+                                    Boolean result = manager.saveData(currentUser);
+                                });
                                 startActivity(MainActivity.newInstance(PasswordSignUpActivity.this));
                             }
                         }).addOnFailureListener(e -> {

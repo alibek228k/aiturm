@@ -12,7 +12,7 @@ public class User implements Serializable {
     private String group;
     private String image;
     private String userID;
-
+    private SignInMethod signInMethod;
     private Gender gender;
     private float sharedAmount;
     private boolean requestSent;
@@ -120,6 +120,14 @@ public class User implements Serializable {
 
     public void setRequestCount(int requestCount) {
         this.requestCount = requestCount;
+    }
+
+    public SignInMethod getSignInMethod() {
+        return signInMethod;
+    }
+
+    public void setSignInMethod(SignInMethod signInMethod) {
+        this.signInMethod = signInMethod;
     }
 
     public enum Gender{

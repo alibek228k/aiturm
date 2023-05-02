@@ -4,13 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
-
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +11,12 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 
 import com.example.shroomies.R;
 import com.google.android.material.button.MaterialButton;
@@ -29,9 +28,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
+import kz.devs.aiturm.model.User;
+
 public class ChangeNameDialogFragment extends DialogFragment {
     private View v;
-    private name changedName;
+    private NameChangedCallback changedNameChangedCallback;
     private FirebaseAuth mAuth;
     private User user;
 
@@ -50,14 +51,14 @@ public class ChangeNameDialogFragment extends DialogFragment {
             showKeyboard();
         }
     }
-    public interface name{
-        void sendbackName(String changedName);
+    public interface NameChangedCallback {
+        void onNameChanged(String changedName);
     }
     @Override
     public void onAttach(@NonNull @NotNull Context context) {
         super.onAttach(context);
         try {
-            changedName =(ChangeNameDialogFragment.name) getTargetFragment();
+            changedNameChangedCallback =(NameChangedCallback) getTargetFragment();
 
         } catch (Exception e) {
             Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_SHORT).show();
@@ -74,8 +75,12 @@ public class ChangeNameDialogFragment extends DialogFragment {
         inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
     }
     public void closeKeyboard(){
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
-        inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(getContext().INPUT_METHOD_SERVICE);
+            inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        }catch (NullPointerException e){
+            e.printStackTrace();
+        }
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -102,9 +107,9 @@ public class ChangeNameDialogFragment extends DialogFragment {
         nameEditTxt.setEndIconOnClickListener(v -> nameEditTxt.getEditText().setText(""));
         Bundle bundle=this.getArguments();
         if(bundle!=null) {
-            user=bundle.getParcelable("USER");
+            user = (User) bundle.getSerializable("USER");
             if(user!=null) {
-                if(!user.getName().isEmpty()){
+                if(user.getName() != null && !user.getName().isEmpty()){
                     nameEditTxt.getEditText().setText(user.getName());
                 }else{
                     nameEditTxt.getEditText().setHint("My name");
@@ -143,7 +148,7 @@ public class ChangeNameDialogFragment extends DialogFragment {
          DatabaseReference rootRef=FirebaseDatabase.getInstance().getReference();
          rootRef.child(Config.users).child(userUid).child("name").setValue(enteredName).addOnCompleteListener(task -> {
              if(task.isSuccessful()){
-                 changedName.sendbackName(enteredName);
+                 changedNameChangedCallback.onNameChanged(enteredName);
                  closeKeyboard();
                  dismiss();
              }
