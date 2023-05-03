@@ -167,9 +167,9 @@ public class NewChatFragment extends DialogFragment {
 
                                         }
                                         if(suggestedUser.size()!=0){
-                                            searchUserRecyclerViewAdapter  = new SearchUserRecyclerViewAdapter(getContext() , suggestedUser);
-                                            searchUserRecyclerViewAdapter.setHasStableIds(true);
-                                            recyclerView.setAdapter(searchUserRecyclerViewAdapter);
+//                                            searchUserRecyclerViewAdapter  = new SearchUserRecyclerViewAdapter(getContext() , suggestedUser);
+//                                            searchUserRecyclerViewAdapter.setHasStableIds(true);
+//                                            recyclerView.setAdapter(searchUserRecyclerViewAdapter);
 
                                         }else{
                                             Snackbar.make(rootLayout ,"No such user found" , Snackbar.LENGTH_SHORT).show();

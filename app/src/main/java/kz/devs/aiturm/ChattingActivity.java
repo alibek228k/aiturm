@@ -2,7 +2,6 @@ package kz.devs.aiturm;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -56,6 +55,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kz.devs.aiturm.model.User;
 import me.everything.android.ui.overscroll.IOverScrollDecor;
 import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -132,15 +132,15 @@ public class ChattingActivity extends AppCompatActivity {
         rootRef = FirebaseDatabase.getInstance().getReference();
         Bundle extras = getIntent().getExtras();
         if (!(extras == null)) {
-            User reciever =extras.getParcelable("USER");
+            User receiver = (User) extras.getSerializable("USER");
             String recieverIDFromNoti = extras.getString("USERID");
-            if (recieverIDFromNoti!=null) {
+            if (recieverIDFromNoti != null) {
                 receiverID = recieverIDFromNoti;
                 retrieveMessages();
             }
-            if (reciever!=null) {
-                receiverID = reciever.getUserID();
-                setUserDetails(reciever);
+            if (receiver != null) {
+                receiverID = receiver.getUserID();
+                setUserDetails(receiver);
                 retrieveMessages();
             }
 
@@ -387,15 +387,12 @@ public class ChattingActivity extends AppCompatActivity {
         String[] options = {"Gallery"};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choose Image from");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    if (!checkStoragePermisson()) {
-                        requestStoragePermission();
-                    } else {
-                        pickFromGallery();
-                    }
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                if (!checkStoragePermisson()) {
+                    requestStoragePermission();
+                } else {
+                    pickFromGallery();
                 }
             }
         });
@@ -541,37 +538,37 @@ public class ChattingActivity extends AppCompatActivity {
 
     }
 
-    private void setUserDetails(final User reciever) {
-        if (!reciever.getImage().isEmpty()) {
+    private void setUserDetails(final User receiver) {
+        if (receiver.getImage() != null && !receiver.getImage().isEmpty()) {
             GlideApp.with(getApplicationContext())
-                    .load(reciever.getImage())
+                    .load(receiver.getImage())
                     .fitCenter()
                     .circleCrop()
                     .into(receiverProfileImage);
             receiverProfileImage.setPadding(0, 0, 0, 0);
         }
-        receiverUsername.setText(reciever.getUsername());
-        messageSeen(reciever.getUserID());
+        receiverUsername.setText(receiver.getUsername());
+        messageSeen(receiver.getUserID());
     }
 
     private void messageSeen(final String receiverID) {
-        rootRef.child(Config.messages).child(senderID).child(receiverID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    for (DataSnapshot sp : snapshot.getChildren()) {
-                        Messages messages = sp.getValue(Messages.class);
-                        if (messages != null) {
-                            if (messages.getFrom().equals(senderID) || messages.getFrom().equals(receiverID)) {
-                                HashMap<String, Object> hash = new HashMap<>();
-                                hash.put("isSeen", true);
-                                sp.getRef().updateChildren(hash);
+        rootRef.child(Config.messages)
+                .child(senderID)
+                .child(receiverID)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            for (DataSnapshot sp : snapshot.getChildren()) {
+                                Messages messages = sp.getValue(Messages.class);
+                                if (messages != null) {
+                                    if (messages.getFrom().equals(senderID) || messages.getFrom().equals(receiverID)) {
+                                        HashMap<String, Object> hash = new HashMap<>();
+                                        hash.put("isSeen", true);
+                                        sp.getRef().updateChildren(hash);
                             }
                         }
                     }
-
-                    // once the user  sees the messages
-                    //update the number of unseen messages in the badge
                     MainActivity.setBadgeToNumberOfNotifications(rootRef, mAuth);
                 }
             }

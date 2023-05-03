@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.shroomies.R;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,10 +27,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
+
 public class UserSearchFragment extends Fragment {
     DatabaseReference rootRef;
     private SearchUserRecyclerViewAdapter searchUserRecyclerViewAdapter;
-    private List<User> userList;
+    private List<User> userList = new ArrayList<>();
     private View v;
 
     @Override
@@ -42,16 +47,20 @@ public class UserSearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v =   inflater.inflate(R.layout.fragment_user_search, container, false);
-        Query query = rootRef.child(Config.users).limitToFirst(30).orderByChild(Config.username);
+        Query query = rootRef.child(Config.users).orderByChild(Config.username);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     userList.clear();
+                    var currentUser = new SessionManager(getContext()).getData();
                     for (DataSnapshot dataSnapshot
                             : snapshot.getChildren()) {
                         User user = dataSnapshot.getValue(User.class);
-                        userList.add(user);
+                        user.setUserID(dataSnapshot.getKey());
+                        if (!dataSnapshot.getKey().equals(currentUser.getUserID())){
+                            userList.add(user);
+                        }
                     }
                     searchUserRecyclerViewAdapter.notifyDataSetChanged();
                 }
@@ -59,6 +68,7 @@ public class UserSearchFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(getContext(), "Failed to load users list", Toast.LENGTH_SHORT).show();
             }
         });
         return v;
@@ -68,7 +78,6 @@ public class UserSearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView recyclerView = v.findViewById(R.id.user_recycler_view);
-        userList = new ArrayList<>();
         searchUserRecyclerViewAdapter = new SearchUserRecyclerViewAdapter(getActivity(), userList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 

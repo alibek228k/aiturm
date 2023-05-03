@@ -19,6 +19,8 @@ import com.example.shroomies.R;
 
 import java.util.List;
 
+import kz.devs.aiturm.model.User;
+
 public class SearchUserRecyclerViewAdapter extends RecyclerView.Adapter<SearchUserRecyclerViewAdapter.ViewHolder> {
     private final Context context;
     private final List<User> userList;
