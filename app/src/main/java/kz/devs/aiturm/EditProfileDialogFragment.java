@@ -55,8 +55,9 @@ import kz.devs.aiturm.presentaiton.edit.ChangeEmailDialog;
 import kz.devs.aiturm.presentaiton.edit.ChangeGenderDialogFragment;
 import kz.devs.aiturm.presentaiton.edit.ChangeGroupDialogFragment;
 import kz.devs.aiturm.presentaiton.edit.ChangePhoneDialogFragment;
+import kz.devs.aiturm.presentaiton.edit.ChangeSpecialityDialogFragment;
 
-public class EditProfileDialogFragment extends DialogFragment implements ChangePhoneDialogFragment.PhoneChangeCallback, ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
+public class EditProfileDialogFragment extends DialogFragment implements ChangeSpecialityDialogFragment.SpecialityChangeCallback, ChangePhoneDialogFragment.PhoneChangeCallback, ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
 
     private EditProfileCallback callback;
 
@@ -124,6 +125,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
         LinearLayout changeName = v.findViewById(R.id.name_linear);
         LinearLayout changeGroup = v.findViewById(R.id.group_linear);
         LinearLayout changePhone = v.findViewById(R.id.phone_number_linear);
+        LinearLayout changeSpeciality = v.findViewById(R.id.specialization_linear);
         Button deleteAccount = v.findViewById(R.id.delete_account_button);
         Button cancle = v.findViewById(R.id.edit_profile_cancel);
         Button done = v.findViewById(R.id.edit_profile_done);
@@ -156,7 +158,6 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
                 changeGenderDialog.setTargetFragment(EditProfileDialogFragment.this,DIALOG_FRAGMENT_REQUEST_CODE);
                 changeGenderDialog.show(getParentFragmentManager(), null);
             });
-
             changeUserNameButton.setOnClickListener(v -> {
                 ChangeUsernameDialog changeUsernameDialog = new ChangeUsernameDialog();
                 Bundle bundle = new Bundle();
@@ -165,6 +166,16 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
                 changeUsernameDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
                 changeUsernameDialog.show(getParentFragmentManager(), null);
             });
+
+            changeSpeciality.setOnClickListener(v -> {
+                ChangeSpecialityDialogFragment changeSpecialityDialog = new ChangeSpecialityDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changeSpecialityDialog.setArguments(bundle);
+                changeSpecialityDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changeSpecialityDialog.show(getParentFragmentManager(), null);
+            });
+
             changeEmail.setOnClickListener(v -> {
                 SignInMethod method = user.getSignInMethod();
                 if (method == null) {
@@ -429,6 +440,19 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
     }
 
     @Override
+    public void onSpecialityChanged(String speciality) {
+        SessionManager manager = new SessionManager(getContext());
+        var updatedUser = manager.getData();
+        updatedUser.setSpecialization(speciality);
+        callback.onProfileDataChanged(updatedUser);
+        manager.removeUserData();
+        manager.saveData(updatedUser);
+        user = updatedUser;
+        this.specialityTextView.setText(speciality);
+    }
+
+
+    @Override
     public void onGenderChanged(User.Gender gender) {
         SessionManager manager = new SessionManager(getContext());
         var updatedUser = manager.getData();
@@ -494,6 +518,8 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
         user = updatedUser;
         nameTxtView.setText(changedName);
     }
+
+
 }
 
 interface EditProfileCallback {
