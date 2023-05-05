@@ -89,6 +89,7 @@ public class ChangeGenderDialogFragment extends DialogFragment {
         @SuppressLint("SetTextI18n")
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            rootRef = FirebaseDatabase.getInstance().getReference();
             View view = inflater.inflate(R.layout.dialog_fragment_change_gender, container, false);
             getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 

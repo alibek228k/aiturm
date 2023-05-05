@@ -103,26 +103,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/line_below_user_name"
-        android:orientation="horizontal"
-        android:layout_margin="10dp">
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bio"
+            android:layout_gravity="center"
             android:minWidth="50dp"
-            android:textSize="15sp"
-            android:layout_gravity="center"/>
+            android:text="Bio"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/edit_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
             android:layout_gravity="center_horizontal"
-            android:text="Bio"
-            android:textSize="14sp"
+            android:layout_marginLeft="50dp"
             android:lines="1"
-            />
+            android:text="Bio"
+            android:textSize="14sp" />
     </LinearLayout>
     <View
         android:layout_width="match_parent"
@@ -203,15 +206,16 @@
             android:text="@string/gender"
             android:textSize="15sp"
             android:textColor="@color/jetBlack"/>
+
         <TextView
             android:id="@+id/edit_gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="45dp"
+            android:lines="1"
             android:text="@string/gender"
-            android:textSize="14sp"
-            android:lines="1" />
+            android:textSize="14sp"/>
     </LinearLayout>
 
     <View
@@ -233,15 +237,16 @@
             android:text="@string/group"
             android:textSize="15sp"
             android:textColor="@color/jetBlack"/>
+
         <TextView
             android:id="@+id/edit_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="45dp"
+            android:lines="1"
             android:text="@string/group"
-            android:textSize="14sp"
-            android:lines="1" />
+            android:textSize="14sp" />
     </LinearLayout>
 
     <View
@@ -256,22 +261,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minWidth="50dp"
             android:text="@string/phone_number"
-            android:textSize="15sp"
-            android:textColor="@color/jetBlack"/>
+            android:textColor="@color/jetBlack"
+            android:textSize="15sp" />
+
         <TextView
             android:id="@+id/edit_phone_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="20dp"
+            android:lines="1"
             android:text="@string/phone_number"
-            android:textSize="14sp"
-            android:lines="1" />
+            android:textSize="14sp" />
     </LinearLayout>
 
 

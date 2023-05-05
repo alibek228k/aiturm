@@ -54,8 +54,9 @@ import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.edit.ChangeEmailDialog;
 import kz.devs.aiturm.presentaiton.edit.ChangeGenderDialogFragment;
 import kz.devs.aiturm.presentaiton.edit.ChangeGroupDialogFragment;
+import kz.devs.aiturm.presentaiton.edit.ChangePhoneDialogFragment;
 
-public class EditProfileDialogFragment extends DialogFragment implements ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
+public class EditProfileDialogFragment extends DialogFragment implements ChangePhoneDialogFragment.PhoneChangeCallback, ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
 
     private EditProfileCallback callback;
 
@@ -122,6 +123,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeG
         LinearLayout changeGender = v.findViewById(R.id.gender_linear);
         LinearLayout changeName = v.findViewById(R.id.name_linear);
         LinearLayout changeGroup = v.findViewById(R.id.group_linear);
+        LinearLayout changePhone = v.findViewById(R.id.phone_number_linear);
         Button deleteAccount = v.findViewById(R.id.delete_account_button);
         Button cancle = v.findViewById(R.id.edit_profile_cancel);
         Button done = v.findViewById(R.id.edit_profile_done);
@@ -190,6 +192,15 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeG
                 changeGroupDialogFragment.setArguments(bundle);
                 changeGroupDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
                 changeGroupDialogFragment.show(getParentFragmentManager(), null);
+            });
+
+            changePhone.setOnClickListener(v -> {
+                ChangePhoneDialogFragment changePhoneDialogFragment = new ChangePhoneDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changePhoneDialogFragment.setArguments(bundle);
+                changePhoneDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changePhoneDialogFragment.show(getParentFragmentManager(), null);
             });
 
 
@@ -405,6 +416,18 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeG
         user = updatedUser;
         this.groupTextView.setText(groupTxt);
     }
+    @Override
+    public void onPhoneChanged(String phoneTxt) {
+        SessionManager manager = new SessionManager(getContext());
+        var updatedUser = manager.getData();
+        updatedUser.setPhoneNumber(phoneTxt);
+        callback.onProfileDataChanged(updatedUser);
+        manager.removeUserData();
+        manager.saveData(updatedUser);
+        user = updatedUser;
+        this.phoneNumberTextView.setText(phoneTxt);
+    }
+
 
     public void onGenderChanged(User.Gender gender) {
         SessionManager manager = new SessionManager(getContext());
@@ -414,13 +437,14 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeG
         manager.removeUserData();
         manager.saveData(updatedUser);
         user = updatedUser;
-        var genderTxt = "";
-        if (gender == User.Gender.MALE){
-            genderTxt = "Male";
-        }else if (gender == User.Gender.FEMALE){
-            genderTxt = "Female";
-        }
-        this.groupTextView.setText(genderTxt);
+//        var genderTxt = "";
+//        if (gender == User.Gender.MALE){
+//            genderTxt = "Male";
+//        }else if (gender == User.Gender.FEMALE){
+//            genderTxt = "Female";
+//        }
+//        user = updatedUser;
+        this.genderTextView.setText(gender.ordinal());
     }
 
 
