@@ -1,7 +1,8 @@
-package kz.devs.aiturm;
+package kz.devs.aiturm.presentaiton.edit;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
@@ -33,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Objects;
 
+import kz.devs.aiturm.Config;
 import kz.devs.aiturm.model.User;
 
 
@@ -48,7 +51,8 @@ public class ChangeGenderDialogFragment extends DialogFragment {
     private RadioButton maleRadioButton;
     private RadioButton femaleRadioButton;
 
-    private GenderChangeListener genderChangeListener;
+    private User.Gender currentGender;
+
     private GenderChangeCallback changedGenderChangeCallback;
 
     @Override
@@ -68,7 +72,7 @@ public class ChangeGenderDialogFragment extends DialogFragment {
     }
 
     public interface GenderChangeCallback {
-        void onGenderChanged(String bioTxt);
+        void onGenderChanged(User.Gender gender);
     }
 
     @Override
@@ -81,14 +85,6 @@ public class ChangeGenderDialogFragment extends DialogFragment {
             Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();
         }
     }
-
-        public interface GenderChangeListener {
-            void onGenderChanged(String gender);
-        }
-
-        public void setGenderChangeListener(GenderChangeListener genderChangeListener) {
-            this.genderChangeListener = genderChangeListener;
-        }
 
         @SuppressLint("SetTextI18n")
         @Override
@@ -104,33 +100,42 @@ public class ChangeGenderDialogFragment extends DialogFragment {
 
             Bundle bundle = getArguments();
             if (bundle != null) {
-                String gender = bundle.getString("GENDER");
-                if (gender != null && gender.equals("female")) {
+                user = (User) bundle.getSerializable("USER");
+                currentGender = user.getGender();
+                if (user.getGender() == User.Gender.FEMALE){
                     femaleRadioButton.setChecked(true);
-                } else {
+                    maleRadioButton.setChecked(false);
+                }else if (user.getGender() == User.Gender.MALE){
                     maleRadioButton.setChecked(true);
+                    femaleRadioButton.setChecked(false);
                 }
+
+                genderRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
+                    if (i == 0){
+                        currentGender = User.Gender.MALE;
+                    }else if (i == 1){
+                        currentGender = User.Gender.FEMALE;
+                    }
+                });
             }
 
             doneButton.setOnClickListener(v -> {
-                String gender;
-                if (maleRadioButton.isChecked()) {
-                    gender = "male";
-                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                    if (firebaseUser != null) {
-                        updateGender(bundle.toString());
-                    }
+                if (currentGender != user.getGender()) {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Change gender")
+                            .setMessage("Are you sure to change gender?")
+                            .setNegativeButton("No", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            })
+                            .setPositiveButton("Yes", ((dialogInterface, i) -> {
+                                updateGender(currentGender);
+                                dialogInterface.dismiss();
+                            }))
+                            .create()
+                            .show();
                 } else {
-                    gender = "female";
-                    FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                    if (firebaseUser != null) {
-                        updateGender(bundle.toString());
-                    }
+                    dismiss();
                 }
-                genderChangeListener.onGenderChanged(gender);
-
-                updateGender(gender);
-                dismiss();
             });
 
             backButton.setOnClickListener(v -> {
@@ -141,17 +146,14 @@ public class ChangeGenderDialogFragment extends DialogFragment {
         }
 
 
-    private void updateGender(String txtGender) {
+    private void updateGender(User.Gender gender) {
         HashMap<String, Object> updateDetails = new HashMap<>();
-        updateDetails.put("gender", txtGender);
+        updateDetails.put("gender", gender);
 
         rootRef.child(Config.users).child(user.getUserID()).updateChildren(updateDetails).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-//                changedGroupChangeCallback.
-//                d(txtGroup);
-                changedGenderChangeCallback.onGenderChanged(txtGender);
-                Toast.makeText(getContext(), "Updated your group" +
-                        "", Toast.LENGTH_SHORT).show();
+                changedGenderChangeCallback.onGenderChanged(currentGender);
+                Toast.makeText(getContext(), "Your gender successfully changed", Toast.LENGTH_SHORT).show();
                 dismiss();
             }
         }).addOnFailureListener(e -> Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show());

@@ -51,8 +51,11 @@ import java.util.Objects;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.edit.ChangeEmailDialog;
+import kz.devs.aiturm.presentaiton.edit.ChangeGenderDialogFragment;
+import kz.devs.aiturm.presentaiton.edit.ChangeGroupDialogFragment;
 
-public class EditProfileDialogFragment extends DialogFragment implements ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback,ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
+public class EditProfileDialogFragment extends DialogFragment implements ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
 
     private EditProfileCallback callback;
 
@@ -403,14 +406,20 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeG
         this.groupTextView.setText(groupTxt);
     }
 
-    public void onGenderChanged(String genderTxt) {
+    public void onGenderChanged(User.Gender gender) {
         SessionManager manager = new SessionManager(getContext());
         var updatedUser = manager.getData();
-        updatedUser.setGender(User.Gender.valueOf(genderTxt));
+        updatedUser.setGender(gender);
         callback.onProfileDataChanged(updatedUser);
         manager.removeUserData();
         manager.saveData(updatedUser);
         user = updatedUser;
+        var genderTxt = "";
+        if (gender == User.Gender.MALE){
+            genderTxt = "Male";
+        }else if (gender == User.Gender.FEMALE){
+            genderTxt = "Female";
+        }
         this.groupTextView.setText(genderTxt);
     }
 

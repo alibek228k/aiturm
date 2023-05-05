@@ -1,4 +1,4 @@
-package kz.devs.aiturm;
+package kz.devs.aiturm.presentaiton.edit;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Objects;
 
+import kz.devs.aiturm.Config;
 import kz.devs.aiturm.model.User;
 
 
