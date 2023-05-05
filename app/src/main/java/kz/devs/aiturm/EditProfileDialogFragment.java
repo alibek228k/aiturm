@@ -1,8 +1,11 @@
 package kz.devs.aiturm;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.ImageDecoder;
 import android.net.Uri;
@@ -17,6 +20,8 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +46,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
@@ -368,6 +375,18 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
         user = updatedUser;
         emailTxtView.setText(emailTxt);
     }
+
+//    @Override
+//    public void onCheckedChanged(RadioGroup group, int checkedId) {
+//        SharedPreferences preferences = getContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
+//        SharedPreferences.Editor editor = preferences.edit();
+//        if (checkedId == R.id.male_radio_button) {
+//            editor.putString("gender", "male");
+//        } else if (checkedId == R.id.female_radio_button) {
+//            editor.putString("gender", "female");
+//        }
+//        editor.apply();
+//    }
 
     @Override
     public void onUsernameChanged(String nameTxt) {

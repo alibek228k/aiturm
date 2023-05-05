@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="kz.devs.aiturm.ChangeEmailDialog">
+    <RelativeLayout
+        android:id="@+id/change_group_upper_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/LogoYellow">
+        <ImageButton
+            android:id="@+id/change_group_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_arrow_back_"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Edit Group"
+            android:textColor="@color/jetBlack"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/change_group_done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:textColor="@color/white"
+            android:text="Done"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
+    </RelativeLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/change_group_input_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        app:boxBackgroundMode="filled"
+        app:boxStrokeColor="@color/LogoYellow"
+        app:boxStrokeWidth="2dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:errorEnabled="true"
+        android:paddingBottom="10dp"
+        app:hintEnabled="false"
+        app:hintAnimationEnabled="false"
+        app:expandedHintEnabled="false"
+        app:textColor="@color/jetBlack"
+        app:endIconDrawable="@drawable/ic_close_icon"
+        app:endIconMode="custom"
+        app:counterTextColor="@color/LogoYellow"
+        app:endIconTint="@color/LogoYellow"
+        android:layout_below="@+id/change_group_upper_page"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/enter_new_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/transparent"
+            android:inputType="text"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:hint="Group"
+            android:textAlignment="textStart"
+            android:textColor="@color/jetBlack"
+            android:enabled="true"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</RelativeLayout>

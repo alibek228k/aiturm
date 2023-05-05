@@ -5,48 +5,48 @@
     android:layout_height="match_parent"
     tools:context="kz.devs.aiturm.EditProfileDialogFragment">
 
-        <RelativeLayout
-            android:id="@+id/upper_edit_profile_page"
-            android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/upper_edit_profile_page"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/LogoYellow">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/edit_profile_cancel"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/LogoYellow"
-            >
+            android:background="@android:color/transparent"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="@android:color/black"
+            android:textSize="13sp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edit_profile_cancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:text="Cancel"
-                android:textAllCaps="false"
-                android:textSize="13sp"
-                android:textColor="@android:color/black" />
-            <TextView
-                android:id="@+id/edit_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Edite Profile"
-                android:textAllCaps="false"
-                android:textColor="@color/jetBlack"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_margin="10dp"
-                android:layout_centerHorizontal="true"
-                />
+        <TextView
+            android:id="@+id/edit_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="10dp"
+            android:text="Edite Profile"
+            android:textAllCaps="false"
+            android:textColor="@color/jetBlack"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/edit_profile_done"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
-                android:text="Done"
-                android:textAllCaps="false"
-                android:textSize="13sp"
-                android:textColor="@color/white"
-                android:textStyle="bold" />
-        </RelativeLayout>
-        <ImageView
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/edit_profile_done"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/transparent"
+            android:text="Done"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
+
+    <ImageView
             android:layout_below="@+id/upper_edit_profile_page"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -99,63 +99,72 @@
             android:layout_marginTop="10dp"
             android:alpha="0.8"
             android:background="@color/lowerGradientColorForLoginBackground"/>
-        <LinearLayout
-            android:id="@+id/bio_linear"
+
+    <LinearLayout
+        android:id="@+id/bio_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/line_below_user_name"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:minWidth="50dp"
+            android:text="Bio"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/edit_bio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/line_below_user_name"
-            android:orientation="horizontal"
-            android:layout_margin="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bio"
-                android:minWidth="50dp"
-                android:textSize="15sp"
-                android:layout_gravity="center"/>
-
-            <TextView
-                android:id="@+id/edit_bio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="50dp"
-                android:layout_gravity="center_horizontal"
-                android:text="Bio"
-                android:textSize="14sp"
-                android:lines="1"
-                />
-        </LinearLayout>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="50dp"
+            android:lines="1"
+            android:text="Bio"
+            android:textSize="14sp" />
+    </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
             android:background="@color/lowerGradientColorForLoginBackground"
             android:layout_below="@id/bio_linear"
             android:layout_marginLeft="100dp"/>
-        <LinearLayout
-            android:id="@+id/name_linear"
+
+    <LinearLayout
+        android:id="@+id/name_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bio_linear"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="50dp"
+            android:text="name"
+            android:textColor="@color/jetBlack"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/edit_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/bio_linear"
-            android:orientation="horizontal"
-            android:layout_margin="10dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:minWidth="50dp"
-                android:layout_height="wrap_content"
-                android:text="name"
-                android:textColor="@color/jetBlack"
-                android:textSize="15sp"/>
-
-            <TextView
-                android:id="@+id/edit_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="50dp"
-                android:lines="1"
-                android:text="name"
-                android:textSize="14sp" />
-        </LinearLayout>
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="50dp"
+            android:lines="1"
+            android:text="name"
+            android:textSize="14sp" />
+    </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
@@ -187,6 +196,77 @@
                 />
         </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/lowerGradientColorForLoginBackground"
+        android:layout_below="@id/name_linear"
+        android:layout_marginLeft="100dp"/>
+
+    <LinearLayout
+        android:id="@+id/email_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_linear"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="50dp"
+            android:text="Email"
+            android:textColor="@color/jetBlack"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="50dp"
+            android:lines="1"
+            android:text="Email"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/lowerGradientColorForLoginBackground"
+        android:layout_below="@id/name_linear"
+        android:layout_marginLeft="100dp"/>
+
+    <LinearLayout
+        android:id="@+id/gender_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_linear"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="50dp"
+            android:text="Email"
+            android:textColor="@color/jetBlack"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/gender_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="50dp"
+            android:lines="1"
+            android:text="Email"
+            android:textSize="14sp" />
+    </LinearLayout>
         <View
             android:id="@+id/line_below_email"
             android:layout_width="match_parent"
