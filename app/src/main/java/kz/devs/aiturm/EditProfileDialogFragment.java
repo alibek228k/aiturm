@@ -428,7 +428,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
         this.phoneNumberTextView.setText(phoneTxt);
     }
 
-
+    @Override
     public void onGenderChanged(User.Gender gender) {
         SessionManager manager = new SessionManager(getContext());
         var updatedUser = manager.getData();
@@ -437,14 +437,13 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
         manager.removeUserData();
         manager.saveData(updatedUser);
         user = updatedUser;
-//        var genderTxt = "";
-//        if (gender == User.Gender.MALE){
-//            genderTxt = "Male";
-//        }else if (gender == User.Gender.FEMALE){
-//            genderTxt = "Female";
-//        }
-//        user = updatedUser;
-        this.genderTextView.setText(gender.ordinal());
+        var genderTxt = "";
+        if (gender == User.Gender.MALE){
+            genderTxt = "Male";
+        }else if (gender == User.Gender.FEMALE){
+            genderTxt = "Female";
+        }
+        this.genderTextView.setText(genderTxt);
     }
 
 

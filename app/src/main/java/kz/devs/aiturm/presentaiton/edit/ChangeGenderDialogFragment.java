@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -32,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -110,15 +112,24 @@ public class ChangeGenderDialogFragment extends DialogFragment {
                     maleRadioButton.setChecked(true);
                     femaleRadioButton.setChecked(false);
                 }
+            }
 
-                genderRadioGroup.setOnCheckedChangeListener((radioGroup, i) -> {
-                    if (i == 0){
+            maleRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
                         currentGender = User.Gender.MALE;
-                    }else if (i == 1){
+                    }
+                }
+            });
+
+            femaleRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
                         currentGender = User.Gender.FEMALE;
                     }
-                });
-            }
+                }
+            });
 
             doneButton.setOnClickListener(v -> {
                 if (currentGender != user.getGender()) {
