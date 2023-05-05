@@ -38,9 +38,9 @@ public class User implements Serializable {
         return name;
     }
 
-//    public CharSequence getGender() {
-//        return gender;
-//    }
+    public Gender getGender() {
+        return gender;
+    }
 
     public void setGender(Gender gender) {
         this.gender = gender;

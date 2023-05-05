@@ -485,17 +485,27 @@ public class ChattingActivity extends AppCompatActivity {
 
         StorageReference filePathName = storageReference.child(Config.privateChatImages).child(image.getLastPathSegment()
                 + System.currentTimeMillis());
-        // put the encrypted image to firebase storage
-        // the key must be stored in the real time database
 
 
         filePathName.putBytes(byteArray).addOnCompleteListener(task -> {
             chosenImage=null;
             if (task.isSuccessful()) {
+                Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
                 imageUrl = task.getResult().getMetadata().getReference().getPath();
+                selectedImageView.setVisibility(View.GONE);
+                imageTextView.setVisibility(View.GONE);
+                addImage.setVisibility(View.VISIBLE);
+                messageBody.setVisibility(View.VISIBLE);
                 addToRealTimeDataBase(imageUrl);
             }
+        }).addOnFailureListener(e -> {
+            selectedImageView.setVisibility(View.GONE);
+            imageTextView.setVisibility(View.GONE);
+            addImage.setVisibility(View.VISIBLE);
+            messageBody.setVisibility(View.VISIBLE);
+            progressDialog.dismiss();
+            e.printStackTrace();
         });
 
     }
