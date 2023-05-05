@@ -122,7 +122,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="80dp"
             android:lines="1"
             android:text="Bio"
             android:textSize="14sp" />
@@ -153,7 +153,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="80dp"
             android:lines="1"
             android:text="name"
             android:textSize="14sp" />
@@ -181,7 +181,7 @@
             android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
+            android:layout_marginLeft="80dp"
             android:layout_gravity="center_horizontal"
             android:text="Email"
             android:textSize="14sp"
@@ -212,7 +212,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="45dp"
+            android:layout_marginLeft="76dp"
             android:lines="1"
             android:text="@string/gender"
             android:textSize="14sp"/>
@@ -243,7 +243,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="45dp"
+            android:layout_marginLeft="80dp"
             android:lines="1"
             android:text="@string/group"
             android:textSize="14sp" />
@@ -305,7 +305,7 @@
             android:id="@+id/edit_specialization"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="45dp"
+            android:layout_marginLeft="58dp"
             android:layout_gravity="center_horizontal"
             android:text="@string/speciality"
             android:textSize="14sp"
