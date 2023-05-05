@@ -74,7 +74,7 @@ public class ChangeBioDialogFragment extends DialogFragment {
     public void onAttach(@NonNull @NotNull Context context) {
         super.onAttach(context);
         try {
-            changedBioChangeCallback =(BioChangeCallback) getTargetFragment();
+            changedBioChangeCallback = (BioChangeCallback) getTargetFragment();
 
         } catch (Exception e) {
             Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show();

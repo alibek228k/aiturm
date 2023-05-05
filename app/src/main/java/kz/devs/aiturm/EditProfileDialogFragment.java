@@ -62,7 +62,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
 
     private View v;
     private ImageView profileImage;
-    private TextView nameTxtView, emailTxtView, bioTxt;
+    private TextView nameTxtView, emailTxtView, bioTxt, genderTextView, groupTextView, phoneNumberTextView, specialityTextView;
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
     private StorageReference storageRef;
@@ -107,6 +107,10 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
         ImageButton editImage = v.findViewById(R.id.change_profile_picture);
         nameTxtView = v.findViewById(R.id.edit_username);
         emailTxtView = v.findViewById(R.id.edit_email);
+        genderTextView = v.findViewById(R.id.edit_gender);
+        groupTextView = v.findViewById(R.id.edit_group);
+        phoneNumberTextView = v.findViewById(R.id.edit_phone_number);
+        specialityTextView = v.findViewById(R.id.edit_specialization);
         changeUserNameButton = v.findViewById(R.id.change_username_button);
         Button changePassword = v.findViewById(R.id.change_password);
         bioTxt = v.findViewById(R.id.edit_bio);
@@ -322,6 +326,15 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
             nameTxtView.setText(user.getName());
             changeUserNameButton.setText("@" + user.getUsername());
             emailTxtView.setText(user.getEmail());
+            var gender = user.getGender();
+            if (gender == User.Gender.MALE){
+                genderTextView.setText(getString(R.string.gender_select_male));
+            }else if (gender == User.Gender.FEMALE){
+                genderTextView.setText(getString(R.string.gender_select_female));
+            }
+            groupTextView.setText(user.getGroup());
+            phoneNumberTextView.setText(user.getPhoneNumber());
+            specialityTextView.setText(user.getSpecialization());
             if (user.getImage() != null) {
                 GlideApp.with(getActivity().getApplicationContext())
                         .load(user.getImage())
