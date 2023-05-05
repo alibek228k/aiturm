@@ -35,7 +35,7 @@
     </RelativeLayout>
 
     <ImageButton
-        android:id="@+id/change_email_back_button"
+        android:id="@+id/change_gender_back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -47,6 +47,7 @@
         android:src="@drawable/ic_arrow_back_" />
 
     <RelativeLayout
+        android:id="@+id/change_gender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="50dp"
