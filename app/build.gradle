@@ -10,8 +10,8 @@ android {
         applicationId "kz.devs.aiturm"
         minSdkVersion 23
         targetSdkVersion 33
-        versionCode 1
-        versionName "0.1.1 pre alpha"
+        versionCode 2
+        versionName "0.1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         Properties properties = new Properties()
