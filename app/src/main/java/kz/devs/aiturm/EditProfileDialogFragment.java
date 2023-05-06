@@ -51,8 +51,13 @@ import java.util.Objects;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.edit.ChangeEmailDialog;
+import kz.devs.aiturm.presentaiton.edit.ChangeGenderDialogFragment;
+import kz.devs.aiturm.presentaiton.edit.ChangeGroupDialogFragment;
+import kz.devs.aiturm.presentaiton.edit.ChangePhoneDialogFragment;
+import kz.devs.aiturm.presentaiton.edit.ChangeSpecialityDialogFragment;
 
-public class EditProfileDialogFragment extends DialogFragment implements ChangeBioDialogFragment.BioChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
+public class EditProfileDialogFragment extends DialogFragment implements ChangeSpecialityDialogFragment.SpecialityChangeCallback, ChangePhoneDialogFragment.PhoneChangeCallback, ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
 
     private EditProfileCallback callback;
 
@@ -70,7 +75,9 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
     private CustomLoadingProgressBar customLoadingProgressBar;
     private User user;
     private MaterialButton changeUserNameButton;
-    private static final int IMAGE_REQUEST= 1;
+
+    private static final int IMAGE_REQUEST = 1;
+    private SessionManager manager;
     public static final int DIALOG_FRAGMENT_REQUEST_CODE = 2;
 
     @Override
@@ -78,7 +85,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
         v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         mAuth = FirebaseAuth.getInstance();
         rootRef = FirebaseDatabase.getInstance().getReference();
-        var manager = new SessionManager(getActivity());
+        manager = new SessionManager(getActivity());
         user = manager.getData();
         storageRef = FirebaseStorage.getInstance().getReference();
         return v;
@@ -116,90 +123,131 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
         bioTxt = v.findViewById(R.id.edit_bio);
         LinearLayout changeBio = v.findViewById(R.id.bio_linear);
         LinearLayout changeEmail = v.findViewById(R.id.email_linear);
+        LinearLayout changeGender = v.findViewById(R.id.gender_linear);
         LinearLayout changeName = v.findViewById(R.id.name_linear);
+        LinearLayout changeGroup = v.findViewById(R.id.group_linear);
+        LinearLayout changePhone = v.findViewById(R.id.phone_number_linear);
+        LinearLayout changeSpeciality = v.findViewById(R.id.specialization_linear);
         Button deleteAccount = v.findViewById(R.id.delete_account_button);
         Button cancle = v.findViewById(R.id.edit_profile_cancel);
         Button done = v.findViewById(R.id.edit_profile_done);
         FirebaseUser firebaseUser=mAuth.getCurrentUser();
-            if (firebaseUser!=null) {
-                getUserDetails();
-                editImage.setOnClickListener(v -> openImage());
-                changeBio.setOnClickListener(v -> {
-                    ChangeBioDialogFragment changeBioDialogFragment = new ChangeBioDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("USER", user);
-                    changeBioDialogFragment.setArguments(bundle);
-                    changeBioDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
-                    changeBioDialogFragment.show(getParentFragmentManager(), null);
-                });
-                changeName.setOnClickListener(view1 -> {
-                    ChangeNameDialogFragment changeNameDialogFragment = new ChangeNameDialogFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("USER", user);
-                    changeNameDialogFragment.setArguments(bundle);
-                    changeNameDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
-                    changeNameDialogFragment.show(getParentFragmentManager(), null);
-                });
+        if (firebaseUser!=null) {
+            getUserDetails();
+            editImage.setOnClickListener(v -> openImage());
+            changeBio.setOnClickListener(v -> {
+                ChangeBioDialogFragment changeBioDialogFragment = new ChangeBioDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changeBioDialogFragment.setArguments(bundle);
+                changeBioDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changeBioDialogFragment.show(getParentFragmentManager(), null);
+            });
+            changeName.setOnClickListener(view1 -> {
+                ChangeNameDialogFragment changeNameDialogFragment = new ChangeNameDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changeNameDialogFragment.setArguments(bundle);
+                changeNameDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changeNameDialogFragment.show(getParentFragmentManager(), null);
+            });
 
-                changeUserNameButton.setOnClickListener(v -> {
-                    ChangeUsernameDialog changeUsernameDialog = new ChangeUsernameDialog();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("USER", user);
-                    changeUsernameDialog.setArguments(bundle);
-                    changeUsernameDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
-                    changeUsernameDialog.show(getParentFragmentManager(), null);
-                });
-                changeEmail.setOnClickListener(v -> {
-                    SignInMethod method = user.getSignInMethod();
-                    if (method == null) {
-                        Toast.makeText(getContext(), "Technical problems, try changing your email a little later.", Toast.LENGTH_SHORT).show();
+            changeGender.setOnClickListener(v -> {
+                ChangeGenderDialogFragment changeGenderDialog = new ChangeGenderDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changeGenderDialog.setArguments(bundle);
+                changeGenderDialog.setTargetFragment(EditProfileDialogFragment.this,DIALOG_FRAGMENT_REQUEST_CODE);
+                changeGenderDialog.show(getParentFragmentManager(), null);
+            });
+            changeUserNameButton.setOnClickListener(v -> {
+                ChangeUsernameDialog changeUsernameDialog = new ChangeUsernameDialog();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changeUsernameDialog.setArguments(bundle);
+                changeUsernameDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changeUsernameDialog.show(getParentFragmentManager(), null);
+            });
+
+            changeSpeciality.setOnClickListener(v -> {
+                ChangeSpecialityDialogFragment changeSpecialityDialog = new ChangeSpecialityDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changeSpecialityDialog.setArguments(bundle);
+                changeSpecialityDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changeSpecialityDialog.show(getParentFragmentManager(), null);
+            });
+
+            changeEmail.setOnClickListener(v -> {
+                SignInMethod method = user.getSignInMethod();
+                if (method == null) {
+                    Toast.makeText(getContext(), "Technical problems, try changing your email a little later.", Toast.LENGTH_SHORT).show();
+                } else {
+                    if (method == SignInMethod.GOOGLE) {
+                        Toast.makeText(getContext(), "You can't change your account because you're using a Google account.", Toast.LENGTH_SHORT).show();
+                    } else if (method == SignInMethod.MICROSOFT) {
+                        Toast.makeText(getContext(), "You can't change your account because you're using a Microsoft account.", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (method == SignInMethod.GOOGLE) {
-                            Toast.makeText(getContext(), "You can't change your account because you're using a Google account.", Toast.LENGTH_SHORT).show();
-                        } else if (method == SignInMethod.MICROSOFT) {
-                            Toast.makeText(getContext(), "You can't change your account because you're using a Microsoft account.", Toast.LENGTH_SHORT).show();
-                        } else {
-                            ChangeEmailDialog changeEmailDialog = new ChangeEmailDialog();
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("USER", user);
-                            changeEmailDialog.setArguments(bundle);
-                            changeEmailDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
-                            changeEmailDialog.show(getParentFragmentManager(), null);
-                        }
-                    }
-                });
-
-                changePassword.setOnClickListener(v ->
-                        new AlertDialog.Builder(getActivity())
-                                .setMessage("A message to reset your password will be sent to your email.")
-                                .setTitle("Change password")
-                                .setPositiveButton("OK", (dialogInterface, i) -> {
-                                    dialogInterface.dismiss();
-                                    resetPass();
-                                })
-                                .setNegativeButton("Cancel", (dialogInterface, i) -> {
-                                    dialogInterface.dismiss();
-                                })
-                                .create()
-                                .show()
-                );
-                deleteAccount.setOnClickListener(v -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    builder.setTitle("Are you sure want to delete this account?");
-                    builder.setPositiveButton("Yes", (dialogInterface, i) -> {
-                        DeleteUserDialogDragment deleteUserDialogDragment = new DeleteUserDialogDragment();
+                        ChangeEmailDialog changeEmailDialog = new ChangeEmailDialog();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable("USER", user);
-                        deleteUserDialogDragment.setArguments(bundle);
-                        deleteUserDialogDragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
-                        deleteUserDialogDragment.show(getParentFragmentManager(), null);
-                    });
-                    builder.setNegativeButton("cancel", (dialogInterface, i) -> dialogInterface.dismiss());
-                    builder.show();
+                        changeEmailDialog.setArguments(bundle);
+                        changeEmailDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                        changeEmailDialog.show(getParentFragmentManager(), null);
+                    }
+                }
+            });
+
+            changeGroup.setOnClickListener(v -> {
+                ChangeGroupDialogFragment changeGroupDialogFragment = new ChangeGroupDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changeGroupDialogFragment.setArguments(bundle);
+                changeGroupDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changeGroupDialogFragment.show(getParentFragmentManager(), null);
+            });
+
+            changePhone.setOnClickListener(v -> {
+                ChangePhoneDialogFragment changePhoneDialogFragment = new ChangePhoneDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("USER", user);
+                changePhoneDialogFragment.setArguments(bundle);
+                changePhoneDialogFragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                changePhoneDialogFragment.show(getParentFragmentManager(), null);
+            });
+
+
+            changePassword.setOnClickListener(v ->
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("A message to reset your password will be sent to your email.")
+                            .setTitle("Change password")
+                            .setPositiveButton("OK", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                                resetPass();
+                            })
+                            .setNegativeButton("Cancel", (dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            })
+                            .create()
+                            .show()
+            );
+            deleteAccount.setOnClickListener(v -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Are you sure want to delete this account?");
+                builder.setPositiveButton("Yes", (dialogInterface, i) -> {
+                    DeleteUserDialogDragment deleteUserDialogDragment = new DeleteUserDialogDragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("USER", user);
+                    deleteUserDialogDragment.setArguments(bundle);
+                    deleteUserDialogDragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
+                    deleteUserDialogDragment.show(getParentFragmentManager(), null);
                 });
-            } else {
-                dismiss();
-            }
+                builder.setNegativeButton("cancel", (dialogInterface, i) -> dialogInterface.dismiss());
+                builder.show();
+            });
+        } else {
+            dismiss();
+        }
 
 
         done.setOnClickListener(v -> dismiss());
@@ -209,7 +257,6 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        getActivity();
         if (requestCode == IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data !=null) {
             Uri imageUri = data.getData();
             if (uploadTask !=null && uploadTask.isInProgress()){
@@ -248,7 +295,10 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
                         storageReference.delete().addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
                                 Toast.makeText(getContext(), "Image deleted successfully.", Toast.LENGTH_SHORT).show();
-
+                                user.setImage(null);
+                                manager.removeUserData();
+                                manager.saveData(user);
+                                callback.onProfileDataChanged(user);
                             }
                         }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
 
@@ -258,8 +308,24 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
             }
         }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
     }
-    private void uploadImage(Uri imageUri){
-        Bitmap bitmap=null;
+
+    private void uploadImage(Uri imageUri) {
+
+        if (user.getImage() != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(user.getImage());
+            if (storageReference != null) {
+                storageReference.delete().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        user.setImage(null);
+                        manager.removeUserData();
+                        manager.saveData(user);
+                    }
+                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
+
+            }
+        }
+
+        Bitmap bitmap = null;
         if (Build.VERSION.SDK_INT >= 29) {
             ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), imageUri);
             try {
@@ -297,12 +363,16 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
                     imageDetails.put("image", mUrl);
                     rootRef.child(Config.users).child(user.getUserID()).updateChildren(imageDetails).addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()) {
+                            user.setImage(mUrl);
+                            manager.removeUserData();
+                            manager.saveData(user);
                             GlideApp.with(getContext())
                                     .load(mUrl)
                                     .transform(new CircleCrop())
                                     .placeholder(R.drawable.ic_user_profile_svgrepo_com)
                                     .into(profileImage);
                             customLoadingProgressBar.dismiss();
+                            callback.onProfileDataChanged(user);
                         }
                     });
                 }
@@ -360,49 +430,80 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeB
 
     @Override
     public void onBioChanged(String bioTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setBio(bioTxt);
-        callback.onProfileDataChanged(updatedUser);
+        user.setBio(bioTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         this.bioTxt.setText(bioTxt);
     }
 
-    @Override
-    public void onEmailChanged(String emailTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setEmail(emailTxt);
-        callback.onProfileDataChanged(updatedUser);
+
+    public void onGroupChanged(String groupTxt) {
+        user.setGroup(groupTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
+        this.groupTextView.setText(groupTxt);
+    }
+    @Override
+    public void onPhoneChanged(String phoneTxt) {
+        user.setPhoneNumber(phoneTxt);
+        callback.onProfileDataChanged(user);
+        manager.removeUserData();
+        manager.saveData(user);
+        this.phoneNumberTextView.setText(phoneTxt);
+    }
+
+    @Override
+    public void onSpecialityChanged(String speciality) {
+        user.setSpecialization(speciality);
+        callback.onProfileDataChanged(user);
+        manager.removeUserData();
+        manager.saveData(user);
+        this.specialityTextView.setText(speciality);
+    }
+
+
+    @Override
+    public void onGenderChanged(User.Gender gender) {
+        user.setGender(gender);
+        callback.onProfileDataChanged(user);
+        manager.removeUserData();
+        manager.saveData(user);
+        var genderTxt = "";
+        if (gender == User.Gender.MALE) {
+            genderTxt = "Male";
+        } else if (gender == User.Gender.FEMALE) {
+            genderTxt = "Female";
+        }
+        this.genderTextView.setText(genderTxt);
+    }
+
+
+
+    public void onEmailChanged(String emailTxt) {
+        user.setEmail(emailTxt);
+        callback.onProfileDataChanged(user);
+        manager.removeUserData();
+        manager.saveData(user);
         emailTxtView.setText(emailTxt);
     }
 
     @Override
     public void onUsernameChanged(String nameTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setUsername(nameTxt);
-        callback.onProfileDataChanged(updatedUser);
+        user.setUsername(nameTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         changeUserNameButton.setText(nameTxt);
     }
 
     @Override
     public void onNameChanged(String changedName) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setName(changedName);
-        callback.onProfileDataChanged(updatedUser);
+        user.setName(changedName);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         nameTxtView.setText(changedName);
     }
 }

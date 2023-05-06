@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     tools:context="kz.devs.aiturm.presentaiton.edit.ChangeEmailDialog">
     <RelativeLayout
-        android:id="@+id/change_bio_upper_page"
+        android:id="@+id/change_phone_upper_page"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/LogoYellow">
 
         <ImageButton
-            android:id="@+id/change_bio_back_button"
+            android:id="@+id/change_phone_back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -22,69 +22,67 @@
             android:layout_marginBottom="10dp"
             android:background="@android:color/transparent"
             android:padding="5dp"
-            android:src="@drawable/ic_arrow_back_"/>
+            android:src="@drawable/ic_arrow_back_" />
+
         <TextView
-            android:id="@+id/text_current_bio"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit Bio"
-            android:layout_margin="10dp"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/Black"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="Edit Phone number "
+            android:textColor="@color/jetBlack"
             android:textSize="18sp"
-            android:textStyle="bold"  />
+            android:textStyle="bold" />
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/change_bio_done_button"
+            android:id="@+id/change_phone_done_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="Done"
             android:background="@android:color/transparent"
-            android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="15sp"
-            android:textStyle="bold">
-        </com.google.android.material.button.MaterialButton>
+            android:text="Done"
+            android:textSize="14sp"
+            android:textStyle="bold"/>
     </RelativeLayout>
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/enter_new_bio"
+        android:id="@+id/change_phone_input_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:layout_below="@id/change_bio_upper_page"
         android:layout_marginTop="10dp"
         app:boxBackgroundMode="filled"
-        android:layout_marginBottom="10dp"
         app:boxStrokeColor="@color/LogoYellow"
         app:boxStrokeWidth="2dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         app:errorEnabled="true"
-        app:hintAnimationEnabled="false"
-        app:hintTextColor="@color/lightGrey"
-        app:counterMaxLength="100"
-        app:hintEnabled="false"
-        android:lines="5"
         android:paddingBottom="10dp"
-        android:maxLength="100"
+        app:hintEnabled="false"
+        app:hintAnimationEnabled="false"
+        app:expandedHintEnabled="false"
         app:textColor="@color/jetBlack"
         app:endIconDrawable="@drawable/ic_close_icon"
         app:endIconMode="custom"
-        app:counterEnabled="true"
         app:counterTextColor="@color/LogoYellow"
-        app:endIconTint="@color/LogoYellow">
+        app:endIconTint="@color/LogoYellow"
+        android:layout_below="@+id/change_phone_upper_page"
+        >
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/input_edit_text_bio"
+            android:id="@+id/enter_new_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:textAlignment="textStart"
-            android:inputType="text|textImeMultiLine"
-            android:hint="my bio"
+            android:inputType="text"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
+            android:hint="Phone number"
+            android:textAlignment="textStart"
             android:textColor="@color/jetBlack"
             android:enabled="true"
             />
     </com.google.android.material.textfield.TextInputLayout>
+
 </RelativeLayout>

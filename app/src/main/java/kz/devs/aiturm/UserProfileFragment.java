@@ -32,6 +32,10 @@ import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
 
 
+interface UserCallback {
+    void onUserDataChanged();
+}
+
 public class UserProfileFragment extends Fragment implements EditProfileCallback {
     private TextView textViewName;
     private TextView viewBio;
@@ -49,8 +53,13 @@ public class UserProfileFragment extends Fragment implements EditProfileCallback
     public static final int DIALOG_FRAGMENT_REQUEST_CODE = 2;
     private View rootView;
     private User user;
-    public static final int APARTMENT_PER_PAGINATION =10;
+    public static final int APARTMENT_PER_PAGINATION = 10;
 
+    private final UserCallback callback;
+
+    public UserProfileFragment(UserCallback callback) {
+        this.callback = callback;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -190,6 +199,25 @@ public class UserProfileFragment extends Fragment implements EditProfileCallback
 
     @Override
     public void onProfileDataChanged(User user) {
-
+        if (user != null) {
+            textViewName.setText(user.getName());
+            textViewUsername.setText(user.getUsername());
+            if (user.getBio() != null && !user.getBio().equals("")) {
+                viewBio.setText(user.getBio());
+            }
+            if (user.getImage() != null) {
+                GlideApp.with(getActivity().getApplicationContext())
+                        .load(user.getImage())
+                        .transform(new CircleCrop())
+                        .placeholder(R.drawable.ic_user_profile_svgrepo_com)
+                        .into(profileImage);
+            } else {
+                GlideApp.with(this)
+                        .load(R.drawable.ic_user_profile_svgrepo_com)
+                        .transform(new CircleCrop())
+                        .into(profileImage);
+            }
+            callback.onUserDataChanged();
+        }
     }
 }
