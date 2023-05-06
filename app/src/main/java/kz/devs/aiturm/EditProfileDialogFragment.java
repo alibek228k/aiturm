@@ -75,7 +75,9 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
     private CustomLoadingProgressBar customLoadingProgressBar;
     private User user;
     private MaterialButton changeUserNameButton;
-    private static final int IMAGE_REQUEST= 1;
+
+    private static final int IMAGE_REQUEST = 1;
+    private SessionManager manager;
     public static final int DIALOG_FRAGMENT_REQUEST_CODE = 2;
 
     @Override
@@ -83,7 +85,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
         v = inflater.inflate(R.layout.fragment_edit_profile, container, false);
         mAuth = FirebaseAuth.getInstance();
         rootRef = FirebaseDatabase.getInstance().getReference();
-        var manager = new SessionManager(getActivity());
+        manager = new SessionManager(getActivity());
         user = manager.getData();
         storageRef = FirebaseStorage.getInstance().getReference();
         return v;
@@ -255,7 +257,6 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        getActivity();
         if (requestCode == IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data !=null) {
             Uri imageUri = data.getData();
             if (uploadTask !=null && uploadTask.isInProgress()){
@@ -294,7 +295,10 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
                         storageReference.delete().addOnCompleteListener(task1 -> {
                             if (task1.isSuccessful()) {
                                 Toast.makeText(getContext(), "Image deleted successfully.", Toast.LENGTH_SHORT).show();
-
+                                user.setImage(null);
+                                manager.removeUserData();
+                                manager.saveData(user);
+                                callback.onProfileDataChanged(user);
                             }
                         }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
 
@@ -304,8 +308,24 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
             }
         }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
     }
-    private void uploadImage(Uri imageUri){
-        Bitmap bitmap=null;
+
+    private void uploadImage(Uri imageUri) {
+
+        if (user.getImage() != null) {
+            StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(user.getImage());
+            if (storageReference != null) {
+                storageReference.delete().addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        user.setImage(null);
+                        manager.removeUserData();
+                        manager.saveData(user);
+                    }
+                }).addOnFailureListener(e -> Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show());
+
+            }
+        }
+
+        Bitmap bitmap = null;
         if (Build.VERSION.SDK_INT >= 29) {
             ImageDecoder.Source source = ImageDecoder.createSource(getContext().getContentResolver(), imageUri);
             try {
@@ -343,12 +363,16 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
                     imageDetails.put("image", mUrl);
                     rootRef.child(Config.users).child(user.getUserID()).updateChildren(imageDetails).addOnCompleteListener(task1 -> {
                         if (task1.isSuccessful()) {
+                            user.setImage(mUrl);
+                            manager.removeUserData();
+                            manager.saveData(user);
                             GlideApp.with(getContext())
                                     .load(mUrl)
                                     .transform(new CircleCrop())
                                     .placeholder(R.drawable.ic_user_profile_svgrepo_com)
                                     .into(profileImage);
                             customLoadingProgressBar.dismiss();
+                            callback.onProfileDataChanged(user);
                         }
                     });
                 }
@@ -406,65 +430,50 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
 
     @Override
     public void onBioChanged(String bioTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setBio(bioTxt);
-        callback.onProfileDataChanged(updatedUser);
+        user.setBio(bioTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         this.bioTxt.setText(bioTxt);
     }
 
 
     public void onGroupChanged(String groupTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setGroup(groupTxt);
-        callback.onProfileDataChanged(updatedUser);
+        user.setGroup(groupTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         this.groupTextView.setText(groupTxt);
     }
     @Override
     public void onPhoneChanged(String phoneTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setPhoneNumber(phoneTxt);
-        callback.onProfileDataChanged(updatedUser);
+        user.setPhoneNumber(phoneTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         this.phoneNumberTextView.setText(phoneTxt);
     }
 
     @Override
     public void onSpecialityChanged(String speciality) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setSpecialization(speciality);
-        callback.onProfileDataChanged(updatedUser);
+        user.setSpecialization(speciality);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         this.specialityTextView.setText(speciality);
     }
 
 
     @Override
     public void onGenderChanged(User.Gender gender) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setGender(gender);
-        callback.onProfileDataChanged(updatedUser);
+        user.setGender(gender);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         var genderTxt = "";
-        if (gender == User.Gender.MALE){
+        if (gender == User.Gender.MALE) {
             genderTxt = "Male";
-        }else if (gender == User.Gender.FEMALE){
+        } else if (gender == User.Gender.FEMALE) {
             genderTxt = "Female";
         }
         this.genderTextView.setText(genderTxt);
@@ -473,53 +482,30 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
 
 
     public void onEmailChanged(String emailTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setEmail(emailTxt);
-        callback.onProfileDataChanged(updatedUser);
+        user.setEmail(emailTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         emailTxtView.setText(emailTxt);
     }
 
-//    @Override
-//    public void onCheckedChanged(RadioGroup group, int checkedId) {
-//        SharedPreferences preferences = getContext().getSharedPreferences("MyPrefs", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = preferences.edit();
-//        if (checkedId == R.id.male_radio_button) {
-//            editor.putString("gender", "male");
-//        } else if (checkedId == R.id.female_radio_button) {
-//            editor.putString("gender", "female");
-//        }
-//        editor.apply();
-//    }
-
     @Override
     public void onUsernameChanged(String nameTxt) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setUsername(nameTxt);
-        callback.onProfileDataChanged(updatedUser);
+        user.setUsername(nameTxt);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         changeUserNameButton.setText(nameTxt);
     }
 
     @Override
     public void onNameChanged(String changedName) {
-        SessionManager manager = new SessionManager(getContext());
-        var updatedUser = manager.getData();
-        updatedUser.setName(changedName);
-        callback.onProfileDataChanged(updatedUser);
+        user.setName(changedName);
+        callback.onProfileDataChanged(user);
         manager.removeUserData();
-        manager.saveData(updatedUser);
-        user = updatedUser;
+        manager.saveData(user);
         nameTxtView.setText(changedName);
     }
-
-
 }
 
 interface EditProfileCallback {

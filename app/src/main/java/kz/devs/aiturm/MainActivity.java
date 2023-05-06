@@ -3,7 +3,6 @@ package kz.devs.aiturm;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ViewTreeObserver;
@@ -12,7 +11,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
@@ -23,12 +21,12 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -44,9 +42,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements UserCallback {
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private ImageButton myAiturm, inboxButton;
@@ -62,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
     private User user;
+
+    private SessionManager manager;
 
     private FirebaseUser fUser;
 
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         requestButtonFrame = findViewById(R.id.drawer_nav_request_button_frame_layout);
         favoriteButton = findViewById(R.id.my_favorite_menu);
 
+        manager = new SessionManager(this);
+
         setupUserDetails();
         setupBottomNavigation();
         setupDrawerButton();
@@ -116,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 getFragment(new FindRoomFragment());
             }
             if (item.getItemId() == R.id.user_profile_menu) {
-                getFragment(new UserProfileFragment());
+                getFragment(new UserProfileFragment(this));
             }
             if (item.getItemId() == R.id.publish_post_menu) {
                 startActivity(new Intent(MainActivity.this, PublishPostActivity.class));
@@ -286,29 +289,49 @@ public class MainActivity extends AppCompatActivity {
                                     badgeDrawable.setVerticalOffset(70);
                                     badgeDrawable.setHotspotBounds(100, 100, 100, 100);
                                     badgeDrawable.setBadgeGravity(BadgeDrawable.BOTTOM_END);
-                                  requestButtonFrame.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                                    requestButtonFrame.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                                     if (requestNo == 0) {
                                         badgeDrawable.setVisible(false);
                                     } else {
                                         badgeDrawable.setVisible(true);
                                         badgeDrawable.setNumber(requestNo);
                                     }
-                              }
-                          });
-                          if(user.getImage()!=null){
-                              if(!user.getImage().isEmpty()){
-                                  GlideApp.with(getApplicationContext())
-                                          .load(user.getImage())
-                                          .fitCenter()
-                                          .circleCrop()
-                                          .transition(DrawableTransitionOptions.withCrossFade())
-                                          .into(profilePic);
-                              }
-                          }
-                      }
-                  }
+                                }
+                            });
+                            if (user.getImage() != null) {
+                                if (!user.getImage().isEmpty()) {
+                                    GlideApp.with(getApplicationContext())
+                                            .load(user.getImage())
+                                            .fitCenter()
+                                            .circleCrop()
+                                            .transition(DrawableTransitionOptions.withCrossFade())
+                                            .into(profilePic);
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
+    }
+
+    @Override
+    public void onUserDataChanged() {
+        user = manager.getData();
+        if (user.getImage() != null && !user.getImage().isEmpty()) {
+            GlideApp.with(getApplicationContext())
+                    .load(user.getImage())
+                    .fitCenter()
+                    .circleCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(profilePic);
+        } else {
+            GlideApp.with(this)
+                    .load(R.drawable.ic_user_profile_svgrepo_com)
+                    .transform(new CircleCrop())
+                    .into(profilePic);
+        }
+
+        usernameDrawer.setText(user.getUsername());
     }
 }

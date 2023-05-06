@@ -122,8 +122,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="80dp"
             android:lines="1"
+            android:gravity="end"
             android:text="Bio"
             android:textSize="14sp" />
     </LinearLayout>
@@ -153,8 +153,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="80dp"
             android:lines="1"
+            android:gravity="end"
             android:text="name"
             android:textSize="14sp" />
     </LinearLayout>
@@ -181,9 +181,9 @@
             android:id="@+id/edit_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="80dp"
             android:layout_gravity="center_horizontal"
             android:text="Email"
+            android:gravity="end"
             android:textSize="14sp"
             android:lines="1" />
     </LinearLayout>
@@ -212,8 +212,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="76dp"
             android:lines="1"
+            android:gravity="end"
             android:text="@string/gender"
             android:textSize="14sp"/>
     </LinearLayout>
@@ -243,9 +243,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="80dp"
             android:lines="1"
             android:text="@string/group"
+            android:gravity="end"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -275,9 +275,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="20dp"
             android:lines="1"
             android:text="@string/phone_number"
+            android:gravity="end"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -305,9 +305,9 @@
             android:id="@+id/edit_specialization"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="58dp"
             android:layout_gravity="center_horizontal"
             android:text="@string/speciality"
+            android:gravity="end"
             android:textSize="14sp"
             android:lines="1" />
     </LinearLayout>
