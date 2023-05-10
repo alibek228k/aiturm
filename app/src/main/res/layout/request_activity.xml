@@ -87,7 +87,7 @@
                 android:id="@+id/no_req_txt_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You haven't sent any requests yet, you can go to My shroomies and start sending request now."
+                android:text="You haven't sent any requests yet, you can go to My aiturm and start sending request now."
                 android:layout_margin="20dp"
                 android:gravity="center"
                 android:layout_centerHorizontal="true"

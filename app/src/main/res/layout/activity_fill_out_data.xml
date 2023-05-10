@@ -273,12 +273,12 @@
                 app:boxStrokeColor="@color/white"
                 app:boxStrokeWidth="2dp"
                 app:counterEnabled="true"
-                app:counterMaxLength="11"
+                app:counterMaxLength="17"
                 app:endIconMode="custom"
                 app:errorEnabled="true"
                 app:hintAnimationEnabled="true"
                 app:hintTextColor="@color/jetBlack"
-                app:startIconDrawable="@drawable/ic_user_profile_"
+                app:startIconDrawable="@drawable/ic_call"
                 app:textColor="@color/jetBlack">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -288,7 +288,7 @@
                     android:backgroundTint="@android:color/transparent"
                     android:hint="@string/phone_number"
                     android:inputType="number"
-                    android:maxLength="11"
+                    android:maxLength="17"
                     android:maxLines="1"
                     android:paddingTop="15dp"
                     android:paddingBottom="15dp"

@@ -53,7 +53,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Members extends Fragment {
+public class MembersFragment extends Fragment {
     //views
     private View v;
     private RecyclerView membersRecyclerView;
@@ -339,7 +339,7 @@ public class Members extends Fragment {
     }
 
     void displayErrorAlert(String title ,  String errorMessage  , VolleyError error){
-        customLoadingProgressBar.dismiss();
+        if (customLoadingProgressBar != null) customLoadingProgressBar.dismiss();
         String message = null; // error message, show it in toast or dialog, whatever you want
         if(error!=null) {
             if (error instanceof NetworkError || error instanceof AuthFailureError || error instanceof NoConnectionError || error instanceof TimeoutError) {
@@ -358,7 +358,7 @@ public class Members extends Fragment {
                 .setMessage(message)
                 .setCancelable(false)
                 .setNeutralButton("return", (dialog, which) -> {
-                    Members.this.getActivity().onBackPressed();
+                    MembersFragment.this.getActivity().onBackPressed();
                     dialog.dismiss();
                 })
                 .create()

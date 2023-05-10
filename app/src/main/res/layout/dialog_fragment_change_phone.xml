@@ -69,16 +69,18 @@
         app:counterTextColor="@color/LogoYellow"
         app:endIconTint="@color/LogoYellow"
         android:layout_below="@+id/change_phone_upper_page"
-        >
+        app:startIconDrawable="@drawable/ic_call">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/enter_new_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@android:color/transparent"
-            android:inputType="text"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:hint="Phone number"
+            android:hint="@string/phone_number"
+            android:inputType="number"
+            android:maxLength="17"
+            android:maxLines="1"
             android:textAlignment="textStart"
             android:textColor="@color/jetBlack"
             android:enabled="true"

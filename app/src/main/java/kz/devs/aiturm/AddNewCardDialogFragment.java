@@ -297,8 +297,6 @@ public class AddNewCardDialogFragment extends DialogFragment implements SplitExp
             dialog.show();
         });
 
-
-
         requestQueue = Volley.newRequestQueue(getActivity());
     }
 
@@ -876,17 +874,17 @@ public class AddNewCardDialogFragment extends DialogFragment implements SplitExp
         }else{
             message = errorMessage;
         }
-        new android.app.AlertDialog.Builder(getActivity())
-                .setIcon(R.drawable.ic_alert)
-                .setTitle(title)
-                .setMessage(message)
-                .setCancelable(false)
-                .setNeutralButton("return", (dialog, which) -> {
-                    AddNewCardDialogFragment.this.dismiss();
-                    dialog.dismiss();
-                })
-                .create()
-                .show();
+//        new android.app.AlertDialog.Builder(getActivity())
+//                .setIcon(R.drawable.ic_alert)
+//                .setTitle(title)
+//                .setMessage(message)
+//                .setCancelable(false)
+//                .setNeutralButton("return", (dialog, which) -> {
+//                    AddNewCardDialogFragment.this.dismiss();
+//                    dialog.dismiss();
+//                })
+//                .create()
+//                .show();
     }
 
 

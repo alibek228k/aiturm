@@ -117,6 +117,11 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
         postTypeChip = v.findViewById(R.id.post_type_chip);
         postType = Config.APARTMENT_POST;
 
+
+        buildingName = "Arman kala";
+        buildingAddress = "Turkestan 30";
+        locationChip.setText(buildingName);
+
         getUserImage();
         nextButton.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -286,13 +291,13 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
         } else {
             locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.LogoYellow));
         }
-        if (selectedLatLng == null) {
-            errors.add("Please enter a valid location");
-            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.canceRed));
-            status = false;
-        } else {
-            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.LogoYellow));
-        }
+//        if (selectedLatLng == null) {
+//            errors.add("Please enter a valid location");
+//            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.canceRed));
+//            status = false;
+//        } else {
+//            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.LogoYellow));
+//        }
         if (descriptionEditText.getText().toString().trim().isEmpty()) {
             errors.add("Please enter a description");
             descriptionEditText.setHintTextColor(getActivity().getColor(R.color.canceRed));

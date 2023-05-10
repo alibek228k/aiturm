@@ -1,7 +1,6 @@
 package kz.devs.aiturm;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,6 +10,7 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -71,6 +71,8 @@ import java.util.TimeZone;
 import me.everything.android.ui.overscroll.IOverScrollDecor;
 import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
+
+import kz.devs.aiturm.model.User;
 
 
 public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomies , CardUploaded  {
@@ -331,6 +333,8 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                 addNewCardDialogFragment.setArguments(bundle);
 
                 addNewCardDialogFragment.show(getActivity().getSupportFragmentManager(), "add new card");
+            }else{
+                Toast.makeText(getActivity() , "apartment null", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -344,7 +348,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                 add.setArguments(bundle1);
                 add.show(getParentFragmentManager(),"add member to apartment");
             }else{
-//                Toast.makeText(getActivity() , "apartment null", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity() , "apartment null", Toast.LENGTH_SHORT).show();
             }
 
         });
@@ -369,15 +373,15 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         memberButton.setOnClickListener(v -> {
             if(apartment!=null) {
 
-                Members members = new Members();
+                MembersFragment membersFragment = new MembersFragment();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("APARTMENT_DETAILS", apartment);
-                members.setArguments(bundle1);
+                membersFragment.setArguments(bundle1);
                 fm = getActivity().getSupportFragmentManager();
                 ft = fm.beginTransaction();
                 ft.addToBackStack(null);
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.replace(R.id.my_shroomies_container, members);
+                ft.replace(R.id.my_shroomies_container, membersFragment);
                 ft.commit();
             }
         });
@@ -411,20 +415,23 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 
 
     }
-
-
-
     private void getUserToken(){
         displayProgressView();
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        
         if(firebaseUser!=null){
             firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
                 if(task.isSuccessful()) {
                     String token = task.getResult().getToken();
+
                     String apartmentID = (String) task.getResult().getClaims().get(Config.apartmentID);
-//                    Log.d("apartment ID" , apartmentID);
-                    getApartmentDetails(token, apartmentID);
-                    getUnseenMessageNo(apartmentID,firebaseUser.getUid());
+                    if (apartmentID != null){
+                        getApartmentDetails(token, apartmentID);
+                        getUnseenMessageNo(apartmentID,firebaseUser.getUid());
+                    }else{
+                            
+                    }
+
                 }else{
                     String title = "Authentication error";
                     String message = "We encountered a problem while authenticating your account";
@@ -436,28 +443,30 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
     }
     private void getUnseenMessageNo(String apartmentID, String userID){
         DatabaseReference rootRef= FirebaseDatabase.getInstance().getReference();
-        rootRef.child("groupMessages").child(apartmentID).child("unSeenMessageCount")
-                .child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            unSeenMessagesNo=Integer.parseInt(snapshot.getValue().toString());
-                            if(unSeenMessagesNo==0){
-                                badgeDrawable.setVisible(false);
+        if (apartmentID != null){
+            rootRef.child("groupMessages").child(apartmentID).child("unSeenMessageCount")
+                    .child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull @NotNull DataSnapshot snapshot) {
+                            if (snapshot.exists()) {
+                                unSeenMessagesNo=Integer.parseInt(snapshot.getValue().toString());
+                                if(unSeenMessagesNo==0){
+                                    badgeDrawable.setVisible(false);
+                                }else{
+                                    badgeDrawable.setVisible(true);
+                                    badgeDrawable.setNumber(unSeenMessagesNo);
+                                }
                             }else{
-                                badgeDrawable.setVisible(true);
-                                badgeDrawable.setNumber(unSeenMessagesNo);
+                                badgeDrawable.setVisible(false);
                             }
-                        }else{
-                            badgeDrawable.setVisible(false);
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull @NotNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull @NotNull DatabaseError error) {
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
     private void getApartmentDetails(String token , String apartmentID){
@@ -470,6 +479,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             e.printStackTrace();
             return;
         }
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GET_APARTMENT_DETAILS, data, response -> {
 
             final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
@@ -560,6 +570,10 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             if (error instanceof NetworkError || error instanceof AuthFailureError || error instanceof NoConnectionError || error instanceof TimeoutError) {
                 message = "Cannot connect to Internet";
             } else if (error instanceof ServerError) {
+                apartment = new AiturmApartment(
+                        "15156156", "15165", new HashMap<>(), new HashMap<>(), new HashMap<>()
+                );
+                error.printStackTrace();
                 message = "Server error. Please try again later";
             }  else if (error instanceof ParseError) {
                 message = "Parsing error! Please try again later";
@@ -813,17 +827,17 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         tasksDecor.setOverScrollStateListener(onOverPullListener);
         expensesDecor.setOverScrollStateListener(onOverPullListener);
         removeProgressView();
-         new AlertDialog.Builder(getActivity())
-                .setIcon(R.drawable.ic_alert)
-                .setTitle(title)
-                .setMessage(message)
-                 .setCancelable(false)
-                 .setNeutralButton("return", (dialog, which) -> {
-                     getActivity().finish();
-                     dialog.dismiss();
-                 })
-                 .setPositiveButton("refresh", (dialog, which) -> getUserToken())
-                .create()
-                .show();
+//         new AlertDialog.Builder(getActivity())
+//                .setIcon(R.drawable.ic_alert)
+//                .setTitle(title)
+//                .setMessage(message)
+//                 .setCancelable(false)
+//                 .setNeutralButton("return", (dialog, which) -> {
+//                     getActivity().finish();
+//                     dialog.dismiss();
+//                 })
+//                 .setPositiveButton("refresh", (dialog, which) -> getUserToken())
+//                .create()
+//                .show();
     }
 }

@@ -57,7 +57,6 @@
 
             <TextView
                 android:layout_width="match_parent"
-
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
@@ -66,21 +65,6 @@
                 android:layout_below="@+id/title_card"
 
                 />
-
-<!--            <ImageButton-->
-<!--                android:id="@+id/archive_card_btn"-->
-<!--                android:src="@drawable/ic_archive"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_alignBottom="@id/expense_done"-->
-<!--                android:layout_marginBottom="5dp"-->
-<!--                android:layout_marginRight="10dp"-->
-<!--                android:layout_marginTop="20dp"-->
-<!--                android:layout_alignParentEnd="true"-->
-<!--                android:background="@android:color/transparent"-->
-<!--                android:padding="5dp"-->
-<!--                android:elevation="5dp"-->
-<!--                />-->
 
             <ImageButton
                 android:id="@+id/task_card_menu_image_button"

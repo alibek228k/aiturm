@@ -9,8 +9,8 @@ import java.util.Map;
 public class AiturmApartment implements Parcelable {
     String apartmentID, adminID;
     HashMap<String,String> apartmentMembers;
-    Map<String , ExpensesCard > expensesCard;
-    Map<String , TasksCard> taskCard;
+    Map<String, ExpensesCard> expensesCard;
+    Map<String, TasksCard> taskCard;
 
     public Map<String, ApartmentLogs> getLogs() {
         return logs;

@@ -3,6 +3,8 @@ package kz.devs.aiturm.presentaiton.authorization;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.ImageButton;
@@ -27,7 +29,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import kz.devs.aiturm.Config;
 import kz.devs.aiturm.CustomToast;
-import kz.devs.aiturm.LoginActivity;
 import kz.devs.aiturm.PasswordSignUpActivity;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
@@ -64,6 +65,7 @@ public class FillOutDataActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
     private GoogleSignInOptions gso;
+    private String newPhoneNumber = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +89,7 @@ public class FillOutDataActivity extends AppCompatActivity {
         initFirebaseArguments();
         setupSignInMethod();
         setupToolbar();
+        setupPhoneNumberFormatting();
         setupNextButton();
     }
 
@@ -128,11 +131,53 @@ public class FillOutDataActivity extends AppCompatActivity {
         mGoogleSignInClient = GoogleSignIn.getClient(FillOutDataActivity.this, gso);
     }
 
+    private void setupPhoneNumberFormatting() {
+        phoneNumberInputLayout.getEditText().addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
+            boolean backspacingFlag = false;
+            int cursorComplement = 0;
+            boolean editedFlag = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                cursorComplement = s.length() - phoneNumberInputLayout.getEditText().getSelectionStart();
+                backspacingFlag = count > after;
+            }
+
+            @Override
+            public synchronized void afterTextChanged(Editable s) {
+                String string = s.toString();
+                String phone = string.replaceAll("[^\\d]", "");
+
+                if (!editedFlag) {
+
+                    if (phone.length() >= 9 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = "+7(" + phone.substring(1, 4) + ") " + phone.substring(
+                                4, 7
+                        ) + "-" + phone.substring(7, 9) + "-" + phone.substring(9);
+                        phoneNumberInputLayout.getEditText().setText(ans);
+                        phoneNumberInputLayout.getEditText().setSelection(phoneNumberInputLayout.getEditText().getText().length() - cursorComplement);
+
+                    } else if (phone.length() >= 4 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = "+7(" + phone.substring(1, 4) + ") " + phone.substring(4);
+                        phoneNumberInputLayout.getEditText().setText(ans);
+                        phoneNumberInputLayout.getEditText().setSelection(phoneNumberInputLayout.getEditText().getText().length() - cursorComplement);
+                    }
+                } else {
+                    editedFlag = false;
+                }
+
+                newPhoneNumber = phone;
+            }
+        });
+
+    }
+
     private void setupNextButton() {
         nextButton.setOnClickListener(view -> {
 
             String username = usernameInputLayout.getEditText().getText().toString().trim();
-            String phoneNumber = phoneNumberInputLayout.getEditText().getText().toString().trim();
             String speciality = specialityInputLayout.getEditText().getText().toString();
             String group = groupInputLayout.getEditText().getText().toString().trim();
             String firstName = firstNameInputLayout.getEditText().getText().toString().trim();
@@ -144,8 +189,8 @@ public class FillOutDataActivity extends AppCompatActivity {
             } else {
                 usernameInputLayout.setError(null);
             }
-            if (phoneNumber.isBlank() || !phoneNumber.matches("^77\\d{9}$")) {
-                phoneNumberInputLayout.setError("Phone number format should be 77555555555");
+            if (newPhoneNumber.isBlank()) {
+                phoneNumberInputLayout.setError("Phone number can not be blanc");
             } else {
                 phoneNumberInputLayout.setError(null);
             }
@@ -234,7 +279,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                     } else if (femaleRadioButton.isChecked()) {
                         user.setGender(User.Gender.FEMALE);
                     }
-                    user.setPhoneNumber(phoneNumberInputLayout.getEditText().getText().toString());
+                    user.setPhoneNumber(newPhoneNumber);
                     user.setSpecialization(specialityInputLayout.getEditText().getText().toString());
                     user.setGroup(groupInputLayout.getEditText().getText().toString());
                     Intent intent = new Intent(FillOutDataActivity.this, PasswordSignUpActivity.class);
@@ -270,7 +315,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                         } else if (femaleRadioButton.isChecked()) {
                             user.setGender(User.Gender.FEMALE);
                         }
-                        user.setPhoneNumber(phoneNumberInputLayout.getEditText().getText().toString());
+                        user.setPhoneNumber(newPhoneNumber);
                         user.setSpecialization(specialityInputLayout.getEditText().getText().toString());
                         user.setGroup(groupInputLayout.getEditText().getText().toString());
 

@@ -59,6 +59,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import kz.devs.aiturm.model.User;
+
 
 public class ExpensesCardAdapter extends RecyclerView.Adapter<ExpensesCardAdapter.ExpensesViewHolder> implements ItemTouchHelperAdapter {
     private final Context context;

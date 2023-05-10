@@ -49,6 +49,8 @@ import me.everything.android.ui.overscroll.IOverScrollDecor;
 import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
+import kz.devs.aiturm.model.User;
+
 public class ArchiveFragment extends Fragment {
     private TabLayout archiveTablayout;
     private RecyclerView expensesRecyclerview;
@@ -70,7 +72,7 @@ public class ArchiveFragment extends Fragment {
     //values
     private boolean scrollFromTop;
     private String apartmentID;
-    private HashMap<String , User > memberHashMap;
+    private HashMap<String , User>memberHashMap;
 
 
 

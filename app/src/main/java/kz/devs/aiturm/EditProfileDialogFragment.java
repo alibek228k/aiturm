@@ -403,7 +403,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
                 genderTextView.setText(getString(R.string.gender_select_female));
             }
             groupTextView.setText(user.getGroup());
-            phoneNumberTextView.setText(user.getPhoneNumber());
+            setupPhoneNumberFormatting(user.getPhoneNumber());
             specialityTextView.setText(user.getSpecialization());
             if (user.getImage() != null) {
                 GlideApp.with(getActivity().getApplicationContext())
@@ -415,6 +415,13 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
             }
         }
 
+    }
+
+    private void setupPhoneNumberFormatting(String phone){
+        String ans = "+7(" + phone.substring(1, 4) + ") " + phone.substring(
+                4, 7
+        ) + "-" + phone.substring(7, 9) + "-" + phone.substring(9);
+        phoneNumberTextView.setText(ans);
     }
 
     private void resetPass() {
@@ -451,7 +458,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
         callback.onProfileDataChanged(user);
         manager.removeUserData();
         manager.saveData(user);
-        this.phoneNumberTextView.setText(phoneTxt);
+        setupPhoneNumberFormatting(phoneTxt);
     }
 
     @Override

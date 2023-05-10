@@ -3,6 +3,8 @@ package kz.devs.aiturm.presentaiton.edit;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,7 +41,8 @@ public class ChangePhoneDialogFragment extends DialogFragment {
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
 
-    private TextInputLayout newPhone;
+    private TextInputLayout phoneNumberInputLayout;
+    private String newPhoneNumber = "";
     private User user;
     private View v;
     private PhoneChangeCallback changedPhoneChangeCallback;
@@ -87,34 +90,32 @@ public class ChangePhoneDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        newPhone = v.findViewById(R.id.change_phone_input_text);
-        newPhone.requestFocus();
-        showKeyboard();
+        phoneNumberInputLayout = v.findViewById(R.id.change_phone_input_text);
         Button doneButton = v.findViewById(R.id.change_phone_done_button);
         ImageButton backButton = v.findViewById(R.id.change_phone_back_button);
         Bundle bundle=this.getArguments();
         if (bundle!=null) {
             user = (User) bundle.getSerializable("USER");
-            if (!(user.getPhoneNumber() == null || user.getPhoneNumber().equals(""))) {
-                newPhone.getEditText().setText(user.getPhoneNumber());
-                newPhone.getEditText().setSelection(newPhone.getEditText().getText().length());
-            } else {
-                newPhone.setHint("phoneNumber");
-            }
+            newPhoneNumber = user.getPhoneNumber();
         } else {
             closeKeyboard();
             dismiss();
 
         }
-        newPhone.setEndIconOnClickListener(view1 -> newPhone.getEditText().setText(""));
+
+        setupPhoneNumberFormatting();
+        phoneNumberInputLayout.requestFocus();
+        showKeyboard();
+
+        phoneNumberInputLayout.setEndIconOnClickListener(view1 -> phoneNumberInputLayout.getEditText().setText(""));
         doneButton.setOnClickListener(v -> {
-            String txtPhone = newPhone.getEditText().getText().toString().trim();
+            String txtPhone = newPhoneNumber;
             if (txtPhone.equals(user.getPhoneNumber())){
-                newPhone.setError("No changes have been made");
+                phoneNumberInputLayout.setError("No changes have been made");
             } else if (txtPhone.isBlank()) {
-                newPhone.setError("phone number can not be empty");
+                phoneNumberInputLayout.setError("phone number can not be empty");
             } else {
-                newPhone.setError(null);
+                phoneNumberInputLayout.setError(null);
                 FirebaseUser firebaseUser = mAuth.getCurrentUser();
                 if (firebaseUser != null) {
                     updatePhone(txtPhone);
@@ -123,7 +124,7 @@ public class ChangePhoneDialogFragment extends DialogFragment {
 
         });
         backButton.setOnClickListener(v -> {
-            if ((user.getPhoneNumber() != null && !user.getPhoneNumber().equals(newPhone.getEditText().getText().toString()))) {
+            if ((user.getPhoneNumber() != null && !user.getPhoneNumber().equals(newPhoneNumber))) {
                 Toast.makeText(getContext(), "unSaved Changes", Toast.LENGTH_LONG).show();
             } else {
                 closeKeyboard();
@@ -133,11 +134,65 @@ public class ChangePhoneDialogFragment extends DialogFragment {
 
 
     }
-    private void updatePhone(String txtPhone) {
-        if (!txtPhone.startsWith("+7") && !txtPhone.startsWith("8")) {
-            newPhone.setError("Invalid phone number format");
-            return;
+
+    private void setupPhoneNumberFormatting() {
+        var phoneNumber = user.getPhoneNumber();
+        if (phoneNumber == null || phoneNumber.isBlank()) {
+            phoneNumberInputLayout.getEditText().setText("+7");
+        } else {
+            String ans = "+7(" + phoneNumber.substring(1, 4) + ") " + phoneNumber.substring(
+                    4, 7
+            ) + "-" + phoneNumber.substring(7, 9) + "-" + phoneNumber.substring(9);
+            phoneNumberInputLayout.getEditText().setText(ans);
         }
+        phoneNumberInputLayout.getEditText().addTextChangedListener(new PhoneNumberFormattingTextWatcher() {
+
+            boolean backspacingFlag = false;
+            int cursorComplement = 0;
+            boolean editedFlag = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                cursorComplement = s.length() - phoneNumberInputLayout.getEditText().getSelectionStart();
+                //we check if the user ir inputing or erasing a character
+                backspacingFlag = count > after;
+            }
+
+            @Override
+            public synchronized void afterTextChanged(Editable s) {
+                String string = s.toString();
+                String phone = string.replaceAll("[^\\d]", "");
+
+                if (!editedFlag) {
+
+                    if (phone.length() >= 9 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = "+7(" + phone.substring(1, 4) + ") " + phone.substring(
+                                4, 7
+                        ) + "-" + phone.substring(7, 9) + "-" + phone.substring(9);
+                        phoneNumberInputLayout.getEditText().setText(ans);
+                        phoneNumberInputLayout.getEditText().setSelection(phoneNumberInputLayout.getEditText().getText().length() - cursorComplement);
+
+                    } else if (phone.length() >= 4 && !backspacingFlag) {
+                        editedFlag = true;
+                        String ans = "+7(" + phone.substring(1, 4) + ") " + phone.substring(4);
+                        phoneNumberInputLayout.getEditText().setText(ans);
+                        phoneNumberInputLayout.getEditText().setSelection(phoneNumberInputLayout.getEditText().getText().length() - cursorComplement);
+                    }
+                } else {
+                    editedFlag = false;
+                }
+
+                newPhoneNumber = phone;
+            }
+        });
+
+    }
+
+
+    private void updatePhone(String txtPhone) {
+        if (phoneNumberInputLayout.getError() != null) return;
+        if (phoneNumberInputLayout.getEditText().getText() == null || phoneNumberInputLayout.getEditText().getText().toString().trim().isBlank()) return;
         HashMap<String, Object> updateDetails = new HashMap<>();
         updateDetails.put("phoneNumber", txtPhone);
 

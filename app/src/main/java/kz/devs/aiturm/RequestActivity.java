@@ -183,7 +183,7 @@ RequestActivity extends AppCompatActivity {
                     JSONArray requests = response.getJSONObject(Config.result).getJSONArray(Config.requests);
                     Log.d("requests" , requests.toString());
                     JSONArray receivedJsonArray = requests.getJSONArray(0);
-                    JSONArray sentJsonArray =requests.getJSONArray(1);
+                    JSONArray sentJsonArray = requests.getJSONArray(1);
                     if (receivedJsonArray != null) {
                         if(receivedJsonArray.length()>0){
                             for (int i = 0; i < receivedJsonArray.length(); i++) {
@@ -253,7 +253,7 @@ RequestActivity extends AppCompatActivity {
          firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
              if (task.isSuccessful()) {
                  String token = task.getResult().getToken();
-                 getRequests(token,firebaseUser.getUid());
+                 getRequests(token, firebaseUser.getUid());
 
              }else{
                  displayErrorAlert(null,"Something went wrong!");
@@ -274,18 +274,17 @@ RequestActivity extends AppCompatActivity {
         }else{
             message = errorMessage;
         }
-        new AlertDialog.Builder(getApplicationContext())
-                .setIcon(R.drawable.ic_alert)
-                .setTitle("Error")
-                .setMessage(message)
-                .setCancelable(false)
-                .setNeutralButton("return", (dialog, which) -> {
-                    this.finish();
-                    dialog.dismiss();
-                })
-                .setPositiveButton("refresh", (dialog, which) -> getToken())
-                .create()
-                .show();
-
+//        new AlertDialog.Builder(getApplicationContext())
+//                .setIcon(R.drawable.ic_alert)
+//                .setTitle("Error")
+//                .setMessage(message)
+//                .setCancelable(false)
+//                .setNeutralButton("return", (dialog, which) -> {
+//                    this.finish();
+//                    dialog.dismiss();
+//                })
+//                .setPositiveButton("refresh", (dialog, which) -> getToken())
+//                .create()
+//                .show();
     }
 }

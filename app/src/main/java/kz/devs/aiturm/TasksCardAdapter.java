@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
+import kz.devs.aiturm.model.User;
+
 
 public class TasksCardAdapter extends RecyclerView.Adapter<TasksCardAdapter.TasksCardViewHolder> implements ItemTouchHelperAdapter {
     private final View parentView;
