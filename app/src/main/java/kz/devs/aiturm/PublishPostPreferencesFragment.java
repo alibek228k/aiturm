@@ -57,6 +57,23 @@ public class PublishPostPreferencesFragment extends Fragment {
     private RequestQueue requestQueue;
     private AppCompatActivity appCompatActivity;
 
+    public static Fragment getInstance(
+            String buildingType,
+            String address,
+            String postDescription,
+            String postType
+    ){
+        var bundle = new Bundle();
+        bundle.putString(Config.BUILDING_TYPE, buildingType);
+        bundle.putString(Config.BUILDING_ADDRESS, address);
+        bundle.putString(Config.DESCRIPTION, postDescription);
+        bundle.putString(Config.POST_TYPE, postType);
+
+        var fragment = new PublishPostPreferencesFragment();
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);

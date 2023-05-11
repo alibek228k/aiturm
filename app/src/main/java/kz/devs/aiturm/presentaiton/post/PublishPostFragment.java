@@ -21,29 +21,22 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.shroomies.R;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 import kz.devs.aiturm.Config;
 import kz.devs.aiturm.GlideApp;
-import kz.devs.aiturm.MapsFragment;
-import kz.devs.aiturm.presentaiton.post.type.PostTypeDialogFragment;
 import kz.devs.aiturm.PublishPostPreferencesFragment;
-import kz.devs.aiturm.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.post.type.PostTypeDialogFragment;
 
 
 public class PublishPostFragment extends Fragment implements PostTypeDialogFragment.PostTypeCallback {
-    public static final int MAPS_FRAGMENT_REQUEST_CODE = 2;
 
     private MaterialButton nextButton;
     private View v;
@@ -55,27 +48,22 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     private RelativeLayout apartmentPostLayout, mainLayout;
     private TextInputLayout addressInputLayout;
 
-    private String buildingAddress, locality, subLocality, buildingName;
-    private String postType;
-    private FirebaseAuth mAuth;
+    private String postType = Config.APARTMENT_POST;
+    ;
 
     @Override
     public void onPostTypeChanged(String postType) {
         this.postType = postType;
         if (postType.equals(Config.APARTMENT_POST)) {
-            setApartmentPostState();
+            setupApartmentPostState();
         } else {
-            setPersonalPostState();
+            setupPersonalPostState();
         }
     }
 
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_publish_post, container, false);
-        mAuth=FirebaseAuth.getInstance();
-        return v;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_publish_post, container, false);
     }
 
     @Override
@@ -86,56 +74,90 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         searchForNameTextView = v.findViewById(R.id.search_for_name_text_view);
         apartmentPostLayout = v.findViewById(R.id.apartment_post_layout);
         selectTypeofUnitTextView = v.findViewById(R.id.select_type_text_view);
-
-
         nextButton = v.findViewById(R.id.publish_post_next_button);
         mainLayout = v.findViewById(R.id.relative_layout);
-
         descriptionEditText = v.findViewById(R.id.post_description);
         userImageView = v.findViewById(R.id.user_image_publish_post);
         postTypeChip = v.findViewById(R.id.post_type_chip);
-        postType = Config.APARTMENT_POST;
 
+        setupUserImage();
+        setupNextButton();
+        setupDescriptionEditText();
+        setupAddressTextField();
+        setupApartmentTypeChipGroup();
 
-        buildingName = "Arman kala";
-        buildingAddress = "Turkestan 30";
-
-        getUserImage();
-        nextButton.setOnClickListener(v -> {
+        postTypeChip.setOnClickListener(v -> {
+            PostTypeDialogFragment postTypeDialogFragment = new PostTypeDialogFragment();
             Bundle bundle = new Bundle();
+            bundle.putString(Config.POST_TYPE, postType);
+            postTypeDialogFragment.setArguments(bundle);
+            postTypeDialogFragment.setTargetFragment(this, 0);
+            postTypeDialogFragment.show(getParentFragmentManager(), null);
+        });
+
+    }
+
+    void setupApartmentPostState() {
+        apartmentPostLayout.setVisibility(View.VISIBLE);
+        searchForNameTextView.setVisibility(View.VISIBLE);
+        typeOfUnitChipGroup.setSingleSelection(true);
+        searchForNameTextView.setVisibility(View.GONE);
+        addressInputLayout.setVisibility(View.VISIBLE);
+        postTypeChip.setText("Room post");
+        selectTypeofUnitTextView.setText("Select the type of your residential unit");
+    }
+
+    void setupPersonalPostState() {
+        typeOfUnitChipGroup.setSingleSelection(false);
+        searchForNameTextView.setVisibility(View.GONE);
+        addressInputLayout.setVisibility(View.GONE);
+        selectTypeofUnitTextView.setText("Select your preferred unit types");
+        postTypeChip.setText("Roommate post");
+
+    }
+
+    private void setupNextButton() {
+        nextButton.setOnClickListener(v -> {
 
             if (postType.equals(Config.APARTMENT_POST)) {
                 if (checkDataForApartmentPost()) {
-                    String buildingType = getBuildingType();
-                    bundle.putString(Config.BUILDING_TYPE, buildingType);
-                    bundle.putString(Config.BUILDING_NAME, buildingName);
-                    bundle.putString(Config.BUILDING_ADDRESS, buildingAddress);
-                    bundle.putString(Config.LOCALITY, locality);
-                    bundle.putString(Config.SUB_LOCALITY, subLocality);
-                    bundle.putString(Config.DESCRIPTION, descriptionEditText.getText().toString().trim());
-                    bundle.putString(Config.POST_TYPE, postType);
-                    getFragment(new PublishPostPreferencesFragment(), bundle);
+                    getFragment(PublishPostPreferencesFragment.getInstance(
+                            getBuildingType(),
+                            addressInputLayout.getEditText().getText().toString(),
+                            descriptionEditText.getText().toString().trim(),
+                            postType
+                    ));
                 }
             } else if (checkDataForPersonalPost()) {
-                bundle.putStringArrayList(Config.BUILDING_TYPES, getBuildingTypes());
-                bundle.putString(Config.DESCRIPTION, descriptionEditText.getText().toString().trim());
-                bundle.putString(Config.POST_TYPE, postType);
-                bundle.putString(Config.LOCALITY, locality);
-                bundle.putString(Config.SUB_LOCALITY, subLocality);
-                getFragment(new PublishPostPreferencesFragment(), bundle);
+                getFragment(PublishPostPreferencesFragment.getInstance(
+                        getBuildingType(),
+                        null,
+                        descriptionEditText.getText().toString().trim(),
+                        postType
+                ));
             }
 
         });
+    }
 
-
-        // sets focus to the edit text as soon as the page is open
+    private void setupDescriptionEditText() {
         descriptionEditText.requestFocus();
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
             imm.showSoftInput(descriptionEditText, InputMethodManager.SHOW_IMPLICIT);
 
         }
+    }
 
+    private void setupAddressTextField() {
+        if (postType.equals(Config.APARTMENT_POST)) {
+            addressInputLayout.setVisibility(View.VISIBLE);
+        } else {
+            addressInputLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupApartmentTypeChipGroup() {
         typeOfUnitChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
             searchForNameTextView.setVisibility(View.VISIBLE);
             //if it not in single selection mode
@@ -152,33 +174,6 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
 
 
         });
-
-        postTypeChip.setOnClickListener(v -> {
-            PostTypeDialogFragment postTypeDialogFragment = new PostTypeDialogFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(Config.POST_TYPE, postType);
-            postTypeDialogFragment.setArguments(bundle);
-            postTypeDialogFragment.setTargetFragment(this, 0);
-            postTypeDialogFragment.show(getParentFragmentManager(), null);
-        });
-
-    }
-
-    void setApartmentPostState() {
-        apartmentPostLayout.setVisibility(View.VISIBLE);
-        searchForNameTextView.setVisibility(View.VISIBLE);
-        typeOfUnitChipGroup.setSingleSelection(true);
-        searchForNameTextView.setVisibility(View.GONE);
-        postTypeChip.setText("Room post");
-        selectTypeofUnitTextView.setText("Select the type of your residential unit");
-    }
-
-    void setPersonalPostState() {
-        typeOfUnitChipGroup.setSingleSelection(false);
-        searchForNameTextView.setVisibility(View.GONE);
-        selectTypeofUnitTextView.setText("Select your preferred unit types");
-        postTypeChip.setText("Roommate post");
-
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -232,7 +227,6 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         } else {
             selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.jetBlack));
         }
-        //if the type of the unit is town house then there is no need for the building name
         if ((addressInputLayout.getEditText().getText().toString() == null || addressInputLayout.getEditText().getText().toString().isBlank()) && typeOfUnitChipGroup.getCheckedChipId() != R.id.house_type_chip) {
             errors.add("Please add a locality");
             addressInputLayout.setError("Please add a locality");
@@ -280,34 +274,24 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     }
 
 
-    private void getFragment(Fragment fragment, Bundle bundle) {
-        fragment.setArguments(bundle);
-        FragmentManager fm = getActivity().getSupportFragmentManager();
+    private void getFragment(Fragment fragment) {
+        FragmentManager fm = requireActivity().getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.publish_post_container, fragment);
         ft.commit();
     }
 
-    private void getUserImage() {
-        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        if (firebaseUser != null) {
-            rootRef.child(Config.users).child(firebaseUser.getUid()).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    String url = task.getResult().getValue(User.class).getImage();
-                    if (url != null) {
-                        GlideApp.with(getActivity())
-                                .load(url)
-                                .centerCrop()
-                                .circleCrop()
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(userImageView);
-                    }
-
-                }
-            });
+    private void setupUserImage() {
+        var user = new SessionManager(requireContext()).getData();
+        String url = user.getImage();
+        if (url != null) {
+            GlideApp.with(requireActivity())
+                    .load(url)
+                    .centerCrop()
+                    .circleCrop()
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(userImageView);
         }
-
     }
 
 
