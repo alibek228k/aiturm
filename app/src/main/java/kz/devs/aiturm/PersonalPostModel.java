@@ -3,13 +3,6 @@ package kz.devs.aiturm;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.Timestamp;
-import com.google.maps.android.clustering.ClusterItem;
-
 import java.util.ArrayList;
 
 public class PersonalPostModel implements Parcelable {
@@ -18,7 +11,7 @@ public class PersonalPostModel implements Parcelable {
     private ArrayList<String> buildingTypes;
     private int price;
     private String preferences, postID;
-    private Timestamp timeStamp;
+    private long timeStamp;
 
     public PersonalPostModel() {
     }
@@ -35,7 +28,7 @@ public class PersonalPostModel implements Parcelable {
         price = in.readInt();
         preferences = in.readString();
         postID = in.readString();
-        timeStamp = in.readParcelable(Timestamp.class.getClassLoader());
+        timeStamp = in.readLong();
     }
 
     public static final Creator<PersonalPostModel> CREATOR = new Creator<PersonalPostModel>() {
@@ -68,7 +61,7 @@ public class PersonalPostModel implements Parcelable {
         this.preferences = preferences;
     }
 
-    public Timestamp getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 
@@ -160,6 +153,6 @@ public class PersonalPostModel implements Parcelable {
         dest.writeInt(price);
         dest.writeString(preferences);
         dest.writeString(postID);
-        dest.writeParcelable(timeStamp, flags);
+        dest.writeLong(timeStamp);
     }
 }

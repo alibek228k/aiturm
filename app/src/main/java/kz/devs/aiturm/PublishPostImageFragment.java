@@ -32,12 +32,13 @@ import com.android.volley.toolbox.Volley;
 import com.example.shroomies.R;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.net.HttpHeaders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.karumi.dexter.Dexter;
@@ -60,12 +61,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
 
 public class PublishPostImageFragment extends Fragment {
     private static final int PICK_IMAGE_MULTIPLE = 1;
     public static final int NUMBER_OF_IMAGES_ALLOWED = 5;
-    private View v;
     private ViewPager viewPager;
     private DotsIndicator dotsIndicator;
     private ImageButton deleteImageButton;
@@ -80,14 +81,10 @@ public class PublishPostImageFragment extends Fragment {
     private ViewPagerAdapter viewPagerAdapter;
 
     private int currentViewPagerPosition;
-
-    private FirebaseAuth mAuth;
-    private RequestQueue requestQueue;
-
-    private LatLng latLng;
-    private String locality, subLocality, description, buildingAddress, buildingName, buildingType, preferences;
+    private String description, buildingAddress, buildingType, preferences;
     private int budget, numberOfRoomMates;
-//    private boolean male,female,nonSmoking,petFriendly;
+
+    private CollectionReference dataBase;
 
     public static PublishPostImageFragment getInstance(
             String preferences,
@@ -120,8 +117,7 @@ public class PublishPostImageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
-        requestQueue = Volley.newRequestQueue(requireActivity());
+        dataBase = FirebaseFirestore.getInstance().collection(Config.APARTMENT_POST);
         return inflater.inflate(R.layout.fragment_publish_post_image, container, false);
     }
     @Override
@@ -137,21 +133,15 @@ public class PublishPostImageFragment extends Fragment {
         addMoreImagesButton = view.findViewById(R.id.add_more_images_button);
         rootLayout = view.findViewById(R.id.root_layout);
 
-        if (this.getArguments() == null) displayErrorAlert();
-        Bundle bundle = this.getArguments();
+        Bundle bundle = requireArguments();
         preferences = bundle.getString(Config.PREFERENCE);
-        latLng = bundle.getParcelable(Config.SELECTED_LAT_LNG);
-        locality = bundle.getString(Config.LOCALITY);
-        subLocality = bundle.getString(Config.SUB_LOCALITY);
         description = bundle.getString(Config.DESCRIPTION);
         budget = bundle.getInt(Config.BUDGET);
         numberOfRoomMates = bundle.getInt(Config.NUMBER_OF_ROOMMATES);
-        buildingName = bundle.getString(Config.BUILDING_NAME);
         buildingAddress = bundle.getString(Config.BUILDING_ADDRESS);
         buildingType = bundle.getString(Config.BUILDING_TYPE);
 
         imageUris = new ArrayList<>();
-//        Log.d("prefs" , preferences.toString());
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -160,7 +150,6 @@ public class PublishPostImageFragment extends Fragment {
 
             @Override
             public void onPageSelected(int position) {
-                //set the index of the current image
                 currentViewPagerPosition = position;
             }
 
@@ -175,7 +164,7 @@ public class PublishPostImageFragment extends Fragment {
             if (!imageUris.isEmpty()) {
                 postImagesAddToDatabase(imageUris);
             } else {
-                new CustomToast((PublishPostActivity) getActivity(), "Please add an image of your place").showCustomToast();
+                new CustomToast((PublishPostActivity) getActivity(), getString(R.string.add_image_of_your_place)).showCustomToast();
             }
         });
     }
@@ -222,11 +211,8 @@ public class PublishPostImageFragment extends Fragment {
 
         getActivity();
         if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_MULTIPLE) {
-            // if more than one image is selected
             if (data.getClipData() != null) {
                 int count = data.getClipData().getItemCount(); //evaluate the count before the for loop
-                // get the remaining amount of space left from the pictures that have already been
-                //uploaded if any exist
                 Snackbar.make(rootLayout, "space is  " + spaceAvailable, Snackbar.LENGTH_SHORT).show();
 
                 for (int i = 0; i < count; i++) {
@@ -239,12 +225,9 @@ public class PublishPostImageFragment extends Fragment {
                     }
                 }
             }
-            // if one image is selected
             else if (data.getData() != null) {
                 selectedImageUri = data.getData();
-                //check if the selected uri already exists in tge list
                 for (Uri uri : imageUris) {
-                    //if duplicate found break
                     if (data.getData().equals(uri)) {
                         duplicateFound = true;
                         break;
@@ -269,13 +252,9 @@ public class PublishPostImageFragment extends Fragment {
         }else{
             addMoreImagesButton.setVisibility(View.VISIBLE);
         }
-        //if no duplicate found  store the image
         imageUris.add(newImageUri);
-        //initalize adapter with the list of uri
         viewPagerAdapter = new ViewPagerAdapter(getActivity(), imageUris);
-        // set the view pager to the adapter
         viewPager.setAdapter(viewPagerAdapter);
-        // add the indicator to the view pager and set to update on chage od dataset
         dotsIndicator.setViewPager(viewPager);
         viewPager.getAdapter().registerDataSetObserver(dotsIndicator.getDataSetObserver());
     }
@@ -318,8 +297,6 @@ public class PublishPostImageFragment extends Fragment {
 
     void postImagesAddToDatabase(final List<Uri> imageUri) {
         publishPostButton.setVisibility(View.INVISIBLE);
-        getActivity().onBackPressed();
-        // get the referance of the database
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 
         //create a storage referance
@@ -334,7 +311,6 @@ public class PublishPostImageFragment extends Fragment {
             filePath.child(counter + ".jpg").putFile(uri).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     imageUrls.add(task.getResult().getMetadata().getReference().getPath());
-                    // once all the pictures are added to the Storage add the rest of the posts using the urls to the database
                     if (imageUrls.size() == imageUri.size()) {
                         publishApartmentPost(imageUrls, uniqueId);
                     }
@@ -351,96 +327,42 @@ public class PublishPostImageFragment extends Fragment {
 
 
     private String getUniqueName() {
-        //create a unique id for the post by combining the date with uuid
-        //get the date first
         Calendar calendarDate = Calendar.getInstance();
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
         String saveCurrentDate = currentDate.format(calendarDate.getTime());
 
-        //get the time in hours and minutes
         Calendar calendarTime = Calendar.getInstance();
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss.SSS");
         String saveCurrentTime = currentTime.format(calendarTime.getTime());
 
-        //add the two string together
 
-        return mAuth.getUid() + saveCurrentDate + saveCurrentTime;
+        return new SessionManager(requireContext()).getData().getUserID() + saveCurrentDate + saveCurrentTime;
     }
 
     void publishApartmentPost(List<String> imageUris, String imageFolderPath) {
 
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String token = task.getResult().getToken();
-                JSONObject jsonObject = new JSONObject();
-                JSONObject data = new JSONObject();
-                JSONObject postDetails = new JSONObject();
-                JSONArray images = new JSONArray(imageUris);
-                try {
-                    String hash = GeoFireUtils.getGeoHashForLocation(new GeoLocation(latLng.latitude, latLng.longitude));
-                    ArrayList<String> buildingAddressForQuery = new ArrayList(Arrays.asList(buildingAddress.trim().split("[?U\\W]")));
-                    if (buildingName != null) {
-                        ArrayList<String> buildingNameForQuery = new ArrayList(Arrays.asList(buildingName.trim().split("[?U\\W]")));
-                        buildingAddressForQuery.addAll(buildingNameForQuery);
-                    }
-                    //remove null and empty strings
-                    buildingAddressForQuery.removeIf(item -> item == null || "".equals(item));
-                    //create a set to remove duplicate strings
-                    Set<String> set = new HashSet<>(buildingAddressForQuery);
-                    List<String> filteredList = new ArrayList<>(set);
-                    //convert strings to lower case
-                    filteredList.replaceAll(String::toLowerCase);
-                    postDetails.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
-                    postDetails.put(Config.DESCRIPTION, description);
-                    postDetails.put(Config.userID, firebaseUser.getUid());
-                    postDetails.put(Config.PRICE, budget);
-                    postDetails.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
-                    postDetails.put(Config.LATITUDE, latLng.latitude);
-                    postDetails.put(Config.LONGITUDE, latLng.longitude);
-                    postDetails.put(Config.PREFERENCE, preferences);
-                    postDetails.put(Config.IMAGE_URL, images);
-                    postDetails.put(Config.LOCALITY, locality);
-                    postDetails.put(Config.SUB_LOCALITY, subLocality);
-                    postDetails.put(Config.TIME_STAMP, "");
-                    postDetails.put(Config.GEO_HASH, hash);
-                    postDetails.put(Config.BUILDING_NAME, buildingName);
-                    postDetails.put(Config.BUILDING_ADDRESS, new JSONArray(filteredList));
-                    postDetails.put(Config.BUILDING_TYPE, buildingType);
-                    jsonObject.put(Config.POST_DETAILS, postDetails);
-                    jsonObject.put(Config.POST_TYPE, Config.APARTMENT_POST);
-                    data.put(Config.data, jsonObject);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_PUBLISH_POST, data, response -> {
-                    try {
-                        boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
-                        String message = response.getJSONObject(Config.result).getString(Config.message);
-                        if (success) {
-                            showCustomToast(message);
-                        }
+        var firebaseUser = new SessionManager(requireContext()).getData();
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }, error -> showCustomToast("An error occurred while publishing your post")) {
-                    @Override
-                    public Map<String, String> getHeaders() {
-                        Map<String, String> params = new HashMap<>();
-                        params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                        params.put(HttpHeaders.AUTHORIZATION, "Bearer " + token);
-                        return params;
-                    }
-                };
-                requestQueue.add(jsonObjectRequest);
-            } else {
-                new CustomToast((PublishPostActivity) getActivity(), "An error occurred while publishing your post").showCustomToast();
-            }
+        Map<String, Object> apartmentPost = new HashMap<>();
+        apartmentPost.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
+        apartmentPost.put(Config.DESCRIPTION, description);
+        apartmentPost.put(Config.userID, firebaseUser.getUserID());
+        apartmentPost.put(Config.PRICE, budget);
+        apartmentPost.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
+        apartmentPost.put(Config.PREFERENCE, preferences);
+        apartmentPost.put(Config.IMAGE_URL, imageUris);
+        apartmentPost.put(Config.TIME_STAMP, System.currentTimeMillis());
+        apartmentPost.put(Config.BUILDING_ADDRESS, buildingAddress);
+        apartmentPost.put(Config.BUILDING_TYPE, buildingType);
+
+        requireActivity().onBackPressed();
+
+        dataBase.add(apartmentPost).addOnSuccessListener(documentReference -> {
+            showCustomToast(requireActivity().getString(R.string.post_success));
         }).addOnFailureListener(e -> {
-//                todo when token is null
+            e.printStackTrace();
+            showCustomToast(requireActivity().getString(R.string.post_failed));
         });
-
     }
 
 
@@ -465,18 +387,5 @@ public class PublishPostImageFragment extends Fragment {
             toast.show();
         });
 
-    }
-
-    private void displayErrorAlert() {
-        new AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.attention))
-                .setMessage(getString(R.string.error_occurred_with_post_creating))
-                .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
-                    dialogInterface.dismiss();
-                })
-                .setOnDismissListener(dialogInterface -> {
-                    requireActivity().onBackPressed();
-                }).create()
-                .show();
     }
 }

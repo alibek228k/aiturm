@@ -19,8 +19,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.Volley;
 import com.example.shroomies.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -45,7 +43,6 @@ public class PublishPostPreferencesFragment extends Fragment {
     ArrayList<String> buildingTypes;
     private CheckBox maleCB, femaleCB, smokingCB, petCB, alcoholCB;
     private CollectionReference dataBase;
-    private RequestQueue requestQueue;
     private AppCompatActivity appCompatActivity;
 
     public static Fragment getInstance(
@@ -77,7 +74,6 @@ public class PublishPostPreferencesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         dataBase = FirebaseFirestore.getInstance().collection(Config.PERSONAL_POST);
-        requestQueue = Volley.newRequestQueue(requireActivity());
         return inflater.inflate(R.layout.fragment_publish_post_preferances, container, false);
     }
 

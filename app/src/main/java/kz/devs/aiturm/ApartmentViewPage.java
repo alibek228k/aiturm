@@ -154,10 +154,10 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
                     getPostOwnerDetails(firebaseUser.getUid(), apartment.getUserID());
                 }
                 //format and set date
-                if (apartment.getTimeStamp() != null) {
-                    Timestamp timestamp = apartment.getTimeStamp();
-                    Date formattedDate = timestamp.toDate();
-                    SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                if (apartment.getTimeStamp() == -1) {
+                    long timestamp = apartment.getTimeStamp();
+                    Date formattedDate = new Date(timestamp);
+                    SimpleDateFormat sfd = new SimpleDateFormat("HH:mm, dd-MM-yyyy", Locale.getDefault());
                     date.setText(sfd.format(formattedDate));
                 }
 

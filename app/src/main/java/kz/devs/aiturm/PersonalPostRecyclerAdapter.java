@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -19,10 +20,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.example.shroomies.R;
 import com.google.android.material.chip.Chip;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,9 +79,9 @@ public class PersonalPostRecyclerAdapter extends RecyclerView.Adapter<PersonalPo
             holder.userBudget.setText("RM" + personalPostModelList.get(position).getPrice());
         }
 
-        if (personalPostModelList.get(position).getTimeStamp() != null) {
-            Timestamp timestamp = personalPostModelList.get(position).getTimeStamp();
-            Date formattedDate = timestamp.toDate();
+        if (personalPostModelList.get(position).getTimeStamp() != -1) {
+            long datetime = personalPostModelList.get(position).getTimeStamp();
+            Date formattedDate = new Date(datetime);
             SimpleDateFormat sfd = new SimpleDateFormat("dd MMM", Locale.getDefault());
             holder.datePosted.setText(sfd.format(formattedDate));
         }
@@ -266,19 +267,19 @@ public class PersonalPostRecyclerAdapter extends RecyclerView.Adapter<PersonalPo
 //                intent.putExtra("USERID", postOwnerID);
 //                context.startActivity(intent);
 //            });
-//            deletPostButton.setOnClickListener(v -> deletPersonalPost());
+            deletePostButton.setOnClickListener(v -> deletPersonalPost());
 //            favButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
 //                SharedPreferences prefs = context.getSharedPreferences(userId, Context.MODE_PRIVATE);
 //                SharedPreferences.Editor edit = prefs.edit();
-//                if(isChecked) {
+//                if (isChecked) {
 //                    favoriteSet.add(personalPostModelList.get(getAdapterPosition()).getPostID());
 //                    edit.putStringSet(PERSONAL_FAVOURITES, favoriteSet);
 //                    edit.apply();
-//                }else{
+//                } else {
 //                    favoriteSet.remove(personalPostModelList.get(getAdapterPosition()).getPostID());
 //                    edit.putStringSet(PERSONAL_FAVOURITES, favoriteSet);
 //                    edit.commit();
-//                    if(isFromfav){
+//                    if (isFromfav) {
 //                        personalPostModelList.remove(getAdapterPosition());
 //                        notifyItemRemoved(getAdapterPosition());
 //                    }
@@ -287,20 +288,20 @@ public class PersonalPostRecyclerAdapter extends RecyclerView.Adapter<PersonalPo
         }
 
 
-//        private void deletPersonalPost() {
-//            FirebaseFirestore firestore=FirebaseFirestore.getInstance();
-//            firestore.collection("postPersonal")
-//                .document(personalPostModelList.get(getAdapterPosition()).getId()).
-//                delete()
-//                .addOnSuccessListener(aVoid -> {
-//                    personalPostModelList.remove(getAdapterPosition());
-//                    notifyItemRemoved(getAdapterPosition());
-//                }).addOnFailureListener(e -> {
-//                    //TODO display a dialog
-//                    Toast.makeText(context,"Something went wrong!",Toast.LENGTH_SHORT).show();
-//                });
-//
-//        }
+        private void deletPersonalPost() {
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            firestore.collection("postPersonal")
+                    .document(personalPostModelList.get(getAdapterPosition()).getId()).
+                    delete()
+                    .addOnSuccessListener(aVoid -> {
+                        personalPostModelList.remove(getAdapterPosition());
+                        notifyItemRemoved(getAdapterPosition());
+                    }).addOnFailureListener(e -> {
+                        //TODO display a dialog
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                    });
+
+        }
     }
 
 

@@ -13,9 +13,8 @@ import com.google.maps.android.clustering.ClusterItem;
 import java.util.List;
 
 public class Apartment implements Parcelable, ClusterItem {
-    private String userID, apartmentID, description, id, locality, subLocality, buildingName, buildingType;
-    private List<String> buildingAddress;
-    private Timestamp timeStamp;
+    private String userID, apartmentID, description, id, locality, subLocality, buildingName, buildingType, buildingAddress;
+    private long timeStamp;
 
     private String preferences;
     private int numberOfRoommates;
@@ -33,8 +32,8 @@ public class Apartment implements Parcelable, ClusterItem {
         subLocality = in.readString();
         buildingName = in.readString();
         buildingType = in.readString();
-        buildingAddress = in.createStringArrayList();
-        timeStamp = in.readParcelable(Timestamp.class.getClassLoader());
+        buildingAddress = in.readString();
+        timeStamp = in.readLong();
         preferences = in.readString();
         numberOfRoommates = in.readInt();
         latitude = in.readDouble();
@@ -53,8 +52,8 @@ public class Apartment implements Parcelable, ClusterItem {
         dest.writeString(subLocality);
         dest.writeString(buildingName);
         dest.writeString(buildingType);
-        dest.writeStringList(buildingAddress);
-        dest.writeParcelable(timeStamp, flags);
+        dest.writeString(buildingAddress);
+        dest.writeLong(timeStamp);
         dest.writeString(preferences);
         dest.writeInt(numberOfRoommates);
         dest.writeDouble(latitude);
@@ -84,7 +83,7 @@ public class Apartment implements Parcelable, ClusterItem {
         return subLocality;
     }
 
-    public List<String> getBuildingAddress() {
+    public String getBuildingAddress() {
         return buildingAddress;
     }
 
@@ -101,7 +100,7 @@ public class Apartment implements Parcelable, ClusterItem {
     }
 
 
-    public Timestamp getTimeStamp() {
+    public long getTimeStamp() {
         return timeStamp;
     }
 
