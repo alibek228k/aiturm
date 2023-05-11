@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/box_inset_layout_padding"
-    tools:context="kz.devs.aiturm.PublishPostActivity"
+    tools:context="kz.devs.aiturm.presentaiton.post.PublishPostActivity"
     >
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/publish_post_tool_bar"
@@ -23,9 +23,7 @@
         android:id="@+id/publish_post_container"
         android:layout_width="match_parent"
         android:layout_below="@+id/publish_post_tool_bar"
-        android:layout_height="match_parent"
-
-      >
+        android:layout_height="match_parent">
 
 
 

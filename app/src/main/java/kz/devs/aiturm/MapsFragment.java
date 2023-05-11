@@ -62,6 +62,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
+
 public class MapsFragment extends DialogFragment {
     private static final int AUTOCOMPLETE_REQUEST_CODE = 1;
     private GoogleMap mMap;

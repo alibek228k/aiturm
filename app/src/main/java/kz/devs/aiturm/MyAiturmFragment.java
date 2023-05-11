@@ -371,7 +371,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 
         });
         memberButton.setOnClickListener(v -> {
-            if(apartment!=null) {
+//            if(apartment!=null) {
 
                 MembersFragment membersFragment = new MembersFragment();
                 Bundle bundle1 = new Bundle();
@@ -383,7 +383,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.replace(R.id.my_shroomies_container, membersFragment);
                 ft.commit();
-            }
+//            }
         });
         logButton.setOnClickListener(view12 -> {
             slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
@@ -428,10 +428,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                     if (apartmentID != null){
                         getApartmentDetails(token, apartmentID);
                         getUnseenMessageNo(apartmentID,firebaseUser.getUid());
-                    }else{
-                            
                     }
-
                 }else{
                     String title = "Authentication error";
                     String message = "We encountered a problem while authenticating your account";

@@ -71,6 +71,7 @@
     <string name="username">Username</string>
     <string name="gender_select_male">Male</string>
     <string name="gender_select_female">Female</string>
+    <string name="add_address">Enter your address</string>
 
 
 </resources>

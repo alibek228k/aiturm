@@ -3,6 +3,7 @@
     <androidx.cardview.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         app:cardCornerRadius="0dp"
         android:elevation="1dp"
         android:layout_marginTop="0.3dp"
@@ -61,7 +62,7 @@
                 app:iconPadding="4dp"
                 app:iconSize="15dp"
                 app:iconTint="@color/jetBlack"
-                />
+                tools:visibility="visible"/>
 
             <ImageButton
                 android:id="@+id/msg_member"
@@ -74,6 +75,7 @@
                 android:src="@drawable/ic_message"
                 android:visibility="visible"
                 android:padding="10dp"
+                tools:visibility="gone"
                />
 
             <ImageButton
@@ -87,6 +89,7 @@
                 android:layout_marginEnd="20dp"
                 android:visibility="visible"
                 android:padding="10dp"
+                tools:visibility="gone"
                 />
 
         </RelativeLayout>

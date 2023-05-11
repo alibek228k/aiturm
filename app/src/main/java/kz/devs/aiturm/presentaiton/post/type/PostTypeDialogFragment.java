@@ -1,4 +1,4 @@
-package kz.devs.aiturm;
+package kz.devs.aiturm.presentaiton.post.type;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,6 +16,9 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.shroomies.R;
 import com.google.android.material.checkbox.MaterialCheckBox;
+
+import kz.devs.aiturm.Config;
+import kz.devs.aiturm.presentaiton.post.PublishPostFragment;
 
 
 public class PostTypeDialogFragment extends DialogFragment {
@@ -100,8 +103,7 @@ public class PostTypeDialogFragment extends DialogFragment {
     }
 
 
-}
-
-interface PostTypeCallback {
-    void onPostTypeChanged(String postType);
+    public interface PostTypeCallback {
+        void onPostTypeChanged(String postType);
+    }
 }

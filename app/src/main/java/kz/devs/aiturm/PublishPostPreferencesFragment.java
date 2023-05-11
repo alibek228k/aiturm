@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
+
 
 public class PublishPostPreferencesFragment extends Fragment {
     private View v;

@@ -44,6 +44,7 @@ import java.util.List;
 
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
 
 public class MainActivity extends AppCompatActivity implements UserCallback {
     private DrawerLayout drawerLayout;

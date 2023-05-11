@@ -79,7 +79,7 @@ public class MapSearchFragment extends Fragment {
     private CollectionReference apartmentPostReference;
     private CollectionReference personalPostReference;
     private ClusterManager<Apartment> apartmentClusterManager;
-    private ClusterManager<PersonalPostModel> personalPostClusterManager;
+//    private ClusterManager<PersonalPostModel> personalPostClusterManager;
     private static GoogleMap mMap;
 
     private LatLng currentLatLng;
@@ -94,8 +94,8 @@ public class MapSearchFragment extends Fragment {
         public void onMapReady(GoogleMap googleMap) {
             mMap = googleMap;
             apartmentClusterManager = new ClusterManager<>(getActivity(), mMap);
-            personalPostClusterManager = new ClusterManager<>(getActivity(), mMap);
-            personalPostClusterManager.setRenderer(new PersonalPostIconRendered(getActivity(), mMap, personalPostClusterManager));
+//            personalPostClusterManager = new ClusterManager<>(getActivity(), mMap);
+//            personalPostClusterManager.setRenderer(new PersonalPostIconRendered(getActivity(), mMap, personalPostClusterManager));
             apartmentClusterManager.setRenderer(new CustomIconRendered(getActivity(), mMap, apartmentClusterManager));
 
             apartmentClusterManager.setOnClusterClickListener(cluster -> {
@@ -113,19 +113,19 @@ public class MapSearchFragment extends Fragment {
                 mapSearchDialog.show(getChildFragmentManager(), null);
                 return true;
             });
-            personalPostClusterManager.setOnClusterClickListener(cluster -> {
-                if (cluster instanceof List) {
-                    personalPosts = (ArrayList<PersonalPostModel>) cluster.getItems();
-                } else {
-                    personalPosts = new ArrayList<>(cluster.getItems());
-                }
-                PersonalPostMapDialogFragment personalPostMapDialogFragment = new PersonalPostMapDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(Config.PERSONAL_POST_LIST, personalPosts);
-                personalPostMapDialogFragment.setArguments(bundle);
-                personalPostMapDialogFragment.show(getChildFragmentManager(), null);
-                return true;
-            });
+//            personalPostClusterManager.setOnClusterClickListener(cluster -> {
+//                if (cluster instanceof List) {
+//                    personalPosts = (ArrayList<PersonalPostModel>) cluster.getItems();
+//                } else {
+//                    personalPosts = new ArrayList<>(cluster.getItems());
+//                }
+//                PersonalPostMapDialogFragment personalPostMapDialogFragment = new PersonalPostMapDialogFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList(Config.PERSONAL_POST_LIST, personalPosts);
+//                personalPostMapDialogFragment.setArguments(bundle);
+//                personalPostMapDialogFragment.show(getChildFragmentManager(), null);
+//                return true;
+//            });
 
             mMap.setOnCameraIdleListener(apartmentClusterManager);
             mMap.setOnMarkerClickListener(apartmentClusterManager);
@@ -138,14 +138,14 @@ public class MapSearchFragment extends Fragment {
                 return true;
 
             });
-            personalPostClusterManager.setOnClusterItemClickListener(item -> {
-                PersonalPostSingleDialogFragment personalPostSingleDialogFragment = new PersonalPostSingleDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelable(Config.PERSONAL_POST, item);
-                personalPostSingleDialogFragment.setArguments(bundle);
-                personalPostSingleDialogFragment.show(getParentFragmentManager(), null);
-                return true;
-            });
+//            personalPostClusterManager.setOnClusterItemClickListener(item -> {
+//                PersonalPostSingleDialogFragment personalPostSingleDialogFragment = new PersonalPostSingleDialogFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelable(Config.PERSONAL_POST, item);
+//                personalPostSingleDialogFragment.setArguments(bundle);
+//                personalPostSingleDialogFragment.show(getParentFragmentManager(), null);
+//                return true;
+//            });
 
             // sets the view map to the proximity of the current location
             setCurrentLatLng();
@@ -211,7 +211,7 @@ public class MapSearchFragment extends Fragment {
         if (loading) {
             loading = false;
             apartmentClusterManager.removeItems(apartmentClusterManager.getAlgorithm().getItems());
-            personalPostClusterManager.removeItems(personalPostClusterManager.getAlgorithm().getItems());
+//            personalPostClusterManager.removeItems(personalPostClusterManager.getAlgorithm().getItems());
             mMap.clear();
 
             final GeoLocation center = new GeoLocation(latLng.latitude, latLng.longitude);
@@ -285,10 +285,10 @@ public class MapSearchFragment extends Fragment {
                 } else {
                     PersonalPostModel personalPostModel = doc.toObject(PersonalPostModel.class);
                     personalPostModel.setPostID(doc.getId());
-                    personalPostClusterManager.addItem(personalPostModel);
-                    mMap.setOnCameraIdleListener(personalPostClusterManager);
-                    mMap.setOnMarkerClickListener(personalPostClusterManager);
-                    personalPostClusterManager.cluster();
+//                    personalPostClusterManager.addItem(personalPostModel);
+//                    mMap.setOnCameraIdleListener(personalPostClusterManager);
+//                    mMap.setOnMarkerClickListener(personalPostClusterManager);
+//                    personalPostClusterManager.cluster();
                 }
 
             }
@@ -424,39 +424,39 @@ class CustomIconRendered extends DefaultClusterRenderer<Apartment> {
 
 }
 
-class PersonalPostIconRendered extends DefaultClusterRenderer<PersonalPostModel> {
-    private final Context context;
-    GoogleMap mMap;
-
-    public PersonalPostIconRendered(Context context, GoogleMap map,
-                                    ClusterManager<PersonalPostModel> clusterManager) {
-        super(context, map, clusterManager);
-        this.context = context;
-        mMap = map;
-    }
-
-    @Override
-    protected int getColor(int clusterSize) {
-        return context.getColor(R.color.LogoYellow);
-    }
-
-
-    @Override
-    protected void onBeforeClusterItemRendered(PersonalPostModel item, MarkerOptions markerOptions) {
-        markerOptions.icon(bitmapDescriptorFromVector(context));
-        markerOptions.title("RM" + (item.getPrice()));
-        super.onBeforeClusterItemRendered(item, markerOptions);
-    }
-
-    private BitmapDescriptor bitmapDescriptorFromVector(Context context) {
-        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_person);
-        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
-        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        vectorDrawable.draw(canvas);
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-    }
-
-
-}
+//class PersonalPostIconRendered extends DefaultClusterRenderer<PersonalPostModel> {
+//    private final Context context;
+//    GoogleMap mMap;
+//
+//    public PersonalPostIconRendered(Context context, GoogleMap map,
+//                                    ClusterManager<PersonalPostModel> clusterManager) {
+//        super(context, map, clusterManager);
+//        this.context = context;
+//        mMap = map;
+//    }
+//
+//    @Override
+//    protected int getColor(int clusterSize) {
+//        return context.getColor(R.color.LogoYellow);
+//    }
+//
+//
+//    @Override
+//    protected void onBeforeClusterItemRendered(PersonalPostModel item, MarkerOptions markerOptions) {
+//        markerOptions.icon(bitmapDescriptorFromVector(context));
+//        markerOptions.title("RM" + (item.getPrice()));
+//        super.onBeforeClusterItemRendered(item, markerOptions);
+//    }
+//
+//    private BitmapDescriptor bitmapDescriptorFromVector(Context context) {
+//        Drawable vectorDrawable = ContextCompat.getDrawable(context, R.drawable.ic_person);
+//        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+//        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//        vectorDrawable.draw(canvas);
+//        return BitmapDescriptorFactory.fromBitmap(bitmap);
+//    }
+//
+//
+//}
 

@@ -1,4 +1,4 @@
-package kz.devs.aiturm;
+package kz.devs.aiturm.presentaiton.post;
 
 import android.os.Bundle;
 

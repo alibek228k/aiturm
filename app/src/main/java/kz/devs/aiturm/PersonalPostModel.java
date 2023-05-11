@@ -12,12 +12,11 @@ import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.ArrayList;
 
-public class PersonalPostModel implements ClusterItem, Parcelable {
+public class PersonalPostModel implements Parcelable {
 
     private String date, description, userID, geoHash, locality, subLocality;
     private ArrayList<String> buildingTypes;
     private int price;
-    private double latitude, longitude;
     private String preferences, postID;
     private Timestamp timeStamp;
 
@@ -34,8 +33,6 @@ public class PersonalPostModel implements ClusterItem, Parcelable {
         subLocality = in.readString();
         buildingTypes = in.createStringArrayList();
         price = in.readInt();
-        latitude = in.readDouble();
-        longitude = in.readDouble();
         preferences = in.readString();
         postID = in.readString();
         timeStamp = in.readParcelable(Timestamp.class.getClassLoader());
@@ -68,8 +65,6 @@ public class PersonalPostModel implements ClusterItem, Parcelable {
         this.userID = userID;
         this.postID = id;
         this.price = price;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.preferences = preferences;
     }
 
@@ -137,49 +132,12 @@ public class PersonalPostModel implements ClusterItem, Parcelable {
         this.price = price;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
     public String getPreferences() {
         return preferences;
     }
 
     public void setPreferences(String preferences) {
         this.preferences = preferences;
-    }
-
-    /**
-     * The position of this marker. This must always return the same value.
-     */
-    @NonNull
-    @Override
-    public LatLng getPosition() {
-        return new LatLng(latitude, longitude);
-    }
-
-    @Nullable
-    @Override
-    public String getTitle() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public String getSnippet() {
-        return null;
     }
 
 
@@ -200,8 +158,6 @@ public class PersonalPostModel implements ClusterItem, Parcelable {
         dest.writeString(subLocality);
         dest.writeStringList(buildingTypes);
         dest.writeInt(price);
-        dest.writeDouble(latitude);
-        dest.writeDouble(longitude);
         dest.writeString(preferences);
         dest.writeString(postID);
         dest.writeParcelable(timeStamp, flags);

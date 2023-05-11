@@ -1,4 +1,4 @@
-package kz.devs.aiturm;
+package kz.devs.aiturm.presentaiton.post;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -26,6 +26,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -33,8 +34,15 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
+import kz.devs.aiturm.Config;
+import kz.devs.aiturm.GlideApp;
+import kz.devs.aiturm.MapsFragment;
+import kz.devs.aiturm.presentaiton.post.type.PostTypeDialogFragment;
+import kz.devs.aiturm.PublishPostPreferencesFragment;
+import kz.devs.aiturm.User;
 
-public class PublishPostFragment extends Fragment implements MapsFragment.OnLocationSet, PostTypeCallback {
+
+public class PublishPostFragment extends Fragment implements PostTypeDialogFragment.PostTypeCallback {
     public static final int MAPS_FRAGMENT_REQUEST_CODE = 2;
 
     private MaterialButton nextButton;
@@ -42,12 +50,12 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
     private TextView searchForNameTextView, selectTypeofUnitTextView;
     private ImageView userImageView;
     private ChipGroup typeOfUnitChipGroup;
-    private Chip locationChip, postTypeChip;
+    private Chip postTypeChip;
     private EditText descriptionEditText;
     private RelativeLayout apartmentPostLayout, mainLayout;
+    private TextInputLayout addressInputLayout;
 
     private String buildingAddress, locality, subLocality, buildingName;
-    private LatLng selectedLatLng;
     private String postType;
     private FirebaseAuth mAuth;
 
@@ -58,35 +66,6 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
             setApartmentPostState();
         } else {
             setPersonalPostState();
-        }
-    }
-
-
-    // override the interface method "sendNewLocation" to get the location
-    public void OnLocationForApartmentSet(LatLng selectedLatLng, String buildingName, String buildingAddress) {
-        this.selectedLatLng = selectedLatLng;
-        this.buildingName = buildingName;
-        this.buildingAddress = buildingAddress;
-        locationChip.setText(buildingName);
-
-    }
-
-    @Override
-    public void OnLocationForTownHouseSet(LatLng selectedLatLng, String subLocality, String locality, String buildingAddress) {
-        this.selectedLatLng = selectedLatLng;
-        this.locality = locality;
-        this.subLocality = subLocality;
-        this.buildingAddress = buildingAddress;
-        locationChip.setText(subLocality + ", " + subLocality);
-    }
-
-    @Override
-    public void OnLocationForPersonalPostSet(LatLng selectedLatLng, String subLocality, String locality) {
-        this.locality = locality;
-        this.subLocality = locality;
-        this.selectedLatLng = selectedLatLng;
-        if (locality != null && subLocality != null) {
-            locationChip.setText(subLocality + ", " + subLocality);
         }
     }
 
@@ -102,7 +81,7 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        locationChip = v.findViewById(R.id.location_chip_view);
+        addressInputLayout = v.findViewById(R.id.address_input_text);
         typeOfUnitChipGroup = v.findViewById(R.id.type_of_unit_chip_group);
         searchForNameTextView = v.findViewById(R.id.search_for_name_text_view);
         apartmentPostLayout = v.findViewById(R.id.apartment_post_layout);
@@ -120,7 +99,6 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
 
         buildingName = "Arman kala";
         buildingAddress = "Turkestan 30";
-        locationChip.setText(buildingName);
 
         getUserImage();
         nextButton.setOnClickListener(v -> {
@@ -134,7 +112,6 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
                     bundle.putString(Config.BUILDING_ADDRESS, buildingAddress);
                     bundle.putString(Config.LOCALITY, locality);
                     bundle.putString(Config.SUB_LOCALITY, subLocality);
-                    bundle.putParcelable(Config.SELECTED_LAT_LNG, selectedLatLng);
                     bundle.putString(Config.DESCRIPTION, descriptionEditText.getText().toString().trim());
                     bundle.putString(Config.POST_TYPE, postType);
                     getFragment(new PublishPostPreferencesFragment(), bundle);
@@ -145,7 +122,6 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
                 bundle.putString(Config.POST_TYPE, postType);
                 bundle.putString(Config.LOCALITY, locality);
                 bundle.putString(Config.SUB_LOCALITY, subLocality);
-                bundle.putParcelable(Config.SELECTED_LAT_LNG, selectedLatLng);
                 getFragment(new PublishPostPreferencesFragment(), bundle);
             }
 
@@ -159,32 +135,6 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
             imm.showSoftInput(descriptionEditText, InputMethodManager.SHOW_IMPLICIT);
 
         }
-
-        locationChip.setOnClickListener(v -> {
-            if (postType.equals(Config.APARTMENT_POST)) {
-                if (typeOfUnitChipGroup.getCheckedChipId() == View.NO_ID) {
-                    selectTypeofUnitTextView.setTextColor(getActivity().getColor(R.color.canceRed));
-                    Snackbar.make(mainLayout, "Please select the type of your unit first", Snackbar.LENGTH_LONG);
-                } else {
-                    selectTypeofUnitTextView.setTextColor(getActivity().getColor(R.color.jetBlack));
-                    MapsFragment mapsFragment = new MapsFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(Config.POST_TYPE, postType);
-                    bundle.putBoolean(Config.TYPE_HOUSE, typeOfUnitChipGroup.getCheckedChipId() == R.id.house_type_chip);
-                    mapsFragment.setArguments(bundle);
-                    mapsFragment.setTargetFragment(PublishPostFragment.this, MAPS_FRAGMENT_REQUEST_CODE);
-                    mapsFragment.show(getParentFragmentManager(), null);
-                }
-            } else {
-                MapsFragment mapsFragment = new MapsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString(Config.POST_TYPE, postType);
-                mapsFragment.setArguments(bundle);
-                mapsFragment.setTargetFragment(PublishPostFragment.this, MAPS_FRAGMENT_REQUEST_CODE);
-                mapsFragment.show(getParentFragmentManager(), null);
-            }
-
-        });
 
         typeOfUnitChipGroup.setOnCheckedChangeListener((group, checkedId) -> {
             searchForNameTextView.setVisibility(View.VISIBLE);
@@ -202,7 +152,6 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
 
 
         });
-
 
         postTypeChip.setOnClickListener(v -> {
             PostTypeDialogFragment postTypeDialogFragment = new PostTypeDialogFragment();
@@ -284,20 +233,13 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
             selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.jetBlack));
         }
         //if the type of the unit is town house then there is no need for the building name
-        if (buildingName == null && typeOfUnitChipGroup.getCheckedChipId() != R.id.house_type_chip) {
-            errors.add("Please search for the name of the building");
-            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.canceRed));
+        if ((addressInputLayout.getEditText().getText().toString() == null || addressInputLayout.getEditText().getText().toString().isBlank()) && typeOfUnitChipGroup.getCheckedChipId() != R.id.house_type_chip) {
+            errors.add("Please add a locality");
+            addressInputLayout.setError("Please add a locality");
             status = false;
         } else {
-            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.LogoYellow));
+            addressInputLayout.setError(null);
         }
-//        if (selectedLatLng == null) {
-//            errors.add("Please enter a valid location");
-//            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.canceRed));
-//            status = false;
-//        } else {
-//            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.LogoYellow));
-//        }
         if (descriptionEditText.getText().toString().trim().isEmpty()) {
             errors.add("Please enter a description");
             descriptionEditText.setHintTextColor(getActivity().getColor(R.color.canceRed));
@@ -323,12 +265,12 @@ public class PublishPostFragment extends Fragment implements MapsFragment.OnLoca
         } else {
             descriptionEditText.setHintTextColor(getActivity().getColor(R.color.lightGrey));
         }
-        if (selectedLatLng == null || locality == null || subLocality == null) {
+        if (addressInputLayout.getEditText().getText().toString() == null || addressInputLayout.getEditText().getText().toString().isBlank()) {
             errors.add("Please add a locality");
-            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.canceRed));
+            addressInputLayout.setError("Please add a locality");
             status = false;
         } else {
-            locationChip.setChipStrokeColor(getActivity().getColorStateList(R.color.LogoYellow));
+            addressInputLayout.setError(null);
         }
         if (!errors.isEmpty()) {
             Snackbar.make(mainLayout, errors.get(0), Snackbar.LENGTH_LONG).show();

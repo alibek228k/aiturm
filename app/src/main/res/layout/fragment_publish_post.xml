@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
-    tools:context="kz.devs.aiturm.PublishPostFragment">
+    tools:context="kz.devs.aiturm.presentaiton.post.PublishPostFragment">
 
     <com.google.android.material.chip.Chip
         android:id="@+id/post_type_chip"
@@ -52,20 +52,22 @@
                 android:id="@+id/post_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@android:color/transparent"
-                android:hint="talk about yourself"
                 android:layout_alignTop="@id/user_image_publish_post"
-                android:padding="5dp"
-                android:focusable="true"
-                android:maxLength="200"
-                android:textSize="14sp"
-
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginBottom="5dp"
                 android:layout_toEndOf="@id/user_image_publish_post"
+                android:background="@android:color/transparent"
+
+                android:focusable="true"
                 android:focusedByDefault="true"
 
 
-                />
+                android:hint="talk about yourself"
+                android:maxLength="200"
+                android:padding="5dp"
+                android:textSize="14sp" />
 
             <RelativeLayout
                 android:id="@+id/apartment_post_layout"
@@ -182,21 +184,41 @@
                     android:layout_below="@id/search_for_name_text_view"
                     android:background="@color/Alabaster" />
 
-                <com.google.android.material.chip.Chip
-                    android:id="@+id/location_chip_view"
-                    android:layout_width="wrap_content"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/address_input_text"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/divider"
-                    android:layout_marginStart="5dp"
+                    android:layout_margin="10dp"
+                    android:layout_marginTop="10dp"
+                    app:boxBackgroundMode="filled"
+                    app:boxStrokeColor="@color/LogoYellow"
+                    app:boxStrokeWidth="2dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginTop="5dp"
-                    android:minHeight="0dp"
-                    android:padding="0dp"
-                    android:text="Add location"
-                    app:chipIcon="@drawable/ic_location_icon_25dp"
-                    app:chipBackgroundColor="@color/white"
-                    app:chipStrokeWidth="1dp"
-                    app:chipStrokeColor="@color/LogoYellow" />
+                    app:errorEnabled="true"
+                    android:paddingBottom="10dp"
+                    app:hintEnabled="false"
+                    app:hintAnimationEnabled="false"
+                    app:expandedHintEnabled="false"
+                    app:textColor="@color/jetBlack"
+                    app:endIconDrawable="@drawable/ic_close_icon"
+                    app:endIconMode="custom"
+                    app:counterTextColor="@color/LogoYellow"
+                    app:endIconTint="@color/LogoYellow"
+                    android:layout_below="@id/divider">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/enter_new_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:inputType="textEmailSubject"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:hint="@string/add_address"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/jetBlack"
+                        android:enabled="true" />
+                </com.google.android.material.textfield.TextInputLayout>
 
 
             </RelativeLayout>

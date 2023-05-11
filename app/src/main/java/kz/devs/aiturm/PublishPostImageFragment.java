@@ -59,6 +59,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
+
 public class PublishPostImageFragment extends Fragment {
     private static final int PICK_IMAGE_MULTIPLE = 1;
     public static final int NUMBER_OF_IMAGES_ALLOWED = 5;

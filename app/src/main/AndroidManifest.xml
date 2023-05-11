@@ -54,7 +54,7 @@
             android:name="kz.devs.aiturm.FavouritesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="kz.devs.aiturm.PublishPostActivity"
+            android:name="kz.devs.aiturm.presentaiton.post.PublishPostActivity"
             android:parentActivityName="kz.devs.aiturm.MainActivity"
             android:screenOrientation="portrait" />
         <activity

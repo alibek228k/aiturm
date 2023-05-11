@@ -10,8 +10,7 @@
         android:background="@color/LogoYellow"
         android:gravity="center"
         app:contentInsetStart="0dp"
-        app:contentInsetStartWithNavigation="0dp"
-        >
+        app:contentInsetStartWithNavigation="0dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
@@ -23,9 +22,8 @@
             app:cardCornerRadius="50dp"
             android:clickable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:elevation="0dp"
+            android:elevation="0dp">
 
-            >
         <ImageButton
             android:id="@+id/myshroomies_toolbar_logo"
             android:layout_width="wrap_content"
@@ -68,8 +66,7 @@
             app:lottie_loop="true"
             app:lottie_rawRes="@raw/loading_jetblack"
             android:layout_gravity="center"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
     </androidx.appcompat.widget.Toolbar>
 

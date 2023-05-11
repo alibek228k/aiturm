@@ -41,6 +41,7 @@
             android:textSize="14sp"
             android:textStyle="bold"/>
     </RelativeLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/change_email_input_text"
         android:layout_width="match_parent"
@@ -62,8 +63,7 @@
         app:endIconMode="custom"
         app:counterTextColor="@color/LogoYellow"
         app:endIconTint="@color/LogoYellow"
-        android:layout_below="@+id/change_email_upper_page"
-        >
+        android:layout_below="@+id/change_email_upper_page">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/enter_new_email"
             android:layout_width="match_parent"
@@ -75,8 +75,7 @@
             android:hint="Email"
             android:textAlignment="textStart"
             android:textColor="@color/jetBlack"
-            android:enabled="true"
-            />
+            android:enabled="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </RelativeLayout>
