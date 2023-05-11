@@ -10,6 +10,9 @@
     This string is used for square devices and overridden by hello_world in
     values-round/strings.xml for round devices.
     -->
+
+    <string name="ok">OK</string>
+
     <string name="hello_world">Hello Square World!</string>
     <string name="api_key">AIzaSyCF5NRNtEAcNX0QAXquDQ68yCYXsLhp2Ao</string>
     <string name="Heading_discover">Discover</string>
@@ -72,6 +75,22 @@
     <string name="gender_select_male">Male</string>
     <string name="gender_select_female">Female</string>
     <string name="add_address">Enter your address</string>
+
+    <string name="room_post">Room post</string>
+    <string name="roommate_post">Roommate post</string>
+    <string name="select_type_residential_unit">Select the type of your residential unit</string>
+    <string name="select_type_preferred_unit">Select your preferred unit types</string>
+
+    <string name="attention">Attention!</string>
+    <string name="error_occurred_with_post_creating">An error occurred while creating the post, please try again later</string>
+
+    <string name="error_room_members_can_not_be_empty">Room members can not be empty!</string>
+    <string name="error_budget_can_not_be_empty">Budget can not be empty!</string>
+    <string name="publish_post">Publish post</string>
+    <string name="post_success">Post published successfully</string>
+    <string name="post_failed">Failed to publish post</string>
+
+
 
 
 </resources>

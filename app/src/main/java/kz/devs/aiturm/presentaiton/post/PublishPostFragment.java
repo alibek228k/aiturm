@@ -39,7 +39,6 @@ import kz.devs.aiturm.presentaiton.post.type.PostTypeDialogFragment;
 public class PublishPostFragment extends Fragment implements PostTypeDialogFragment.PostTypeCallback {
 
     private MaterialButton nextButton;
-    private View v;
     private TextView searchForNameTextView, selectTypeofUnitTextView;
     private ImageView userImageView;
     private ChipGroup typeOfUnitChipGroup;
@@ -49,7 +48,6 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     private TextInputLayout addressInputLayout;
 
     private String postType = Config.APARTMENT_POST;
-    ;
 
     @Override
     public void onPostTypeChanged(String postType) {
@@ -69,16 +67,16 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        addressInputLayout = v.findViewById(R.id.address_input_text);
-        typeOfUnitChipGroup = v.findViewById(R.id.type_of_unit_chip_group);
-        searchForNameTextView = v.findViewById(R.id.search_for_name_text_view);
-        apartmentPostLayout = v.findViewById(R.id.apartment_post_layout);
-        selectTypeofUnitTextView = v.findViewById(R.id.select_type_text_view);
-        nextButton = v.findViewById(R.id.publish_post_next_button);
-        mainLayout = v.findViewById(R.id.relative_layout);
-        descriptionEditText = v.findViewById(R.id.post_description);
-        userImageView = v.findViewById(R.id.user_image_publish_post);
-        postTypeChip = v.findViewById(R.id.post_type_chip);
+        typeOfUnitChipGroup = view.findViewById(R.id.type_of_unit_chip_group);
+        searchForNameTextView = view.findViewById(R.id.search_for_name_text_view);
+        apartmentPostLayout = view.findViewById(R.id.apartment_post_layout);
+        selectTypeofUnitTextView = view.findViewById(R.id.select_type_text_view);
+        nextButton = view.findViewById(R.id.publish_post_next_button);
+        mainLayout = view.findViewById(R.id.relative_layout);
+        descriptionEditText = view.findViewById(R.id.post_description);
+        userImageView = view.findViewById(R.id.user_image_publish_post);
+        postTypeChip = view.findViewById(R.id.post_type_chip);
+        addressInputLayout = view.findViewById(R.id.address_input_text);
 
         setupUserImage();
         setupNextButton();
@@ -103,16 +101,16 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         typeOfUnitChipGroup.setSingleSelection(true);
         searchForNameTextView.setVisibility(View.GONE);
         addressInputLayout.setVisibility(View.VISIBLE);
-        postTypeChip.setText("Room post");
-        selectTypeofUnitTextView.setText("Select the type of your residential unit");
+        postTypeChip.setText(getString(R.string.room_post));
+        selectTypeofUnitTextView.setText(getString(R.string.select_type_residential_unit));
     }
 
     void setupPersonalPostState() {
         typeOfUnitChipGroup.setSingleSelection(false);
         searchForNameTextView.setVisibility(View.GONE);
         addressInputLayout.setVisibility(View.GONE);
-        selectTypeofUnitTextView.setText("Select your preferred unit types");
-        postTypeChip.setText("Roommate post");
+        selectTypeofUnitTextView.setText(getString(R.string.select_type_preferred_unit));
+        postTypeChip.setText(getString(R.string.roommate_post));
 
     }
 
@@ -123,6 +121,7 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
                 if (checkDataForApartmentPost()) {
                     getFragment(PublishPostPreferencesFragment.getInstance(
                             getBuildingType(),
+                            null,
                             addressInputLayout.getEditText().getText().toString(),
                             descriptionEditText.getText().toString().trim(),
                             postType
@@ -130,7 +129,8 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
                 }
             } else if (checkDataForPersonalPost()) {
                 getFragment(PublishPostPreferencesFragment.getInstance(
-                        getBuildingType(),
+                        null,
+                        getBuildingTypes(),
                         null,
                         descriptionEditText.getText().toString().trim(),
                         postType
@@ -252,19 +252,19 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     private boolean checkDataForPersonalPost() {
         boolean status = true;
         ArrayList<String> errors = new ArrayList<>();
+        if (getBuildingTypes().isEmpty()) {
+            selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.canceRed));
+            errors.add("Please select the type of your unit");
+            status = false;
+        } else {
+            selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.jetBlack));
+        }
         if (descriptionEditText.getText().toString().trim().isEmpty()) {
             errors.add("Please enter a description");
             descriptionEditText.setHintTextColor(getActivity().getColor(R.color.canceRed));
             status = false;
         } else {
             descriptionEditText.setHintTextColor(getActivity().getColor(R.color.lightGrey));
-        }
-        if (addressInputLayout.getEditText().getText().toString() == null || addressInputLayout.getEditText().getText().toString().isBlank()) {
-            errors.add("Please add a locality");
-            addressInputLayout.setError("Please add a locality");
-            status = false;
-        } else {
-            addressInputLayout.setError(null);
         }
         if (!errors.isEmpty()) {
             Snackbar.make(mainLayout, errors.get(0), Snackbar.LENGTH_LONG).show();

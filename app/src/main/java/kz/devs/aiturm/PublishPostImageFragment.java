@@ -2,6 +2,7 @@ package kz.devs.aiturm;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -88,6 +89,27 @@ public class PublishPostImageFragment extends Fragment {
     private int budget, numberOfRoomMates;
 //    private boolean male,female,nonSmoking,petFriendly;
 
+    public static PublishPostImageFragment getInstance(
+            String preferences,
+            String buildingType,
+            String buildingAddress,
+            String description,
+            int budget,
+            int numberOfRoommates
+    ) {
+        var bundle = new Bundle();
+        bundle.putString(Config.PREFERENCE, preferences);
+        bundle.putString(Config.BUILDING_TYPE, buildingType);
+        bundle.putString(Config.BUILDING_ADDRESS, buildingAddress);
+        bundle.putString(Config.DESCRIPTION, description);
+        bundle.putInt(Config.BUDGET, budget);
+        bundle.putInt(Config.NUMBER_OF_ROOMMATES, numberOfRoommates);
+        var fragment = new PublishPostImageFragment();
+        fragment.setArguments(bundle);
+
+        return fragment;
+    }
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -98,41 +120,36 @@ public class PublishPostImageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_publish_post_image, container, false);
-        mAuth=FirebaseAuth.getInstance();
-        requestQueue= Volley.newRequestQueue(getActivity());
-        return v;
+        mAuth = FirebaseAuth.getInstance();
+        requestQueue = Volley.newRequestQueue(requireActivity());
+        return inflater.inflate(R.layout.fragment_publish_post_image, container, false);
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        lottieAnimationView = v.findViewById(R.id.add_image_animation);
-        viewPager = v.findViewById(R.id.view_pager);
-        dotsIndicator = v.findViewById(R.id.dots_indicator);
-        deleteImageButton = v.findViewById(R.id.delete_image_post);
-        publishPostButton = v.findViewById(R.id.publish_post_button);
-        addImageCardView = v.findViewById(R.id.add_image_card_view);
-        publishPostButton = v.findViewById(R.id.publish_post_button);
-        addMoreImagesButton = v.findViewById(R.id.add_more_images_button);
-        rootLayout = v.findViewById(R.id.root_layout);
+        lottieAnimationView = view.findViewById(R.id.add_image_animation);
+        viewPager = view.findViewById(R.id.view_pager);
+        dotsIndicator = view.findViewById(R.id.dots_indicator);
+        deleteImageButton = view.findViewById(R.id.delete_image_post);
+        publishPostButton = view.findViewById(R.id.publish_post_button);
+        addImageCardView = view.findViewById(R.id.add_image_card_view);
+        publishPostButton = view.findViewById(R.id.publish_post_button);
+        addMoreImagesButton = view.findViewById(R.id.add_more_images_button);
+        rootLayout = view.findViewById(R.id.root_layout);
 
-        if (this.getArguments()!=null) {
-            Bundle bundle = this.getArguments();
-//            male = bundle.getBoolean(Config.MALE);
-//            female = bundle.getBoolean(Config.FEMALE);
-//            nonSmoking = bundle.getBoolean(Config.NON_SMOKING);
-//            petFriendly = bundle.getBoolean(Config.PET_FRIENDLY);
-            preferences = bundle.getString(Config.PREFERENCE);
-            latLng = bundle.getParcelable(Config.SELECTED_LAT_LNG);
-            locality = bundle.getString(Config.LOCALITY);
-            subLocality = bundle.getString(Config.SUB_LOCALITY);
-            description = bundle.getString(Config.DESCRIPTION);
-            budget = bundle.getInt(Config.BUDGET);
-            numberOfRoomMates = bundle.getInt(Config.NUMBER_OF_ROOMMATES);
-            buildingName = bundle.getString(Config.BUILDING_NAME);
-            buildingAddress = bundle.getString(Config.BUILDING_ADDRESS);
-            buildingType = bundle.getString(Config.BUILDING_TYPE);
-        }
+        if (this.getArguments() == null) displayErrorAlert();
+        Bundle bundle = this.getArguments();
+        preferences = bundle.getString(Config.PREFERENCE);
+        latLng = bundle.getParcelable(Config.SELECTED_LAT_LNG);
+        locality = bundle.getString(Config.LOCALITY);
+        subLocality = bundle.getString(Config.SUB_LOCALITY);
+        description = bundle.getString(Config.DESCRIPTION);
+        budget = bundle.getInt(Config.BUDGET);
+        numberOfRoomMates = bundle.getInt(Config.NUMBER_OF_ROOMMATES);
+        buildingName = bundle.getString(Config.BUILDING_NAME);
+        buildingAddress = bundle.getString(Config.BUILDING_ADDRESS);
+        buildingType = bundle.getString(Config.BUILDING_TYPE);
+
         imageUris = new ArrayList<>();
 //        Log.d("prefs" , preferences.toString());
 
@@ -448,5 +465,18 @@ public class PublishPostImageFragment extends Fragment {
             toast.show();
         });
 
+    }
+
+    private void displayErrorAlert() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.attention))
+                .setMessage(getString(R.string.error_occurred_with_post_creating))
+                .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                })
+                .setOnDismissListener(dialogInterface -> {
+                    requireActivity().onBackPressed();
+                }).create()
+                .show();
     }
 }
