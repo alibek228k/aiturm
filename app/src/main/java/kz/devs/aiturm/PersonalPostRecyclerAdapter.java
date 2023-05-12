@@ -267,7 +267,7 @@ public class PersonalPostRecyclerAdapter extends RecyclerView.Adapter<PersonalPo
 //                intent.putExtra("USERID", postOwnerID);
 //                context.startActivity(intent);
 //            });
-            deletePostButton.setOnClickListener(v -> deletPersonalPost());
+//            deletePostButton.setOnClickListener(v -> deletPersonalPost());
 //            favButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
 //                SharedPreferences prefs = context.getSharedPreferences(userId, Context.MODE_PRIVATE);
 //                SharedPreferences.Editor edit = prefs.edit();
@@ -288,20 +288,20 @@ public class PersonalPostRecyclerAdapter extends RecyclerView.Adapter<PersonalPo
         }
 
 
-        private void deletPersonalPost() {
-            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-            firestore.collection("postPersonal")
-                    .document(personalPostModelList.get(getAdapterPosition()).getId()).
-                    delete()
-                    .addOnSuccessListener(aVoid -> {
-                        personalPostModelList.remove(getAdapterPosition());
-                        notifyItemRemoved(getAdapterPosition());
-                    }).addOnFailureListener(e -> {
-                        //TODO display a dialog
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
-                    });
-
-        }
+//        private void deletPersonalPost() {
+//            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+//            firestore.collection("postPersonal")
+//                    .document(personalPostModelList.get(getAdapterPosition()).getId()).
+//                    delete()
+//                    .addOnSuccessListener(aVoid -> {
+//                        personalPostModelList.remove(getAdapterPosition());
+//                        notifyItemRemoved(getAdapterPosition());
+//                    }).addOnFailureListener(e -> {
+//                        //TODO display a dialog
+//                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
+//                    });
+//
+//        }
     }
 
 

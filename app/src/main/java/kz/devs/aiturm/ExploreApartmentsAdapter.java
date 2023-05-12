@@ -68,22 +68,10 @@ public class ExploreApartmentsAdapter extends RecyclerView.Adapter<ExploreApartm
 
         String buildingType = apartmentList.get(position).getBuildingType();
         if (buildingType != null) {
-            if (buildingType.equals(Config.TYPE_HOUSE)) {
-                String locality = apartmentList.get(position).getLocality();
-                String subLocality = apartmentList.get(position).getSubLocality();
-                if (locality != null && subLocality != null) {
-                    holder.addressTV.setText(subLocality + ", " + locality);
-                } else {
-
-                }
-            } else {
-                String buildingName = apartmentList.get(position).getBuildingName();
+                String buildingName = apartmentList.get(position).getBuildingAddress();
                 if (buildingName != null) {
                     holder.addressTV.setText(buildingName);
-                } else {
-
                 }
-            }
         }
         int prefCounter = 0;
         String prefs = apartmentList.get(position).getPreferences();

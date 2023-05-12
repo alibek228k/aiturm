@@ -266,21 +266,13 @@ public class FindRoomFragment extends Fragment {
                     case 1:
                         recyclerView.setVisibility(View.GONE);
                         fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.frame_layout_search, new MapSearchFragment());
-                        // add tag to clear off of backstack
-                        fragmentTransaction.addToBackStack(MAP_FRAGMENT);
-                        fragmentTransaction.commit();
-                        break;
-                    case 2:
-                        recyclerView.setVisibility(View.GONE);
-                        fragmentTransaction = fragmentManager.beginTransaction();
                         fragmentTransaction.replace(R.id.frame_layout_search, new PersonalPostFragment());
                         fragmentTransaction.addToBackStack(PERSONAL_SEARCH);
                         fragmentTransaction.commit();
                         setSearchViewHint("Search terms");
                         break;
 
-                    case 3:
+                    case 2:
                         setSearchViewVisible();
                         searchView.requestFocus();
                         recyclerView.setVisibility(View.GONE);

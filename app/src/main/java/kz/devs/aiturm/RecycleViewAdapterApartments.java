@@ -86,17 +86,9 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
                 holder.buildingTypeTextView.setText("Condominium");
                 break;
         }
-        if (buildingType.equals(Config.TYPE_HOUSE)) {
-            String locality = apartmentList.get(position).getLocality();
-            String subLocality = apartmentList.get(position).getSubLocality();
-            if (locality != null && subLocality != null) {
-                holder.addressTV.setText(subLocality + ", " + locality);
-            }
-        } else {
-            String buildingName = apartmentList.get(position).getBuildingName();
-            if (buildingName != null) {
-                holder.addressTV.setText(buildingName);
-            }
+        String buildingName = apartmentList.get(position).getBuildingAddress();
+        if (buildingName != null) {
+            holder.addressTV.setText(buildingName);
         }
         //set the description
         holder.descriptionTV.setText(apartmentList.get(position).getDescription());

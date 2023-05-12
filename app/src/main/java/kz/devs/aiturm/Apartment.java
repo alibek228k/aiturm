@@ -3,17 +3,10 @@ package kz.devs.aiturm;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.Timestamp;
-import com.google.maps.android.clustering.ClusterItem;
-
 import java.util.List;
 
-public class Apartment implements Parcelable, ClusterItem {
-    private String userID, apartmentID, description, id, locality, subLocality, buildingName, buildingType, buildingAddress;
+public class Apartment implements Parcelable {
+    private String userID, apartmentID, description, id, buildingType, buildingAddress;
     private long timeStamp;
 
     private String preferences;
@@ -28,9 +21,6 @@ public class Apartment implements Parcelable, ClusterItem {
         apartmentID = in.readString();
         description = in.readString();
         id = in.readString();
-        locality = in.readString();
-        subLocality = in.readString();
-        buildingName = in.readString();
         buildingType = in.readString();
         buildingAddress = in.readString();
         timeStamp = in.readLong();
@@ -48,9 +38,6 @@ public class Apartment implements Parcelable, ClusterItem {
         dest.writeString(apartmentID);
         dest.writeString(description);
         dest.writeString(id);
-        dest.writeString(locality);
-        dest.writeString(subLocality);
-        dest.writeString(buildingName);
         dest.writeString(buildingType);
         dest.writeString(buildingAddress);
         dest.writeLong(timeStamp);
@@ -79,17 +66,11 @@ public class Apartment implements Parcelable, ClusterItem {
         }
     };
 
-    public String getSubLocality() {
-        return subLocality;
-    }
 
     public String getBuildingAddress() {
         return buildingAddress;
     }
 
-    public String getBuildingName() {
-        return buildingName;
-    }
 
     public String getBuildingType() {
         return buildingType;
@@ -145,32 +126,6 @@ public class Apartment implements Parcelable, ClusterItem {
     }
 
     Apartment() {
-    }
-
-
-    public String getLocality() {
-        return locality;
-    }
-
-
-    @NonNull
-    @Override
-    public LatLng getPosition() {
-        return new LatLng(latitude, longitude);
-    }
-
-
-    @Nullable
-    @Override
-    public String getTitle() {
-        return "";
-    }
-
-
-    @Nullable
-    @Override
-    public String getSnippet() {
-        return "";
     }
 
 

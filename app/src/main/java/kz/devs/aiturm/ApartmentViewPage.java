@@ -35,7 +35,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -190,22 +189,12 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
                         break;
                 }
 
-                if (buildingType.equals(Config.TYPE_HOUSE)) {
-                    String locality = apartment.getLocality();
-                    String subLocality = apartment.getSubLocality();
-                    if (locality != null && subLocality != null) {
-                        locationAddressTextView.setText(subLocality + ", " + locality);
-                    } else {
 
-                    }
-                } else {
-                    String buildingName = apartment.getBuildingName();
-                    if (buildingName != null) {
-                        locationAddressTextView.setText(buildingName);
-                    } else {
-
-                    }
+                String buildingName = apartment.getBuildingAddress();
+                if (buildingName != null) {
+                    locationAddressTextView.setText(buildingName);
                 }
+
                 int prefCounter = 0;
                 int genderPrefsCounter = 0;
 

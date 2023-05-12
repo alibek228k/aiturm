@@ -285,12 +285,6 @@
                         recyclerView.setVisibility(View.VISIBLE);
                         break;
                     case 1:
-                        recyclerView.setVisibility(View.GONE);
-                        fragmentTransaction = fragmentManager.beginTransaction();
-                        fragmentTransaction.replace(R.id.frame_layout_search, new MapSearchFragment());
-                        // add tag to clear off of backstack
-                        fragmentTransaction.addToBackStack(MAP_FRAGMENT);
-                        fragmentTransaction.commit();
                         break;
                     case 2:
                         recyclerView.setVisibility(View.GONE);

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/fragment_find_roommate_scene2"
-    tools:context="kz.devs.aiturm.FindRoomFragment"
-    >
+    tools:context="kz.devs.aiturm.FindRoomFragment">
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -22,8 +21,10 @@
         app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
         android:background="@color/LogoYellow"
         app:tabSelectedTextColor="@color/white"
+        app:tabMaxWidth="0dp"
+        app:tabGravity="fill"
         android:elevation="5dp"
-        app:tabMode="scrollable"
+        app:tabMode="fixed"
         app:tabPaddingEnd="25dp"
         app:tabPaddingStart="25dp">
 
@@ -37,14 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Map" />
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Roommates"
-            />
+            android:text="Roommates" />
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"

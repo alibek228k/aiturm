@@ -89,25 +89,11 @@ public class MapSingleDialogFragment extends DialogFragment {
             } else {
                 numberRoommatesTextView.setText(numRoomMates + " roommates");
             }
-            String buildingType = apartment.getBuildingType();
 
-            if (buildingType.equals(Config.TYPE_HOUSE)) {
-                String locality = apartment.getLocality();
-                String subLocality = apartment.getSubLocality();
-                if (locality != null && subLocality != null) {
-                    locationTextView.setText(subLocality + ", " + locality);
-                } else {
-
-                }
-            } else {
-                String buildingName = apartment.getBuildingName();
+                String buildingName = apartment.getBuildingAddress();
                 if (buildingName != null) {
                     locationTextView.setText(buildingName);
-                } else {
-
                 }
-            }
-
 
         }
 
