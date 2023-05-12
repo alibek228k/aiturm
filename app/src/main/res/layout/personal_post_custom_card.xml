@@ -264,5 +264,5 @@
         android:layout_alignParentEnd="true"
         android:background="@android:color/transparent"
         android:src="@drawable/ic_delete"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </RelativeLayout>

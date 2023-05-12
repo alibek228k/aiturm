@@ -241,7 +241,7 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
     }
 
     private void goToApartmentViewPage(int position) {
-        Intent intent = new Intent(context, ApartmentViewPage.class);
+        Intent intent = new Intent(context, ApartmentViewPageActivity.class);
         // add the parcelable apartment object to the intent and use it's values to
         //update the apartment view class
         intent.putExtra("apartment", apartmentList.get(position));

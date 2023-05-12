@@ -220,9 +220,6 @@
                         android:id="@+id/location_address_text_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignTop="@id/apartment_post_page_map"
-                        android:layout_alignStart="@id/apartment_post_page_map"
-                        android:layout_alignEnd="@+id/apartment_post_page_map"
                         android:elevation="1dp"
                         android:padding="5dp"
                         android:background="#B3333533"
@@ -234,11 +231,6 @@
                         android:gravity="center_vertical"
                         android:maxLines="2"
                         android:ellipsize="end" />
-
-                    <kz.devs.aiturm.CustomMapView
-                        android:id="@+id/apartment_post_page_map"
-                        android:layout_width="match_parent"
-                        android:layout_height="250dp" />
 
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>

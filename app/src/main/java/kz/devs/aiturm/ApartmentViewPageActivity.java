@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,24 +53,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCallback {
-    private static final String MAP_VIEW_BUNDLE_KEY = "MapViewBundleKey";
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
+
+public class ApartmentViewPageActivity extends AppCompatActivity implements OnMapReadyCallback {
     private ImageButton messageButton;
     private TextView username;
     private TextView preferencesTextView;
     private TextView genderTextView;
     private Apartment apartment;
-    private CustomMapView mapView;
 
     private ImageView userImageView;
     private User user;
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mapView.onStart();
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -141,15 +137,13 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setSubtitle("Place");
         getSupportActionBar().setTitle("");
-        mapView = findViewById(R.id.apartment_post_page_map);
-        mapView.getMapAsync(this);
-        initGoogleMap(savedInstanceState);
         if (getIntent().getExtras() != null) {
             apartment = new Apartment();
             apartment = getIntent().getExtras().getParcelable("apartment");
             //set the desicription
             if (apartment != null) {
                 if (firebaseUser != null) {
+                    System.out.println("User ids: me: " + firebaseUser.getUid() + ", post author: " + apartment.getUserID());
                     getPostOwnerDetails(firebaseUser.getUid(), apartment.getUserID());
                 }
                 //format and set date
@@ -245,7 +239,12 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
         }
         messageButton.setOnClickListener(v -> {
             if (user != null) {
-                chatWithThisUser(user);
+                if (new SessionManager(this).getData().getUserID().equals(apartment.getUserID())) {
+                    Toast.makeText(this, getString(R.string.error_cannot_message_with_yourself), Toast.LENGTH_SHORT).show();
+                } else {
+                    user.setUserID(apartment.getUserID());
+                    chatWithThisUser(user);
+                }
             }
         });
 
@@ -259,8 +258,9 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = new User();
                 user = snapshot.getValue(User.class);
+                System.out.println("onDateChange " + snapshot);
                 if (user!=null) {
-                    if (currentUserid.equals(user.getUserID())) {
+                    if (currentUserid.equals(userUid)) {
                         messageButton.setVisibility(View.GONE);
                         username.setText("You");
                         preferencesTextView.setText("You're allowing:");
@@ -272,7 +272,7 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
                         genderTextView.setText(userName + " is looking for");
                     }
 
-                    if (!user.getImage().isEmpty()) {
+                    if (user.getImage() != null && !user.getImage().isEmpty()) {
                         GlideApp.with(getApplication())
                                 .load(user.getImage())
                                 .transform(new CircleCrop())
@@ -295,58 +295,6 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
         startActivity(intent);
     }
 
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-            mapView.onStop();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-            mapView.onDestroy();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-            mapView.onPause();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-            mapView.onResume();
-
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-
-            mapView.onLowMemory();
-
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Bundle mapViewBundle = outState.getBundle(MAP_VIEW_BUNDLE_KEY);
-        if (mapViewBundle == null) {
-            mapViewBundle = new Bundle();
-            outState.putBundle(MAP_VIEW_BUNDLE_KEY, mapViewBundle);
-        }
-        if(mapView!=null) {
-            mapView.onSaveInstanceState(outState);
-        }
-
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -360,21 +308,6 @@ public class ApartmentViewPage extends AppCompatActivity implements OnMapReadyCa
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
             }
         }
-    }
-
-    private void initGoogleMap(Bundle savedInstanceState) {
-        // *** IMPORTANT ***
-        // MapView requires that the Bundle you pass contain _ONLY_ MapView SDK
-        // objects or sub-Bundles.
-        Bundle mapViewBundle = null;
-        if (savedInstanceState != null) {
-            mapViewBundle = savedInstanceState.getBundle(MAP_VIEW_BUNDLE_KEY);
-        }
-
-        mapView.onCreate(mapViewBundle);
-        mapView.getMapAsync(this);
-
-
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector() {
@@ -420,7 +353,7 @@ class ViewPagerAdapterApartmentView extends PagerAdapter {
             Bundle bundle = new Bundle();
             bundle.putStringArrayList(Config.IMAGE_URL, (ArrayList<String>) imageUrls);
             imageViewPager.setArguments(bundle);
-            imageViewPager.show(((ApartmentViewPage) context).getSupportFragmentManager(), null);
+            imageViewPager.show(((ApartmentViewPageActivity) context).getSupportFragmentManager(), null);
         });
 
 

@@ -100,7 +100,7 @@ public class MapSingleDialogFragment extends DialogFragment {
 
         apartmentMapLayout.setOnClickListener(v -> {
             dismiss();
-            Intent intent = new Intent(getActivity(), ApartmentViewPage.class);
+            Intent intent = new Intent(getActivity(), ApartmentViewPageActivity.class);
             intent.putExtra(Config.apartment, apartment);
             startActivity(intent);
         });
