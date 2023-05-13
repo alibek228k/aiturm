@@ -23,8 +23,8 @@
         app:tabSelectedTextColor="@color/white"
         app:tabMaxWidth="0dp"
         app:tabGravity="fill"
-        android:elevation="5dp"
         app:tabMode="fixed"
+        android:elevation="5dp"
         app:tabPaddingEnd="25dp"
         app:tabPaddingStart="25dp">
 

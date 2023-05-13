@@ -127,7 +127,6 @@ public class PublishPostImageFragment extends Fragment {
         viewPager = view.findViewById(R.id.view_pager);
         dotsIndicator = view.findViewById(R.id.dots_indicator);
         deleteImageButton = view.findViewById(R.id.delete_image_post);
-        publishPostButton = view.findViewById(R.id.publish_post_button);
         addImageCardView = view.findViewById(R.id.add_image_card_view);
         publishPostButton = view.findViewById(R.id.publish_post_button);
         addMoreImagesButton = view.findViewById(R.id.add_more_images_button);
@@ -355,13 +354,14 @@ public class PublishPostImageFragment extends Fragment {
         apartmentPost.put(Config.BUILDING_ADDRESS, buildingAddress);
         apartmentPost.put(Config.BUILDING_TYPE, buildingType);
 
-        requireActivity().onBackPressed();
 
         dataBase.add(apartmentPost).addOnSuccessListener(documentReference -> {
             showCustomToast(requireActivity().getString(R.string.post_success));
+            requireActivity().onBackPressed();
         }).addOnFailureListener(e -> {
             e.printStackTrace();
             showCustomToast(requireActivity().getString(R.string.post_failed));
+            requireActivity().onBackPressed();
         });
     }
 

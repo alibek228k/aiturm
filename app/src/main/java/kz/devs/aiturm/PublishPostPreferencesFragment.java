@@ -185,12 +185,13 @@ public class PublishPostPreferencesFragment extends Fragment {
         personalPost.put(Config.BUILDING_TYPES, buildingTypes);
         personalPost.put(Config.TIME_STAMP, System.currentTimeMillis());
 
-        requireActivity().onBackPressed();
         dataBase.add(personalPost).addOnSuccessListener(documentReference -> {
             showCustomToast(getString(R.string.post_success));
+            requireActivity().onBackPressed();
         }).addOnFailureListener(e -> {
             e.printStackTrace();
             showCustomToast(getString(R.string.post_failed));
+            requireActivity().onBackPressed();
         });
     }
 
