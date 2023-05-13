@@ -47,7 +47,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AddRoomMember extends DialogFragment {
+import kz.devs.aiturm.model.User;
+
+public class AddRoomMemberDialogFragment extends DialogFragment {
     //views
     private View v;
     private SearchView memberSearchView;
@@ -248,7 +250,7 @@ public class AddRoomMember extends DialogFragment {
                 .setMessage(message)
                 .setCancelable(false)
                 .setNeutralButton("Return", (dialog, which) -> {
-                    AddRoomMember.this.getActivity().onBackPressed();
+                    AddRoomMemberDialogFragment.this.getActivity().onBackPressed();
                     dialog.dismiss();
                 })
                 .create()

@@ -24,20 +24,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.shroomies.R;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -45,34 +34,28 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
-import com.google.common.net.HttpHeaders;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.skydoves.powerspinner.PowerSpinnerView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
 import me.everything.android.ui.overscroll.IOverScrollDecor;
 import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
-
-import kz.devs.aiturm.model.User;
 
 
 public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomies , CardUploaded  {
@@ -103,26 +86,30 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
     //model
     private AiturmApartment apartment;
     //firebase
-    private FirebaseAuth mAuth;
     private RequestQueue requestQueue;
     //fragment
     private FragmentTransaction ft;
     private FragmentManager fm;
     //values
-    private String selectedCardID , selectedCardType;
-    private static final String TASK_CARD_LIST = "TASK_CARD_LIST" ,EXPENSE_CARD_LIST = "EXPENSE_CARD_LIST";
-    private boolean cardFound =false;
-    private int recyclerPosition=0;
+    private String selectedCardID, selectedCardType;
+    private static final String TASK_CARD_LIST = "TASK_CARD_LIST", EXPENSE_CARD_LIST = "EXPENSE_CARD_LIST";
+    private boolean cardFound = false;
+    private int recyclerPosition = 0;
     boolean scrollFromTop;
-    private int unSeenMessagesNo=0;
+    private int unSeenMessagesNo = 0;
+
+    private SessionManager manager;
+    private User user;
+    private DatabaseReference rootRef;
+    private FirebaseFirestore firebaseFirestore;
 
     @Override
-    public void sendData(TasksCard tasksCard , ExpensesCard expensesCard) {
-        if(tasksCard!=null){
-            if(tasksCardsList!=null && tasksCardAdapter!=null){
+    public void sendData(TasksCard tasksCard, ExpensesCard expensesCard) {
+        if (tasksCard != null) {
+            if (tasksCardsList != null && tasksCardAdapter != null) {
                 tasksCardsList.add(tasksCard);
                 tasksCardAdapter.notifyDataSetChanged();
-                    removeNoCardsLayout();
+                removeNoCardsLayout();
 
             }
         }else if(expensesCard!=null){
@@ -139,8 +126,11 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mAuth = FirebaseAuth.getInstance();
         requestQueue = Volley.newRequestQueue(getActivity());
+        manager = new SessionManager(requireContext());
+        user = manager.getData();
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        firebaseFirestore = FirebaseFirestore.getInstance();
         v = inflater.inflate(R.layout.fragment_my_shroomies, container, false);
         return v;
     }
@@ -342,7 +332,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         addMemberButton.setOnClickListener(v -> {
             if(apartment!=null){
                 slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                AddRoomMember add=new AddRoomMember();
+                AddRoomMemberDialogFragment add=new AddRoomMemberDialogFragment();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("APARTMENT_DETAILS",apartment);
                 add.setArguments(bundle1);
@@ -415,31 +405,17 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 
 
     }
-    private void getUserToken(){
+    private void getUserToken() {
         displayProgressView();
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        
-        if(firebaseUser!=null){
-            firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
-                if(task.isSuccessful()) {
-                    String token = task.getResult().getToken();
+        var apartmentID = user.getApartmentID();
+        if (apartmentID != null) {
+            getApartmentDetails(apartmentID);
+            getUnseenMessageNo(apartmentID, user.getUserID());
 
-                    String apartmentID = (String) task.getResult().getClaims().get(Config.apartmentID);
-                    if (apartmentID != null){
-                        getApartmentDetails(token, apartmentID);
-                        getUnseenMessageNo(apartmentID,firebaseUser.getUid());
-                    }
-                }else{
-                    String title = "Authentication error";
-                    String message = "We encountered a problem while authenticating your account";
-                    displayErrorAlert(title, message);
-                }
-            });
         }
 
     }
     private void getUnseenMessageNo(String apartmentID, String userID){
-        DatabaseReference rootRef= FirebaseDatabase.getInstance().getReference();
         if (apartmentID != null){
             rootRef.child("groupMessages").child(apartmentID).child("unSeenMessageCount")
                     .child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -466,127 +442,66 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         }
     }
 
-    private void getApartmentDetails(String token , String apartmentID){
-        JSONObject jsonObject = new JSONObject();
-        JSONObject data  = new JSONObject();
-        try {
-            jsonObject.put(Config.apartmentID, apartmentID);
-            data.put(Config.data, jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return;
-        }
+    private void getApartmentDetails(String apartmentID) {
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GET_APARTMENT_DETAILS, data, response -> {
+        firebaseFirestore.collection(Config.APARTMENT_LIST).document(apartmentID).get().addOnSuccessListener(documentSnapshot -> {
+            apartment = documentSnapshot.toObject(AiturmApartment.class);
+            apartment.setApartmentID(documentSnapshot.getId());
 
-            final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-            try {
-                JSONObject result = response.getJSONObject(Config.result);
-                boolean success = result.getBoolean(Config.success);
+            var membersIds = apartment.getApartmentMembers().values();
+            rootRef.child(Config.users).get().addOnCompleteListener(task -> {
+                task.getResult().getChildren().forEach(children ->{
+                    membersIds.forEach(id -> {
+                        if (children.getKey().equals(id)){
+                            membersHashMap.put(children.getKey(), children.getValue(User.class));
+                        }
+                    });
+                });
+            });
 
-            if (success) {
-                membersHashMap = new HashMap<>();
-                JSONObject apartmentJsonObject = (JSONObject) result.get(Config.apartment);
-                JSONArray membersJson= result.getJSONArray(Config.members);
-                for(int i =0;i<membersJson.length();i++){
-                    User user = mapper.readValue(membersJson.getJSONObject(i).toString(), User.class);
-                    membersHashMap.put(user.getUserID() , user);
+            expensesCardsList = new ArrayList<>();
+            if (apartment.getExpensesCard() != null) {
+                if (isAdded()) {
+                    expensesCardsList = new ArrayList<>(apartment.getExpensesCard().values());
                 }
-
-                apartment = new AiturmApartment();
-                apartment = mapper.readValue(apartmentJsonObject.toString(), AiturmApartment.class);
-
-                //initialize an empty list and
-                //if the user add a new card the new card will be sent to this fragment
-                // im checking if the list is not null to add the card
-                //this will ensure that the list is not null
-                expensesCardsList = new ArrayList<>();
-                if (apartment.getExpensesCard() != null) {
-                    if (isAdded()) {
-                        expensesCardsList = new ArrayList<>(apartment.getExpensesCard().values());
-                    }
-                }
-
-
-                expensesCardAdapter = new ExpensesCardAdapter(expensesCardsList, getActivity(), false, apartment.getApartmentID(), getParentFragmentManager(), slidingLayout , membersHashMap);
-                myExpensesRecyclerView.setAdapter(expensesCardAdapter);
-                ItemTouchHelper.Callback expenseCalback =
-                        new CardsTouchHelper(expensesCardAdapter);
-                ItemTouchHelper expenseTouchHelper = new ItemTouchHelper(expenseCalback);
-                expenseTouchHelper.attachToRecyclerView(myExpensesRecyclerView);
-
-
-                tasksCardsList = new ArrayList<>();
-                if (apartment.getTaskCard() != null) {
-                    if (isAdded()) {
-                        tasksCardsList = new ArrayList<>(apartment.getTaskCard().values());
-                    }
-                }
-
-
-
-                tasksCardAdapter = new TasksCardAdapter(tasksCardsList, getActivity(), false, apartment.getApartmentID(), getParentFragmentManager(), slidingLayout , membersHashMap);
-                myTasksRecyclerView.setAdapter(tasksCardAdapter);
-                ItemTouchHelper.Callback callback =
-                        new CardsTouchHelper(tasksCardAdapter);
-                ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
-                touchHelper.attachToRecyclerView(myTasksRecyclerView);
-
-                if (apartment.getLogs() != null) {
-                    if (!apartment.getLogs().isEmpty()) {
-                        apartmentLogs = new ArrayList<>(apartment.getLogs().values());
-                    }
-                }
-
-                tasksDecor.setOverScrollStateListener(onOverPullListener);
-                expensesDecor.setOverScrollStateListener(onOverPullListener);
-                setListenersForemptyLists();
-
-                removeProgressView();
-
-                scroll();
-
-
-            } else {
-                String title = "Unexpected error";
-                String message = "We have encountered an unexpected error ,try to check your internet connection and log in again.";
-                displayErrorAlert(title, message);
             }
 
-            } catch (JSONException | JsonProcessingException e) {
-                e.printStackTrace();
-                String title = "Unexpected error";
-                String message = "We have encountered an unexpected error ,try to check your internet connection and log in again.";
-                displayErrorAlert(title, message);
+            expensesCardAdapter = new ExpensesCardAdapter(expensesCardsList, getActivity(), false, apartment.getApartmentID(), getParentFragmentManager(), slidingLayout , membersHashMap);
+            myExpensesRecyclerView.setAdapter(expensesCardAdapter);
+            ItemTouchHelper.Callback expenseCalback =
+                    new CardsTouchHelper(expensesCardAdapter);
+            ItemTouchHelper expenseTouchHelper = new ItemTouchHelper(expenseCalback);
+            expenseTouchHelper.attachToRecyclerView(myExpensesRecyclerView);
+
+            tasksCardsList = new ArrayList<>();
+
+            if (apartment.getTaskCard() != null) {
+                if (isAdded()) {
+                    tasksCardsList = new ArrayList<>(apartment.getTaskCard().values());
+                }
             }
 
+            tasksCardAdapter = new TasksCardAdapter(tasksCardsList, getActivity(), false, apartment.getApartmentID(), getParentFragmentManager(), slidingLayout , membersHashMap);
+            myTasksRecyclerView.setAdapter(tasksCardAdapter);
+            ItemTouchHelper.Callback callback =
+                    new CardsTouchHelper(tasksCardAdapter);
+            ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+            touchHelper.attachToRecyclerView(myTasksRecyclerView);
 
-        }, error -> {
-            String message = null; // error message, show it in toast or dialog, whatever you want
-            if (error instanceof NetworkError || error instanceof AuthFailureError || error instanceof NoConnectionError || error instanceof TimeoutError) {
-                message = "Cannot connect to Internet";
-            } else if (error instanceof ServerError) {
-                apartment = new AiturmApartment(
-                        "15156156", "15165", new HashMap<>(), new HashMap<>(), new HashMap<>()
-                );
-                error.printStackTrace();
-                message = "Server error. Please try again later";
-            }  else if (error instanceof ParseError) {
-                message = "Parsing error! Please try again later";
+            if (apartment.getLogs() != null) {
+                if (!apartment.getLogs().isEmpty()) {
+                    apartmentLogs = new ArrayList<>(apartment.getLogs().values());
+                }
             }
-            displayErrorAlert("Error" ,message);
-        })
-        {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> params = new HashMap<>();
-                params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                return params;
-            }
-        };
-        requestQueue.add(jsonObjectRequest);
+
+            tasksDecor.setOverScrollStateListener(onOverPullListener);
+            expensesDecor.setOverScrollStateListener(onOverPullListener);
+            setListenersForemptyLists();
+
+            removeProgressView();
+
+            scroll();
+        });
 
     }
 

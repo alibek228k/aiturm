@@ -2,7 +2,6 @@ package kz.devs.aiturm;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -25,20 +24,11 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.shroomies.R;
-import com.firebase.geofire.GeoFireUtils;
-import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.common.net.HttpHeaders;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -49,18 +39,12 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.make.dots.dotsindicator.DotsIndicator;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
@@ -87,7 +71,8 @@ public class PublishPostImageFragment extends Fragment {
     private String description, buildingAddress, buildingType, preferences;
     private int budget, numberOfRoomMates;
 
-    private FirebaseFirestore dataBase;
+    private FirebaseFirestore fireStoreDatabase;
+    private DatabaseReference realTimeDatabaseReference;
 
     public static PublishPostImageFragment getInstance(
             String preferences,
@@ -120,7 +105,8 @@ public class PublishPostImageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dataBase = FirebaseFirestore.getInstance();
+        fireStoreDatabase = FirebaseFirestore.getInstance();
+        realTimeDatabaseReference = FirebaseDatabase.getInstance().getReference();
         progressBar = new CustomLoadingProgressBar(requireContext(), getString(R.string.publishing_post), R.raw.loading_animation);
         progressBar.setCancelable(false);
         return inflater.inflate(R.layout.fragment_publish_post_image, container, false);
@@ -344,20 +330,31 @@ public class PublishPostImageFragment extends Fragment {
     }
 
     void publishApartmentPost(List<String> imageUris, String imageFolderPath) {
-
-        var firebaseUser = new SessionManager(requireContext()).getData();
+        var manager = new SessionManager(requireContext());
+        var currentUser = manager.getData();
 
         Map<String, Object> apartment = new HashMap<>();
-        apartment.put(Config.adminID, firebaseUser.getUserID());
+        apartment.put(Config.adminID, currentUser.getUserID());
         apartment.put(Config.apartmentMembers, new HashMap<String, String>());
         apartment.put(Config.taskCards, new HashMap<String, TasksCard>());
         apartment.put(Config.expensesCards, new HashMap<String, ExpensesCard>());
 
-        dataBase.collection(Config.APARTMENT_LIST).add(apartment).addOnSuccessListener(documentReference -> {
+        fireStoreDatabase.collection(Config.APARTMENT_LIST).add(apartment).addOnSuccessListener(documentReference -> {
+
+
+            Map<String, Object> apartmentId = new HashMap<>();
+
+            apartmentId.put(Config.apartmentID, documentReference.getId());
+
+            realTimeDatabaseReference.child(Config.users).child(currentUser.getUserID()).updateChildren(apartmentId);
+            currentUser.setApartmentID(documentReference.getId());
+            manager.saveData(currentUser);
+
             Map<String, Object> apartmentPost = new HashMap<>();
+            apartmentPost.put(Config.apartmentID, documentReference.getId());
             apartmentPost.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
             apartmentPost.put(Config.DESCRIPTION, description);
-            apartmentPost.put(Config.userID, firebaseUser.getUserID());
+            apartmentPost.put(Config.userID, currentUser.getUserID());
             apartmentPost.put(Config.PRICE, budget);
             apartmentPost.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
             apartmentPost.put(Config.PREFERENCE, preferences);
@@ -367,7 +364,7 @@ public class PublishPostImageFragment extends Fragment {
             apartmentPost.put(Config.BUILDING_TYPE, buildingType);
 
 
-            dataBase.collection(Config.APARTMENT_POST).add(apartmentPost).addOnSuccessListener(reference -> {
+            fireStoreDatabase.collection(Config.APARTMENT_POST).add(apartmentPost).addOnSuccessListener(reference -> {
                 progressBar.dismiss();
                 showCustomToast(requireActivity().getString(R.string.post_success));
                 requireActivity().onBackPressed();

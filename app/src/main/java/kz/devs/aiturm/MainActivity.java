@@ -155,9 +155,7 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
                 GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
                 mAuth.signOut();
                 mGoogleSignInClient.signOut();
-                SessionManager sessionManager = new SessionManager(MainActivity.this);
-                sessionManager.removeUserData();
-                sessionManager.removeUserData();
+                manager.removeUserData();
                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -270,6 +268,8 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
                 if (task.isSuccessful()) {
                     user = task.getResult().getValue(User.class);
                     if (user != null) {
+                        user.setUserID(mAuth.getCurrentUser().getUid());
+                        manager.saveData(user);
                         if (user.getUsername() == null) {
                             finish();
                             startActivity(new Intent(getApplicationContext(), AddUsername.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));

@@ -17,6 +17,7 @@ public class User implements Serializable {
     private float sharedAmount;
     private boolean requestSent;
     private int requestCount;
+    private String apartmentID;
 
     public String getUsername() {
         return username;
@@ -128,6 +129,14 @@ public class User implements Serializable {
 
     public void setSignInMethod(SignInMethod signInMethod) {
         this.signInMethod = signInMethod;
+    }
+
+    public String getApartmentID() {
+        return apartmentID;
+    }
+
+    public void setApartmentID(String apartmentID) {
+        this.apartmentID = apartmentID;
     }
 
     public enum Gender{
