@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,12 +27,14 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
 import kz.devs.aiturm.Config;
 import kz.devs.aiturm.GlideApp;
 import kz.devs.aiturm.PublishPostPreferencesFragment;
+import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.post.type.PostTypeDialogFragment;
 
@@ -46,6 +49,9 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     private EditText descriptionEditText;
     private RelativeLayout apartmentPostLayout, mainLayout;
     private TextInputLayout addressInputLayout;
+    private FirebaseFirestore firebaseFirestore;
+
+    private User user;
 
     private String postType = Config.APARTMENT_POST;
 
@@ -61,6 +67,8 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
 
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        user = new SessionManager(requireContext()).getData();
         return inflater.inflate(R.layout.fragment_publish_post, container, false);
     }
 
@@ -118,23 +126,37 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         nextButton.setOnClickListener(v -> {
 
             if (postType.equals(Config.APARTMENT_POST)) {
-                if (checkDataForApartmentPost()) {
-                    getFragment(PublishPostPreferencesFragment.getInstance(
-                            getBuildingType(),
-                            null,
-                            addressInputLayout.getEditText().getText().toString(),
-                            descriptionEditText.getText().toString().trim(),
-                            postType
-                    ));
-                }
-            } else if (checkDataForPersonalPost()) {
-                getFragment(PublishPostPreferencesFragment.getInstance(
-                        null,
-                        getBuildingTypes(),
-                        null,
-                        descriptionEditText.getText().toString().trim(),
-                        postType
-                ));
+                firebaseFirestore.collection(Config.APARTMENT_POST).whereEqualTo(Config.userID, user.getUserID()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.getDocuments().isEmpty()) {
+                        if (checkDataForApartmentPost()) {
+                            getFragment(PublishPostPreferencesFragment.getInstance(
+                                    getBuildingType(),
+                                    null,
+                                    addressInputLayout.getEditText().getText().toString(),
+                                    descriptionEditText.getText().toString().trim(),
+                                    postType
+                            ));
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.already_have_apartment_post), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else if (postType.equals(Config.PERSONAL_POST)) {
+                firebaseFirestore.collection(Config.PERSONAL_POST).whereEqualTo(Config.userID, user.getUserID()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (queryDocumentSnapshots.getDocuments().isEmpty()){
+                        if (checkDataForPersonalPost()) {
+                            getFragment(PublishPostPreferencesFragment.getInstance(
+                                    null,
+                                    getBuildingTypes(),
+                                    null,
+                                    descriptionEditText.getText().toString().trim(),
+                                    postType
+                            ));
+                        }
+                    }else{
+                        Toast.makeText(requireContext(), getString(R.string.already_have_personal_post), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
         });

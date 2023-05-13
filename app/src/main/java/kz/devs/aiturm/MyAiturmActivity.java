@@ -33,7 +33,6 @@ public class MyAiturmActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_shroomies);
-        //load myshroomies fragment
         Bundle bundle = getIntent().getExtras();
         myshroomiesFragment = new MyAiturmFragment();
 

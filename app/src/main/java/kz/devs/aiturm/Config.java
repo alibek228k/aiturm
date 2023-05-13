@@ -180,7 +180,7 @@ public class Config {
     public static final String FILTER_PRICE = "filter_price";
     public static final String PROPERTIES = "properties";
     public static final String FILTER_PREFERENCE = "filter_preferences";
-    public static final String APARTMENT_LIST = "APARTMENT_LIST";
+    public static final String APARTMENT_LIST = "apartment_list";
     public static final String FAVOURITES = "FAVOURITES";
     public static final String IMAGE_FOLDER_PATH = "imageFolderPath";
 

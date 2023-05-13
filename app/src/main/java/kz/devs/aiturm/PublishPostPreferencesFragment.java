@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.shroomies.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.firestore.CollectionReference;
@@ -44,6 +45,8 @@ public class PublishPostPreferencesFragment extends Fragment {
     private CheckBox maleCB, femaleCB, smokingCB, petCB, alcoholCB;
     private CollectionReference dataBase;
     private AppCompatActivity appCompatActivity;
+
+    private CustomLoadingProgressBar progressBar;
 
     public static Fragment getInstance(
             String buildingType,
@@ -74,6 +77,8 @@ public class PublishPostPreferencesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         dataBase = FirebaseFirestore.getInstance().collection(Config.PERSONAL_POST);
+        progressBar = new CustomLoadingProgressBar(requireContext(), getString(R.string.publishing_post), R.raw.loading_animation);
+        progressBar.setCancelable(false);
         return inflater.inflate(R.layout.fragment_publish_post_preferances, container, false);
     }
 
@@ -166,6 +171,7 @@ public class PublishPostPreferencesFragment extends Fragment {
     }
 
     private void publishPersonalPost(int price, String preferences) {
+        progressBar.show();
         var user = new SessionManager(requireContext()).getData();
 
         ArrayList<String> keyWords = new ArrayList(Arrays.asList(description.trim().split("[?U\\W]")));
@@ -186,10 +192,12 @@ public class PublishPostPreferencesFragment extends Fragment {
         personalPost.put(Config.TIME_STAMP, System.currentTimeMillis());
 
         dataBase.add(personalPost).addOnSuccessListener(documentReference -> {
+            progressBar.dismiss();
             showCustomToast(getString(R.string.post_success));
             requireActivity().onBackPressed();
         }).addOnFailureListener(e -> {
             e.printStackTrace();
+            progressBar.dismiss();
             showCustomToast(getString(R.string.post_failed));
             requireActivity().onBackPressed();
         });

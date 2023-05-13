@@ -32,6 +32,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.shroomies.R;
 import com.firebase.geofire.GeoFireUtils;
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.net.HttpHeaders;
@@ -76,6 +77,8 @@ public class PublishPostImageFragment extends Fragment {
     private AppCompatActivity appCompatActivity;
     private RelativeLayout rootLayout;
 
+    private CustomLoadingProgressBar progressBar;
+
 
     private ArrayList<Uri> imageUris;
     private ViewPagerAdapter viewPagerAdapter;
@@ -84,7 +87,7 @@ public class PublishPostImageFragment extends Fragment {
     private String description, buildingAddress, buildingType, preferences;
     private int budget, numberOfRoomMates;
 
-    private CollectionReference dataBase;
+    private FirebaseFirestore dataBase;
 
     public static PublishPostImageFragment getInstance(
             String preferences,
@@ -117,7 +120,9 @@ public class PublishPostImageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        dataBase = FirebaseFirestore.getInstance().collection(Config.APARTMENT_POST);
+        dataBase = FirebaseFirestore.getInstance();
+        progressBar = new CustomLoadingProgressBar(requireContext(), getString(R.string.publishing_post), R.raw.loading_animation);
+        progressBar.setCancelable(false);
         return inflater.inflate(R.layout.fragment_publish_post_image, container, false);
     }
     @Override
@@ -296,9 +301,9 @@ public class PublishPostImageFragment extends Fragment {
 
     void postImagesAddToDatabase(final List<Uri> imageUri) {
         publishPostButton.setVisibility(View.INVISIBLE);
+        progressBar.show();
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
 
-        //create a storage referance
         final List<String> imageUrls = new ArrayList<>();
         int counter = 0;
 
@@ -342,26 +347,39 @@ public class PublishPostImageFragment extends Fragment {
 
         var firebaseUser = new SessionManager(requireContext()).getData();
 
-        Map<String, Object> apartmentPost = new HashMap<>();
-        apartmentPost.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
-        apartmentPost.put(Config.DESCRIPTION, description);
-        apartmentPost.put(Config.userID, firebaseUser.getUserID());
-        apartmentPost.put(Config.PRICE, budget);
-        apartmentPost.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
-        apartmentPost.put(Config.PREFERENCE, preferences);
-        apartmentPost.put(Config.IMAGE_URL, imageUris);
-        apartmentPost.put(Config.TIME_STAMP, System.currentTimeMillis());
-        apartmentPost.put(Config.BUILDING_ADDRESS, buildingAddress);
-        apartmentPost.put(Config.BUILDING_TYPE, buildingType);
+        Map<String, Object> apartment = new HashMap<>();
+        apartment.put(Config.adminID, firebaseUser.getUserID());
+        apartment.put(Config.apartmentMembers, new HashMap<String, String>());
+        apartment.put(Config.taskCards, new HashMap<String, TasksCard>());
+        apartment.put(Config.expensesCards, new HashMap<String, ExpensesCard>());
+
+        dataBase.collection(Config.APARTMENT_LIST).add(apartment).addOnSuccessListener(documentReference -> {
+            Map<String, Object> apartmentPost = new HashMap<>();
+            apartmentPost.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
+            apartmentPost.put(Config.DESCRIPTION, description);
+            apartmentPost.put(Config.userID, firebaseUser.getUserID());
+            apartmentPost.put(Config.PRICE, budget);
+            apartmentPost.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
+            apartmentPost.put(Config.PREFERENCE, preferences);
+            apartmentPost.put(Config.IMAGE_URL, imageUris);
+            apartmentPost.put(Config.TIME_STAMP, System.currentTimeMillis());
+            apartmentPost.put(Config.BUILDING_ADDRESS, buildingAddress);
+            apartmentPost.put(Config.BUILDING_TYPE, buildingType);
 
 
-        dataBase.add(apartmentPost).addOnSuccessListener(documentReference -> {
-            showCustomToast(requireActivity().getString(R.string.post_success));
-            requireActivity().onBackPressed();
+            dataBase.collection(Config.APARTMENT_POST).add(apartmentPost).addOnSuccessListener(reference -> {
+                progressBar.dismiss();
+                showCustomToast(requireActivity().getString(R.string.post_success));
+                requireActivity().onBackPressed();
+            }).addOnFailureListener(e -> {
+                e.printStackTrace();
+                progressBar.dismiss();
+                showCustomToast(requireActivity().getString(R.string.post_failed));
+                requireActivity().onBackPressed();
+            });
         }).addOnFailureListener(e -> {
-            e.printStackTrace();
+            progressBar.dismiss();
             showCustomToast(requireActivity().getString(R.string.post_failed));
-            requireActivity().onBackPressed();
         });
     }
 

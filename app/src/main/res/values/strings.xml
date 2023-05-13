@@ -92,6 +92,12 @@
     <string name="add_image_of_your_place">Please add an image of your place</string>
     <string name="error_cannot_message_with_yourself">You cannot send messages to yourself</string>
 
+    <string name="already_have_personal_post">You already have a personal post, delete it and create a new one or edit it.</string>
+    <string name="already_have_apartment_post">You already have a apartment post, delete it and create a new one or edit it.</string>
+
+
+    <string name="publishing_post">Publishing your post!</string>
+
 
 
 

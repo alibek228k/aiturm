@@ -195,9 +195,7 @@ public class DeleteUserDialogDragment extends DialogFragment {
     private void deleteAllPosts(String userId){
         firebaseFirestore.collection(Config.APARTMENT_POST).whereEqualTo(Config.userID, userId).get().addOnSuccessListener(queryDocumentSnapshots -> {
             queryDocumentSnapshots.getDocuments().forEach(documentSnapshot -> {
-                documentSnapshot.getReference().delete().addOnSuccessListener(unused -> {
-
-                });
+                documentSnapshot.getReference().delete();
             });
         });
 
