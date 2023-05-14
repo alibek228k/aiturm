@@ -143,7 +143,6 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
             //set the desicription
             if (apartment != null) {
                 if (firebaseUser != null) {
-                    System.out.println("User ids: me: " + firebaseUser.getUid() + ", post author: " + apartment.getUserID());
                     getPostOwnerDetails(firebaseUser.getUid(), apartment.getUserID());
                 }
                 //format and set date
@@ -258,7 +257,6 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = new User();
                 user = snapshot.getValue(User.class);
-                System.out.println("onDateChange " + snapshot);
                 if (user!=null) {
                     if (currentUserid.equals(userUid)) {
                         messageButton.setVisibility(View.GONE);

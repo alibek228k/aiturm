@@ -1,5 +1,5 @@
 package kz.devs.aiturm;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,7 +28,6 @@ import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -35,10 +35,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.shroomies.R;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.net.HttpHeaders;
 import com.google.firebase.auth.FirebaseAuth;
@@ -46,15 +42,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import kz.devs.aiturm.model.User;
@@ -73,19 +67,23 @@ public class MembersFragment extends Fragment {
     //data structures
     private ArrayList<User> membersList = new ArrayList<>();
     private UserAdapter userAdapter;
-   //model
+    //model
     private AiturmApartment apartment;
 
     private DatabaseReference rootReference;
+
+    private FirebaseFirestore firebaseFirestore;
+    private User admin;
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v =inflater.inflate(R.layout.fragment_shroomie_members, container, false);
+        v = inflater.inflate(R.layout.fragment_shroomie_members, container, false);
         requestQueue = Volley.newRequestQueue(getActivity());
         mAuth = FirebaseAuth.getInstance();
         rootReference = FirebaseDatabase.getInstance().getReference();
+        firebaseFirestore = FirebaseFirestore.getInstance();
         return v;
     }
 
@@ -142,13 +140,10 @@ public class MembersFragment extends Fragment {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("Leave group");
             builder.setPositiveButton("Cancel", (dialog, which) -> dialog.dismiss());
-            builder.setNegativeButton("leave", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    leaveRoomButton.setClickable(false);
-                    leaveApartment();
-                }
+            builder.setNegativeButton("leave", (dialog, which) -> {
+                dialog.dismiss();
+                leaveRoomButton.setClickable(false);
+                leaveApartment();
             });
             builder.setMessage("Leaving this group will remove all data and place you in an empty group.");
             builder.setIcon(R.drawable.ic_shroomies_yelllow_black_borders);
@@ -159,7 +154,10 @@ public class MembersFragment extends Fragment {
 
         msgOwnerImageButton.setOnClickListener(view12 -> {
             Intent intent = new Intent(getContext(), ChattingActivity.class);
-            intent.putExtra("USERID",mAuth.getCurrentUser().getUid());
+            intent.putExtra("USERID", mAuth.getCurrentUser().getUid());
+            if (admin != null) {
+                intent.putExtra("USER", admin);
+            }
             startActivity(intent);
         });
 
@@ -185,62 +183,31 @@ public class MembersFragment extends Fragment {
         ghostImageView.startAnimation(animUpDown);
     }
 
-    private void leaveApartment(){
-        customLoadingProgressBar = new CustomLoadingProgressBar(getActivity(),"Leaving..." , R.raw.lf30_editor_igyp9bvy);
+    private void leaveApartment() {
+        customLoadingProgressBar = new CustomLoadingProgressBar(getActivity(), "Leaving...", R.raw.lf30_editor_igyp9bvy);
         customLoadingProgressBar.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         customLoadingProgressBar.setCancelable(false);
         customLoadingProgressBar.show();
-        JSONObject jsonObject = new JSONObject();
-        JSONObject data = new JSONObject();
-        try {
-            jsonObject.put(Config.apartmentID , apartment.getApartmentID());
-            jsonObject.put(Config.userID , mAuth.getCurrentUser().getUid());
-            data.put(Config.data, jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
-        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-        firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
+        if (apartment == null) {
+            customLoadingProgressBar.dismiss();
+        } else {
+            var members = apartment.getApartmentMembers();
+            members.remove(mAuth.getCurrentUser().getUid());
+            var request = new HashMap<String, Object>();
+            request.put("apartmentMembers", members);
+            firebaseFirestore.collection(Config.APARTMENT_LIST).document(apartment.getApartmentID()).update(request).addOnSuccessListener(task -> {
+                rootReference.child(Config.users).child(mAuth.getCurrentUser().getUid()).child(Config.apartmentID).removeValue().addOnSuccessListener(task1 -> {
+                    getActivity().finish();
+                }).addOnFailureListener(e -> {
+                    customLoadingProgressBar.dismiss();
+                    Toast.makeText(requireContext(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                });
+            }).addOnFailureListener(e -> {
                 customLoadingProgressBar.dismiss();
-                String token = task.getResult().getToken();
-                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_LEAVE_APARTMENT, data, response -> {
-                    try {
-                        JSONObject result = (JSONObject) response.get(Config.result);
-                        boolean success = result.getBoolean(Config.success);
-                        if(success){
-                            String message = result.getString(Config.message);
-                            getActivity().finish();
-                            Snackbar.make(rootLayout ,message , Snackbar.LENGTH_LONG );
-                        }else{
-                            String title = "Unexpected error";
-                            String message = "We have encountered an unexpected error, try to check your internet connection and log in again.";
-                            displayErrorAlert(title, message , null);
-                        }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                        , error -> displayErrorAlert("Error", null, error)) {
-                    @Override
-                    public Map<String, String> getHeaders() {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                        params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                        return params;
-                    }
-                };
-                requestQueue.add(jsonObjectRequest);
-            }else{
-                String title = "Authentication error";
-                String message = "We encountered a problem while authenticating your account";
-                displayErrorAlert(title, message , null);
-            }
-        });
+                Toast.makeText(requireContext(), getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+            });
+        }
 
     }
 
@@ -249,24 +216,26 @@ public class MembersFragment extends Fragment {
         userAdapter = new UserAdapter(membersList, getContext(),apartment,getView());
         membersRecyclerView.setAdapter(userAdapter);
 
-        var membersIds = new ArrayList<String>();
-        membersIds.add(aiturmApartment.getAdminID());
-        membersIds.addAll(aiturmApartment.getApartmentMembers().values());
+        var membersIds = aiturmApartment.getApartmentMembers().values();
         rootReference.child(Config.users).get().addOnSuccessListener(dataSnapshot -> {
             var newList = new ArrayList<User>();
             for (DataSnapshot child : dataSnapshot.getChildren()) {
-                if (membersIds.contains(child.getKey())){
+                if (membersIds.contains(child.getKey())) {
                     var user = child.getValue(User.class);
                     user.setUserID(child.getKey());
                     newList.add(user);
+                } else if (apartment.getAdminID().equals(child.getKey())) {
+                    var admin = child.getValue(User.class);
+                    admin.setUserID(apartment.getAdminID());
+                    setAdminDetails(admin);
                 }
+
             }
 
             if (!newList.isEmpty()){
                 membersList = newList;
                 userAdapter.userList = membersList;
                 userAdapter.notifyDataSetChanged();
-                System.out.println("data has changed");
             }else{
                 noMembersRelativeLayout.setVisibility(View.VISIBLE);
             }
@@ -278,20 +247,23 @@ public class MembersFragment extends Fragment {
     }
 
     private void setAdminDetails(User user) {
-        if(mAuth.getCurrentUser().getUid().equals(user.getUserID())){
-            ownerName.setText("You");
-        }else{
-            ownerName.setText(user.getUsername());
-        }
-        if(user.getImage()!=null){
-            if(!user.getImage().isEmpty()) {
-                GlideApp.with(getContext())
-                        .load(user.getImage())
-                        .fitCenter()
-                        .circleCrop()
-                        .error(R.drawable.ic_user_profile_svgrepo_com)
-                        .transition(DrawableTransitionOptions.withCrossFade()) //Here a fading animation
-                        .into(adminImageView);
+        if (user != null) {
+            admin = user;
+            if (mAuth.getCurrentUser().getUid().equals(user.getUserID())) {
+                ownerName.setText("You");
+            } else {
+                ownerName.setText(user.getUsername());
+            }
+            if (user.getImage() != null) {
+                if (!user.getImage().isEmpty()) {
+                    GlideApp.with(getContext())
+                            .load(user.getImage())
+                            .fitCenter()
+                            .circleCrop()
+                            .error(R.drawable.ic_user_profile_svgrepo_com)
+                            .transition(DrawableTransitionOptions.withCrossFade()) //Here a fading animation
+                            .into(adminImageView);
+                }
             }
         }
     }
