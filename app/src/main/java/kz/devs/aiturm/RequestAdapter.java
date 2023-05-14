@@ -131,31 +131,59 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                     showAcceptDialog(usersList.get(getAdapterPosition()).getUserID() , title , message);
             });
             reject.setOnClickListener(v -> rejectRequest(usersList.get(getAdapterPosition()).getUserID(), getAdapterPosition()));
-            cancel.setOnClickListener(v -> rejectRequest(usersList.get(getAdapterPosition()).getUserID() , getAdapterPosition()));
+            cancel.setOnClickListener(v -> cancelRequest(usersList.get(getAdapterPosition()).getUserID() , getAdapterPosition()));
         }
-
-
 
         private void rejectRequest(final String senderID , int position) {
             var currentUser = new SessionManager(context).getData();
             var receivedRequests = currentUser.getReceivedRequests();
-            receivedRequests.remove(senderID);
-            var request = new HashMap<String, Object>();
-            request.put("receivedRequests", receivedRequests);
-            rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(dataSnapshot -> {
-                var sendRequests = usersList.get(position).getSendRequests();
-                sendRequests.remove(currentUser.getUserID());
-                var newRequest = new HashMap<String, Object>();
-                newRequest.put("sendRequests", sendRequests);
-                rootReference.child(Config.users).child(senderID).updateChildren(newRequest).addOnFailureListener(e -> {
+            if (receivedRequests.keySet().contains(senderID)){
+                receivedRequests.remove(senderID);
+                var request = new HashMap<String, Object>();
+                request.put("receivedRequests", receivedRequests);
+                rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(dataSnapshot -> {
+                    var sendRequests = usersList.get(position).getSendRequests();
+                    sendRequests.remove(currentUser.getUserID());
+                    var newRequest = new HashMap<String, Object>();
+                    newRequest.put("sendRequests", sendRequests);
+                    rootReference.child(Config.users).child(senderID).updateChildren(newRequest).addOnFailureListener(e -> {
+                        Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                    }).addOnSuccessListener(dataSnapshot1 -> {
+                        usersList.remove(position);
+                        notifyItemRemoved(position);
+                    });
+                }).addOnFailureListener(e -> {
                     Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
-                }).addOnSuccessListener(dataSnapshot1 -> {
-                    usersList.remove(position);
-                    notifyItemRemoved(position);
                 });
-            }).addOnFailureListener(e -> {
+            }else{
                 Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
-            });
+            }
+        }
+
+        private void cancelRequest(final String recipientId , int position) {
+            var currentUser = new SessionManager(context).getData();
+            var sendRequests = currentUser.getSendRequests();
+            if (sendRequests.contains(recipientId)) {
+                sendRequests.remove(recipientId);
+                var request = new HashMap<String, Object>();
+                request.put("sendRequests", sendRequests);
+                rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(dataSnapshot -> {
+                    var receivedRequests = usersList.get(position).getReceivedRequests();
+                    receivedRequests.remove(currentUser.getUserID());
+                    var newRequest = new HashMap<String, Object>();
+                    newRequest.put("receivedRequests", receivedRequests);
+                    rootReference.child(Config.users).child(recipientId).updateChildren(newRequest).addOnFailureListener(e -> {
+                        Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                    }).addOnSuccessListener(dataSnapshot1 -> {
+                        usersList.remove(position);
+                        notifyItemRemoved(position);
+                    });
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                });
+            }else{
+                Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+            }
         }
 
          private void acceptRequest(final String senderID){
