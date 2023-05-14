@@ -79,7 +79,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/lightGrey"
-        android:text="Add users to your current group to add cards and manage your unit "
+        android:text="@string/add_users_to_group"
         android:layout_alignParentBottom="true"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"

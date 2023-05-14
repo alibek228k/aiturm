@@ -10,6 +10,7 @@ import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,6 +39,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.common.net.HttpHeaders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,20 +57,17 @@ import java.util.Map;
 import kz.devs.aiturm.model.User;
 
 public class AddRoomMemberDialogFragment extends DialogFragment {
-    //views
-    private View v;
     private SearchView memberSearchView;
-    private RecyclerView addShroomieRecycler;
+    private RecyclerView addMembersRecycler;
     private ImageButton closeButton;
-    private RelativeLayout rootlayout;
+    private RelativeLayout rootLayout;
     private LottieAnimationView progressView;
-    //firebase
-    private FirebaseAuth mAuth;
-    private RequestQueue requestQueue;
     //data
     private UserAdapter userRecyclerAdapter;
     private ArrayList<User> suggestedUser;
     private AiturmApartment apartment;
+
+    private DatabaseReference database;
 
 
     //TODO add users from the  inbox
@@ -89,25 +93,23 @@ public class AddRoomMemberDialogFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        v =inflater.inflate(R.layout.add_shroomies, container, false);
-        mAuth=FirebaseAuth.getInstance();
-        requestQueue = Volley.newRequestQueue(getActivity());
-        return v;
+        database = FirebaseDatabase.getInstance().getReference().child(Config.users);
+        return inflater.inflate(R.layout.dialog_fragment_add_members, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        memberSearchView = v.findViewById(R.id.search_member);
-        addShroomieRecycler = v.findViewById(R.id.add_member_recyclerview);
-        closeButton = v.findViewById(R.id.close_button_add_shroomie);
-        TextView infoTextView = v.findViewById(R.id.information_text_view);
-        rootlayout = v.findViewById(R.id.add_member_root_layout);
-        progressView = v.findViewById(R.id.search_user_progress_view);
+        memberSearchView = view.findViewById(R.id.search_member);
+        addMembersRecycler = view.findViewById(R.id.add_member_recyclerview);
+        closeButton = view.findViewById(R.id.close_button_add_shroomie);
+        TextView infoTextView = view.findViewById(R.id.information_text_view);
+        rootLayout = view.findViewById(R.id.add_member_root_layout);
+        progressView = view.findViewById(R.id.search_user_progress_view);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        addShroomieRecycler.setHasFixedSize(true);
-        addShroomieRecycler.setLayoutManager(linearLayoutManager);
+        addMembersRecycler.setHasFixedSize(true);
+        addMembersRecycler.setLayoutManager(linearLayoutManager);
 
         closeButton.setOnClickListener(v -> dismiss());
 
@@ -139,106 +141,134 @@ public class AddRoomMemberDialogFragment extends DialogFragment {
     void searchUsers(String query){
         progressView.setVisibility(View.VISIBLE);
         if(!query.trim().isEmpty()){
-            FirebaseUser firebaseUser = mAuth
-                    .getCurrentUser();
-            firebaseUser.getIdToken(true)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            String token = task.getResult().getToken();
-                            suggestedUser = new ArrayList<>();
-                            JSONObject jsonObject = new JSONObject();
-                            JSONObject data =  new JSONObject();
-                            try {
-                                jsonObject.put(Config.name, query.trim());
-                                jsonObject.put(Config.currentUser, mAuth.getCurrentUser().getUid());
-                                data.put(Config.data , jsonObject);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SEARCH_USERS, data, response -> {
-                                try {
-                                    JSONObject result = response.getJSONObject(Config.result);
-                                    boolean success = result.getBoolean(Config.success);
-                                if(success){
-                                    JSONArray userArray = result.getJSONArray(Config.message);
-                                    //the result is a json object containing
-                                    //json array of json arrays
-                                    //the nested json array contains 2 indices
-                                    // first index is the user object
-                                    // and the second  index is a boolean value
-                                    //indicating whether the current user has already
-                                    // sent a request to the searched user
-                                    final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
-                                    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+            database.orderByChild(Config.username).startAt(query).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()){
+                        var arrayList = new ArrayList<User>();
+                        snapshot.getChildren().forEach(children -> {
+                            var member = children.getValue(User.class);
+                            member.setUserID(children.getKey());
+                            if (member.getApartmentID() == null) arrayList.add(member);
+                        });
+                        suggestedUser = arrayList;
 
-                                    for(int i= 0 ;i< userArray.length();i++){
-                                        try {
-                                            JSONArray jsonArray =((JSONArray)(userArray.get(i)));
-                                            //cast the first index as a json object and the second as a boolean value
-                                            JSONObject userJsonObject = (JSONObject) jsonArray.get(0);
-                                            boolean requestSent = (boolean)jsonArray.get(1);
-                                            User user =mapper.readValue(userJsonObject.toString() , User.class);
-                                            user.setRequestSent(requestSent);
-                                            if(apartment.getApartmentMembers()!=null){
-                                                if(!apartment.getApartmentMembers().containsKey(user.getUserID())){
-                                                    suggestedUser.add(user);
-                                                }
-                                            }else{
-                                                suggestedUser.add(user);
-                                            }
-
-                                        } catch (JSONException | JsonProcessingException e) {
-                                            e.printStackTrace();
-                                        }        progressView.setVisibility(View.GONE);
-
-                                    }
-                                    if(suggestedUser.size()!=0){
-                                        userRecyclerAdapter= new UserAdapter(suggestedUser,getContext(),true,apartment);
-                                        userRecyclerAdapter.setHasStableIds(true);
-                                        addShroomieRecycler.setAdapter(userRecyclerAdapter);
-                                    }else{
-                                        Snackbar.make(rootlayout ,"No such user found" , Snackbar.LENGTH_SHORT).show();
-
-                                    }
-
-                                }else{
-                                    String message = result.getString(Config.message);
-                                    Snackbar.make(rootlayout ,message , Snackbar.LENGTH_SHORT).show();
-                                }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                    progressView.setVisibility(View.GONE);
-
-                                }
-                                progressView.setVisibility(View.GONE);
-
-                            }, error -> {
-                                String message = null; // error message, show it in toast or dialog, whatever you want
-                                if (error instanceof NetworkError || error instanceof AuthFailureError || error instanceof TimeoutError) {
-                                    message = "Cannot connect to Internet";
-                                } else if (error instanceof ServerError) {
-                                    message = "The server could not be found. Please try again later";
-                                }  else if (error instanceof ParseError) {
-                                    message = "Parsing error! Please try again later";
-                                }
-                                displayErrorAlert("Error" ,message);
-                            })
-                            {
-                                @Override
-                                public Map<String, String> getHeaders() {
-                                    Map<String, String> params = new HashMap<String, String>();
-                                    params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                                    params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                                    return params;
-                                }
-                            };
-                            requestQueue.add(jsonObjectRequest);
+                        if(suggestedUser.size()!=0){
+                            userRecyclerAdapter= new UserAdapter(suggestedUser,getContext(),true,apartment);
+                            userRecyclerAdapter.setHasStableIds(true);
+                            addMembersRecycler.setAdapter(userRecyclerAdapter);
                         }else{
-                            String title = "Authentication error";
-                            String message = "We encountered a problem while authenticating your account";
-                            displayErrorAlert(title, message);
+                            Snackbar.make(rootLayout,getString(R.string.no_such_user_found) , Snackbar.LENGTH_SHORT).show();
                         }
-                    });
+                    }
+                    progressView.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(requireContext(), "Search is canceled", Toast.LENGTH_SHORT).show();
+                    progressView.setVisibility(View.GONE);
+                }
+            });
+//            firebaseUser.getIdToken(true)
+//                    .addOnCompleteListener(task -> {
+//                        if (task.isSuccessful()){
+//                            String token = task.getResult().getToken();
+//                            suggestedUser = new ArrayList<>();
+//                            JSONObject jsonObject = new JSONObject();
+//                            JSONObject data =  new JSONObject();
+//
+//                            try {
+//                                jsonObject.put(Config.name, query.trim());
+//                                jsonObject.put(Config.currentUser, mAuth.getCurrentUser().getUid());
+//                                data.put(Config.data , jsonObject);
+//                            } catch (JSONException e) {
+//                                e.printStackTrace();
+//                            }
+//                            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SEARCH_USERS, data, response -> {
+//                                try {
+//                                    JSONObject result = response.getJSONObject(Config.result);
+//                                    boolean success = result.getBoolean(Config.success);
+//                                if(success){
+//                                    JSONArray userArray = result.getJSONArray(Config.message);
+//                                    //the result is a json object containing
+//                                    //json array of json arrays
+//                                    //the nested json array contains 2 indices
+//                                    // first index is the user object
+//                                    // and the second  index is a boolean value
+//                                    //indicating whether the current user has already
+//                                    // sent a request to the searched user
+//                                    final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
+//                                    mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//
+//                                    for(int i= 0 ;i< userArray.length();i++){
+//                                        try {
+//                                            JSONArray jsonArray =((JSONArray)(userArray.get(i)));
+//                                            //cast the first index as a json object and the second as a boolean value
+//                                            JSONObject userJsonObject = (JSONObject) jsonArray.get(0);
+//                                            boolean requestSent = (boolean)jsonArray.get(1);
+//                                            User user =mapper.readValue(userJsonObject.toString() , User.class);
+//                                            user.setRequestSent(requestSent);
+//                                            if(apartment.getApartmentMembers()!=null){
+//                                                if(!apartment.getApartmentMembers().containsKey(user.getUserID())){
+//                                                    suggestedUser.add(user);
+//                                                }
+//                                            }else{
+//                                                suggestedUser.add(user);
+//                                            }
+//
+//                                        } catch (JSONException | JsonProcessingException e) {
+//                                            e.printStackTrace();
+//                                        }        progressView.setVisibility(View.GONE);
+//
+//                                    }
+//                                    if(suggestedUser.size()!=0){
+//                                        userRecyclerAdapter= new UserAdapter(suggestedUser,getContext(),true,apartment);
+//                                        userRecyclerAdapter.setHasStableIds(true);
+//                                        addMembersRecycler.setAdapter(userRecyclerAdapter);
+//                                    }else{
+//                                        Snackbar.make(rootLayout,"No such user found" , Snackbar.LENGTH_SHORT).show();
+//
+//                                    }
+//
+//                                }else{
+//                                    String message = result.getString(Config.message);
+//                                    Snackbar.make(rootLayout,message , Snackbar.LENGTH_SHORT).show();
+//                                }
+//                                } catch (JSONException e) {
+//                                    e.printStackTrace();
+//                                    progressView.setVisibility(View.GONE);
+//
+//                                }
+//                                progressView.setVisibility(View.GONE);
+//
+//                            }, error -> {
+//                                String message = null; // error message, show it in toast or dialog, whatever you want
+//                                if (error instanceof NetworkError || error instanceof AuthFailureError || error instanceof TimeoutError) {
+//                                    message = "Cannot connect to Internet";
+//                                } else if (error instanceof ServerError) {
+//                                    message = "The server could not be found. Please try again later";
+//                                }  else if (error instanceof ParseError) {
+//                                    message = "Parsing error! Please try again later";
+//                                }
+//                                displayErrorAlert("Error" ,message);
+//                            })
+//                            {
+//                                @Override
+//                                public Map<String, String> getHeaders() {
+//                                    Map<String, String> params = new HashMap<String, String>();
+//                                    params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+//                                    params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
+//                                    return params;
+//                                }
+//                            };
+//                            requestQueue.add(jsonObjectRequest);
+//                        }else{
+//                            String title = "Authentication error";
+//                            String message = "We encountered a problem while authenticating your account";
+//                            displayErrorAlert(title, message);
+//                        }
+//                    });
 
         }
     }

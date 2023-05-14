@@ -97,8 +97,13 @@
 
 
     <string name="publishing_post">Publishing your post!</string>
+    <string name="add_users_to_group">Add users to your current group to add cards and manage your unit</string>
+    <string name="no_such_user_found">No such user found</string>
 
+    <string name="request_sent_success">Request successfully send!</string>
+    <string name="request_sent_failed">Failed to send request</string>
 
+    <string name="network_error">Network error</string>
 
 
 </resources>

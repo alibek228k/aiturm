@@ -1,6 +1,8 @@
 package kz.devs.aiturm.model;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class User implements Serializable {
     private String username;
@@ -15,8 +17,12 @@ public class User implements Serializable {
     private SignInMethod signInMethod;
     private Gender gender;
     private float sharedAmount;
-    private boolean requestSent;
     private int requestCount;
+
+    private List<String> sendRequests;
+
+    //Map because key is a user id value is apartmentId
+    private Map<String, String> receivedRequests;
     private String apartmentID;
 
     public String getUsername() {
@@ -107,14 +113,6 @@ public class User implements Serializable {
         this.sharedAmount = sharedAmount;
     }
 
-    public boolean isRequestSent() {
-        return requestSent;
-    }
-
-    public void setRequestSent(boolean requestSent) {
-        this.requestSent = requestSent;
-    }
-
     public int getRequestCount() {
         return requestCount;
     }
@@ -139,7 +137,23 @@ public class User implements Serializable {
         this.apartmentID = apartmentID;
     }
 
-    public enum Gender{
+    public List<String> getSendRequests() {
+        return sendRequests;
+    }
+
+    public void setSendRequests(List<String> sendRequests) {
+        this.sendRequests = sendRequests;
+    }
+
+    public Map<String, String> getReceivedRequests() {
+        return receivedRequests;
+    }
+
+    public void setReceivedRequests(Map<String, String> receivedRequests) {
+        this.receivedRequests = receivedRequests;
+    }
+
+    public enum Gender {
         MALE, FEMALE
     }
 }

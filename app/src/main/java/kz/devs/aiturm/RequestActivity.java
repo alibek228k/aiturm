@@ -1,12 +1,10 @@
 package kz.devs.aiturm;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
-
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,7 +19,6 @@ import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
@@ -31,13 +28,13 @@ import com.example.shroomies.R;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.common.net.HttpHeaders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +45,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import kz.devs.aiturm.presentaiton.SessionManager;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
+
+import kz.devs.aiturm.model.User;
 
 
 public class
@@ -64,9 +64,13 @@ RequestActivity extends AppCompatActivity {
    //data
    private RequestAdapter requestAdapter;
    private RequestAdapter invitationAdapter;
-   private ArrayList<User> senderUsers;
-   private ArrayList<User> receiverUsers;
+   private ArrayList<User> receivedRequestList;
+   private ArrayList<User> sentRequestList;
    private TabLayout tabLayout;
+
+   private DatabaseReference rootReference;
+   private User currentUser;
+   private SessionManager manager;
 
 
 
@@ -83,7 +87,10 @@ RequestActivity extends AppCompatActivity {
         noSentRequestsLayout = findViewById(R.id.no_sent_request_Layout);
         catAnimationView = findViewById(R.id.empty_animation_req);
         MaterialButton goToMyAiturmButton = findViewById(R.id.go_to_shroomies_button);
-//        Todo add go to publish post
+
+        rootReference = FirebaseDatabase.getInstance().getReference();
+        manager = new SessionManager(this);
+        currentUser = manager.getData();
         Toolbar reqToolbar = findViewById(R.id.request_toolbar);
         setSupportActionBar(reqToolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
@@ -98,8 +105,8 @@ RequestActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(getApplicationContext(), RecyclerView.VERTICAL , false);
         invitationRecyclerView.setLayoutManager(linearLayoutManager1);
         invitationRecyclerView.setHasFixedSize(true);
-        senderUsers=new ArrayList<>();
-        receiverUsers=new ArrayList<>();
+        receivedRequestList =new ArrayList<>();
+        sentRequestList =new ArrayList<>();
         OverScrollDecoratorHelper.setUpOverScroll(invitationRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
         OverScrollDecoratorHelper.setUpOverScroll(requestRecyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
         getToken();
@@ -114,8 +121,8 @@ RequestActivity extends AppCompatActivity {
                     invitationRecyclerView.setVisibility(View.VISIBLE);
                     catAnimationView.pauseAnimation();
                     catAnimationView.setVisibility(View.GONE);
-                    if (senderUsers!=null){
-                        if(senderUsers.isEmpty()){
+                    if (receivedRequestList !=null){
+                        if(receivedRequestList.isEmpty()){
                             invitationRecyclerView.setVisibility(View.GONE);
                             requestRecyclerView.setVisibility(View.GONE);
                             noSentRequestsLayout.setVisibility(View.GONE);
@@ -131,8 +138,8 @@ RequestActivity extends AppCompatActivity {
                     requestRecyclerView.setVisibility(View.VISIBLE);
                     catAnimationView.pauseAnimation();
                     catAnimationView.setVisibility(View.GONE);
-                    if (receiverUsers!=null){
-                        if(receiverUsers.isEmpty()){
+                    if (sentRequestList !=null){
+                        if(sentRequestList.isEmpty()){
                             requestRecyclerView.setVisibility(View.GONE);
                             invitationRecyclerView.setVisibility(View.GONE);
                             noReceivedRequestsLayout.setVisibility(View.GONE);
@@ -158,94 +165,151 @@ RequestActivity extends AppCompatActivity {
 
 
     private void getRequests(String token, String userUid) {
-        senderUsers = new ArrayList<>();
-        receiverUsers = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject();
-        JSONObject data = new JSONObject();
-        try {
-            jsonObject.put(Config.userID , userUid);
-            data.put(Config.data , jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GET_REQUESTS, data, response -> {
-            // response is a json array containing  two json arrays
-            // the first array contains the user objects of the
-            // requests sent to this user
-            // the second contains user objects of that the current
-            // user has sent requests to
-            final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
-            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        receivedRequestList = new ArrayList<>();
+        sentRequestList = new ArrayList<>();
 
-            try {
-                boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
-                if (success) {
-                    JSONArray requests = response.getJSONObject(Config.result).getJSONArray(Config.requests);
-                    Log.d("requests" , requests.toString());
-                    JSONArray receivedJsonArray = requests.getJSONArray(0);
-                    JSONArray sentJsonArray = requests.getJSONArray(1);
-                    if (receivedJsonArray != null) {
-                        if(receivedJsonArray.length()>0){
-                            for (int i = 0; i < receivedJsonArray.length(); i++) {
-                                User user = mapper.readValue(receivedJsonArray.get(i).toString(), User.class);
-                                senderUsers.add(user);
+        var receivedRequests = currentUser.getReceivedRequests();
+        if (receivedRequests == null){
+            if (tabLayout.getSelectedTabPosition()==0){
+                invitationRecyclerView.setVisibility(View.GONE);
+                requestRecyclerView.setVisibility(View.GONE);
+                noSentRequestsLayout.setVisibility(View.GONE);
+                noReceivedRequestsLayout.setVisibility(View.VISIBLE);
+                catAnimationView.playAnimation();
+                catAnimationView.setVisibility(View.VISIBLE);
+            }
+        }else{
+            rootReference.child(Config.users).get().addOnSuccessListener(dataSnapshot ->{
+                if (dataSnapshot.exists()){
+                    dataSnapshot.getChildren().forEach(children -> {
+                        receivedRequests.keySet().forEach(id -> {
+                            if (id.equals(children.getKey())){
+                                var user = children.getValue(User.class);
+                                user.setUserID(children.getKey());
+                                receivedRequestList.add(user);
                             }
-                            invitationAdapter = new RequestAdapter(RequestActivity.this, rootLayout, senderUsers, false);
-                            invitationAdapter.notifyDataSetChanged();
-                            invitationRecyclerView.setAdapter(invitationAdapter);
-                        }else{
-                            if (tabLayout.getSelectedTabPosition()==0){
-                                invitationRecyclerView.setVisibility(View.GONE);
-                                requestRecyclerView.setVisibility(View.GONE);
-                                noSentRequestsLayout.setVisibility(View.GONE);
-                                noReceivedRequestsLayout.setVisibility(View.VISIBLE);
-                                catAnimationView.playAnimation();
-                                catAnimationView.setVisibility(View.VISIBLE);
-                            }
-                        }
-                    }
-                    if (sentJsonArray != null) {
-                        if(sentJsonArray.length()>0){
-                            for (int i = 0; i < sentJsonArray.length(); i++) {
-                                User user = mapper.readValue(sentJsonArray.get(i).toString(), User.class);
-                                receiverUsers.add(user);
-                            }
-                            requestAdapter = new RequestAdapter(RequestActivity.this, rootLayout, receiverUsers, true);
-                            requestAdapter.notifyDataSetChanged();
-                            requestRecyclerView.setAdapter(requestAdapter);
-
-                        }else{
-                            if (tabLayout.getSelectedTabPosition()==1) {
-                                requestRecyclerView.setVisibility(View.GONE);
-                                invitationRecyclerView.setVisibility(View.GONE);
-                                noReceivedRequestsLayout.setVisibility(View.GONE);
-                                noSentRequestsLayout.setVisibility(View.VISIBLE);
-                                catAnimationView.playAnimation();
-                                catAnimationView.setVisibility(View.VISIBLE);
-                            }
-                        }
-
-                    }
-                } else {
-                    String message = "An Unexpected error occurred while performing your request";
-                    displayErrorAlert(null , message);
+                        });
+                    });
                 }
+                invitationAdapter = new RequestAdapter(RequestActivity.this, rootLayout, receivedRequestList, false, FirebaseDatabase.getInstance().getReference());
+                invitationAdapter.notifyDataSetChanged();
+                invitationRecyclerView.setAdapter(invitationAdapter);
+            });
+        }
 
-            } catch (JSONException | JsonProcessingException e) {
-                e.printStackTrace();
+        var sentRequests = currentUser.getSendRequests();
+        if (sentRequests == null){
+            if (tabLayout.getSelectedTabPosition()==1) {
+                requestRecyclerView.setVisibility(View.GONE);
+                invitationRecyclerView.setVisibility(View.GONE);
+                noReceivedRequestsLayout.setVisibility(View.GONE);
+                noSentRequestsLayout.setVisibility(View.VISIBLE);
+                catAnimationView.playAnimation();
+                catAnimationView.setVisibility(View.VISIBLE);
             }
+        }else {
+            rootReference.child(Config.users).get().addOnSuccessListener(dataSnapshot ->{
+                if (dataSnapshot.exists()){
+                    dataSnapshot.getChildren().forEach(children -> {
+                        sentRequests.forEach(id -> {
+                            if (id.equals(children.getKey())){
+                                var user = children.getValue(User.class);
+                                user.setUserID(children.getKey());
+                                sentRequestList.add(user);
+                            }
+                        });
+                    });
+                }
+                requestAdapter = new RequestAdapter(RequestActivity.this, rootLayout, sentRequestList, true, FirebaseDatabase.getInstance().getReference());
+                requestAdapter.notifyDataSetChanged();
+                requestRecyclerView.setAdapter(requestAdapter);
+            });
+        }
 
-        }, error -> displayErrorAlert(error , null)){
-            @Override
-            public Map<String, String> getHeaders()  {
-                Map<String, String> params = new HashMap<>();
-                params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                return params;
-            }
-        };
-        requestQueue.add(jsonObjectRequest);
-
+//        try {
+//            jsonObject.put(Config.userID , userUid);
+//            data.put(Config.data , jsonObject);
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_GET_REQUESTS, data, response -> {
+//            // response is a json array containing  two json arrays
+//            // the first array contains the user objects of the
+//            // requests sent to this user
+//            // the second contains user objects of that the current
+//            // user has sent requests to
+//            final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
+//            mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+//
+//            try {
+//                boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
+//                if (success) {
+//                    JSONArray requests = response.getJSONObject(Config.result).getJSONArray(Config.requests);
+//                    Log.d("requests" , requests.toString());
+//                    JSONArray receivedJsonArray = requests.getJSONArray(0);
+//                    JSONArray sentJsonArray = requests.getJSONArray(1);
+//                    if (receivedJsonArray != null) {
+//                        if(receivedJsonArray.length()>0){
+//                            for (int i = 0; i < receivedJsonArray.length(); i++) {
+//                                User user = mapper.readValue(receivedJsonArray.get(i).toString(), User.class);
+//                                receivedRequestList.add(user);
+//                            }
+//                            invitationAdapter = new RequestAdapter(RequestActivity.this, rootLayout, receivedRequestList, false);
+//                            invitationAdapter.notifyDataSetChanged();
+//                            invitationRecyclerView.setAdapter(invitationAdapter);
+//                        }else{
+//                            if (tabLayout.getSelectedTabPosition()==0){
+//                                invitationRecyclerView.setVisibility(View.GONE);
+//                                requestRecyclerView.setVisibility(View.GONE);
+//                                noSentRequestsLayout.setVisibility(View.GONE);
+//                                noReceivedRequestsLayout.setVisibility(View.VISIBLE);
+//                                catAnimationView.playAnimation();
+//                                catAnimationView.setVisibility(View.VISIBLE);
+//                            }
+//                        }
+//                    }
+//                    if (sentJsonArray != null) {
+//                        if(sentJsonArray.length()>0){
+//                            for (int i = 0; i < sentJsonArray.length(); i++) {
+//                                User user = mapper.readValue(sentJsonArray.get(i).toString(), User.class);
+//                                sentRequestList.add(user);
+//                            }
+//                            requestAdapter = new RequestAdapter(RequestActivity.this, rootLayout, sentRequestList, true);
+//                            requestAdapter.notifyDataSetChanged();
+//                            requestRecyclerView.setAdapter(requestAdapter);
+//
+//                        }else{
+//                            if (tabLayout.getSelectedTabPosition()==1) {
+//                                requestRecyclerView.setVisibility(View.GONE);
+//                                invitationRecyclerView.setVisibility(View.GONE);
+//                                noReceivedRequestsLayout.setVisibility(View.GONE);
+//                                noSentRequestsLayout.setVisibility(View.VISIBLE);
+//                                catAnimationView.playAnimation();
+//                                catAnimationView.setVisibility(View.VISIBLE);
+//                            }
+//                        }
+//
+//                    }
+//                } else {
+//                    String message = "An Unexpected error occurred while performing your request";
+//                    displayErrorAlert(null , message);
+//                }
+//
+//            } catch (JSONException | JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }, error -> displayErrorAlert(error , null)){
+//            @Override
+//            public Map<String, String> getHeaders()  {
+//                Map<String, String> params = new HashMap<>();
+//                params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+//                params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
+//                return params;
+//            }
+//        };
+//        requestQueue.add(jsonObjectRequest);
+//
     }
  void getToken(){
      FirebaseUser firebaseUser = mAuth.getCurrentUser();

@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,14 +28,13 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-
 import com.example.shroomies.R;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.net.HttpHeaders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
+import com.google.firebase.database.DatabaseReference;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +42,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
 
 
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestViewHolder> {
@@ -54,11 +56,14 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     RequestQueue requestQueue;
     RelativeLayout rootLayout;
 
-    public RequestAdapter(Context context, RelativeLayout rootLayout , ArrayList<User> usersList, Boolean receiverUsers) {
+    DatabaseReference rootReference;
+
+    public RequestAdapter(Context context, RelativeLayout rootLayout, ArrayList<User> usersList, Boolean receiverUsers, DatabaseReference rootReference) {
         this.context = context;
-        this.usersList=usersList;
-        this.receiverUsers=receiverUsers;
+        this.usersList = usersList;
+        this.receiverUsers = receiverUsers;
         this.rootLayout = rootLayout;
+        this.rootReference = rootReference;
     }
 
 
@@ -121,11 +126,9 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             cancel=itemView.findViewById(R.id.cancel_request);
 
             accept.setOnClickListener(v -> {
-
                     String title = "Join room";
                     String message = "Joining this room would remove you from your current room. If you are the only member in your current room, your data will be deleted";
                     showAcceptDialog(usersList.get(getAdapterPosition()).getUserID() , title , message);
-
             });
             reject.setOnClickListener(v -> rejectRequest(usersList.get(getAdapterPosition()).getUserID(), getAdapterPosition()));
             cancel.setOnClickListener(v -> rejectRequest(usersList.get(getAdapterPosition()).getUserID() , getAdapterPosition()));
@@ -133,57 +136,26 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
 
 
 
-        private void rejectRequest(final String senderID , int position){
-            FirebaseUser firebaseUser= mAuth.getCurrentUser();
-            if (firebaseUser!=null) {
-                firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
-                        String token = task.getResult().getToken();
-
-                        JSONObject data = new JSONObject();
-                        JSONObject jsonObject = new JSONObject();
-
-                        try {
-                            jsonObject.put("senderID", senderID);
-                            jsonObject.put("receiverID", firebaseUser.getUid());
-                            data.put("data", jsonObject);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_CANCEL_OR_REJECT_REQUEST, data, response -> {
-
-                            try {
-                                boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
-                                if (success) {
-                                    usersList.remove(position);
-                                    notifyItemRemoved(position);
-                                } else {
-                                    Snackbar.make(rootLayout, "We encountered an error while performing your request", BaseTransientBottomBar.LENGTH_LONG).show();
-
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }, error -> displayErrorAlert(error , null))
-                        {
-                            @Override
-                            public Map<String, String> getHeaders()  {
-                                Map<String, String> params = new HashMap<>();
-                                params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                                params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                                return params;
-                            }
-                        };
-                        requestQueue.add(jsonObjectRequest);
-                    }else{
-                        displayErrorAlert(null, "An unexpected error occured");
-                    }
+        private void rejectRequest(final String senderID , int position) {
+            var currentUser = new SessionManager(context).getData();
+            var receivedRequests = currentUser.getReceivedRequests();
+            receivedRequests.remove(senderID);
+            var request = new HashMap<String, Object>();
+            request.put("receivedRequests", receivedRequests);
+            rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(dataSnapshot -> {
+                var sendRequests = usersList.get(position).getSendRequests();
+                sendRequests.remove(currentUser.getUserID());
+                var newRequest = new HashMap<String, Object>();
+                newRequest.put("sendRequests", sendRequests);
+                rootReference.child(Config.users).child(senderID).updateChildren(newRequest).addOnFailureListener(e -> {
+                    Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                }).addOnSuccessListener(dataSnapshot1 -> {
+                    usersList.remove(position);
+                    notifyItemRemoved(position);
                 });
-            }
-
+            }).addOnFailureListener(e -> {
+                Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+            });
         }
 
          private void acceptRequest(final String senderID){

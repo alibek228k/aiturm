@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,6 +34,8 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.common.net.HttpHeaders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,22 +44,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
+
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
-   private final ArrayList<User> userList;
-   private final Context context;
-   private FirebaseAuth mAuth;
-   private boolean fromSearchMember =false;
-   private RequestQueue requestQueue;
-   private final AiturmApartment apartment;
-   private View parentView;
+    private final ArrayList<User> userList;
+    private final Context context;
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
+    private boolean fromSearchMember = false;
+    private RequestQueue requestQueue;
+    private final AiturmApartment apartment;
+    private View parentView;
 
 
     public UserAdapter(ArrayList<User> userList, Context context, AiturmApartment apartment, View parentView) {
         this.userList = userList;
         this.context = context;
-        this.apartment=apartment;
-        this.parentView=parentView;
+        this.apartment = apartment;
+        this.parentView = parentView;
     }
     public UserAdapter(ArrayList<User> userList, Context context, Boolean fromSearchMember, AiturmApartment apartment) {
         this.userList = userList;
@@ -91,19 +98,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             holder.userName.setText(userList.get(position).getUsername());
 
         }
-        if(!mAuth.getCurrentUser().getUid().equals(apartment.getAdminID())){
+        if (!mAuth.getCurrentUser().getUid().equals(apartment.getAdminID())) {
             holder.removeMember.setVisibility(View.INVISIBLE);
         }
-        if(fromSearchMember){
+        if (fromSearchMember) {
             holder.msgMember.setVisibility(View.INVISIBLE);
             holder.removeMember.setVisibility(View.INVISIBLE);
             holder.sendRequest.setVisibility(View.VISIBLE);
 
-            if(userList.get(position).requestSent()){
-                holder.sendRequest.setClickable(false);
-                holder.sendRequest.setText("Sent!");
-            }
-            if(userList.get(position).getUserID().equals(mAuth.getCurrentUser().getUid())){
+//            if(userList.get(position).isRequestSent()){
+//                holder.sendRequest.setClickable(false);
+//                holder.sendRequest.setText("Sent!");
+//            }
+            if (userList
+                    .get(position).getUserID().equals(mAuth.getCurrentUser().getUid())) {
                 holder.sendRequest.setClickable(false);
                 holder.sendRequest.setVisibility(View.GONE);
             }
@@ -172,8 +180,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             .create()
             .show());
 
-            sendRequest.setOnClickListener(v -> sendRequestToUser(userList.get(getAdapterPosition()).getUserID() , apartment.getApartmentID()));
-
+            sendRequest.setOnClickListener(v -> sendRequestToUser(userList.get(getAdapterPosition()), apartment.getApartmentID()));
         }
 
         private void removeMember(String apartmentID, int position) {
@@ -228,72 +235,42 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             });
         }
 
-        private void sendRequestToUser( String id , String  apartmentID) {
+        private void sendRequestToUser(User user, String apartmentID) {
             sendRequest.setText("Sending...");
             sendRequest.setClickable(false);
-            JSONObject  data = new JSONObject();
-            JSONObject jsonObject = new JSONObject();
-            try {
-                jsonObject.put(Config.senderID, mAuth.getCurrentUser().getUid());
-                jsonObject.put (Config.receiverID, id);
-                jsonObject.put(Config.apartmentID , apartmentID);
-                data.put(Config.data , jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            databaseReference = FirebaseDatabase.getInstance().getReference();
+            var currentUser = new SessionManager(context).getData();
 
-            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-            firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    String token = task.getResult().getToken();
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_SEND_REQUEST, data, response -> {
+            HashMap<String, Object> map = new HashMap<>();
+            var receivedRequests = new HashMap<String, String>();
+            receivedRequests.put(currentUser.getUserID(), apartmentID);
+            map.put("receivedRequests", receivedRequests);
+            databaseReference.child(Config.users).child(user.getUserID()).updateChildren(map).addOnCompleteListener(task -> {
+                HashMap<String, Object> map1 = new HashMap<>();
+                var sendRequests = new ArrayList<String>();
+                sendRequests.add(user.getUserID());
+                map1.put("sendRequests", sendRequests);
 
-                        try {
-                            boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
-                            if (success) {
-                                sendRequest.setText("Sent!");
-                                sendRequest.setClickable(false);
-                            } else {
-                                sendRequest.setText("Request");
-                                sendRequest.setClickable(true);
-
-                                Snackbar snack = Snackbar.make(parentView, "We encountered an error while sending the request", BaseTransientBottomBar.LENGTH_SHORT);
-                                snack.show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            sendRequest.setClickable(true);
-                            sendRequest.setText("Request");
-
-                        }
-
-                    }, error -> {
-
+                databaseReference.child(Config.users).child(currentUser.getUserID()).updateChildren(map1).addOnCompleteListener(task1 -> {
+                    if (task1.isSuccessful()) {
+                        sendRequest.setText("Sent!");
+                        sendRequest.setClickable(false);
+                        Toast.makeText(context, context.getString(R.string.request_sent_success), Toast.LENGTH_SHORT).show();
+                        ;
+                    } else {
+                        Toast.makeText(context, context.getString(R.string.request_sent_failed), Toast.LENGTH_SHORT).show();
                         sendRequest.setText("Request");
                         sendRequest.setClickable(true);
 
-                        displayErrorAlert(error , null);
-
-                    }) {
-                        @Override
-                        public Map<String, String> getHeaders()  {
-                            Map<String, String> params = new HashMap<>();
-                            params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                            params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                            return params;
-                        }
-                    };
-                    requestQueue.add(jsonObjectRequest);
-
-                }else{
-                    String message = "We encountered a problem while authenticating your account";
-                    displayErrorAlert(null, message);
-                }
+                    }
+                });
+            }).addOnFailureListener(e -> {
+                Toast.makeText(context, context.getString(R.string.request_sent_failed), Toast.LENGTH_SHORT).show();
+                sendRequest.setText("Request");
+                sendRequest.setClickable(true);
             });
-
-
-    }
         }
+    }
     void displayErrorAlert(@Nullable VolleyError error , String errorMessage){
         String message = null; // error message, show it in toast or dialog, whatever you want
         if(error!=null) {

@@ -27,6 +27,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.shroomies.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -409,9 +410,11 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         displayProgressView();
         var apartmentID = user.getApartmentID();
         if (apartmentID != null) {
-            getApartmentDetails(apartmentID);
             getUnseenMessageNo(apartmentID, user.getUserID());
-
+            getApartmentDetails(apartmentID);
+        }else{
+            removeProgressView();
+            Toast.makeText(requireContext(), getString(R.string.request_sent_failed), Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -443,7 +446,6 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
     }
 
     private void getApartmentDetails(String apartmentID) {
-
         firebaseFirestore.collection(Config.APARTMENT_LIST).document(apartmentID).get().addOnSuccessListener(documentSnapshot -> {
             apartment = documentSnapshot.toObject(AiturmApartment.class);
             apartment.setApartmentID(documentSnapshot.getId());
@@ -501,6 +503,9 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             removeProgressView();
 
             scroll();
+        }).addOnFailureListener(e -> {
+            e.printStackTrace();
+            removeProgressView();
         });
 
     }

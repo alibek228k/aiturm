@@ -53,6 +53,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import kz.devs.aiturm.model.User;
+
 public class MembersFragment extends Fragment {
     //views
     private View v;

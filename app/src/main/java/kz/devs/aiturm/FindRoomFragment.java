@@ -62,7 +62,6 @@ public class FindRoomFragment extends Fragment {
     private boolean loading = true, scrollFromTop, searchState;
     private int pastVisibleItems, visibleItemCount, totalItemCount, newContentRange, previousContentRange;
     private String searchQuery;
-    private static final String MAP_FRAGMENT = "MAP_FRAGMENT";
     private static final String PERSONAL_SEARCH = "PERSONAL_SEARCH";
     private static final String USER_SEARCH = "USER_SEARCH";
     private static final int APARTMENT_PER_PAGINATION = 3;
