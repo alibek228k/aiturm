@@ -79,7 +79,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
     private ArrayList<TasksCard> tasksCardsList;
     private ArrayList<ExpensesCard> expensesCardsList;
     private ArrayList<ApartmentLogs> apartmentLogs;
-    private HashMap<String,User> membersHashMap;
+    private HashMap<String,User> membersHashMap = new HashMap<>();
     private TasksCardAdapter tasksCardAdapter;
     private ExpensesCardAdapter expensesCardAdapter;
     //final static
@@ -451,11 +451,16 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             apartment.setApartmentID(documentSnapshot.getId());
 
             var membersIds = apartment.getApartmentMembers().values();
+            System.out.println("apartment members " + membersIds);
             rootRef.child(Config.users).get().addOnCompleteListener(task -> {
                 task.getResult().getChildren().forEach(children ->{
                     membersIds.forEach(id -> {
                         if (children.getKey().equals(id)){
-                            membersHashMap.put(children.getKey(), children.getValue(User.class));
+                            System.out.println("Apartment member id " + id + " and children key " + children.getKey());
+                            var apartmentMember = children.getValue(User.class);
+                            if (apartmentMember != null) {
+                                membersHashMap.put(children.getKey(), apartmentMember);
+                            }
                         }
                     });
                 });

@@ -49,7 +49,7 @@ import kz.devs.aiturm.presentaiton.SessionManager;
 
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
-    private final ArrayList<User> userList;
+    ArrayList<User> userList;
     private final Context context;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;

@@ -192,7 +192,7 @@ public class AddNewCardDialogFragment extends DialogFragment implements SplitExp
         if (bundle != null) {
             expensesCardSelected = bundle.getBoolean("Expenses");
             apartment=bundle.getParcelable("APARTMENT_DETAILS");
-            if(apartment.apartmentMembers!=null) {
+            if(apartment.getApartmentMembers()!=null) {
                 apartmentMembersHashMap.putAll(apartment.getApartmentMembers());
 
             }

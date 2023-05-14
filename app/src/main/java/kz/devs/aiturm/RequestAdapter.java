@@ -35,6 +35,8 @@ import com.google.common.net.HttpHeaders;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,6 +59,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     RelativeLayout rootLayout;
 
     DatabaseReference rootReference;
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
     public RequestAdapter(Context context, RelativeLayout rootLayout, ArrayList<User> usersList, Boolean receiverUsers, DatabaseReference rootReference) {
         this.context = context;
@@ -64,6 +67,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         this.receiverUsers = receiverUsers;
         this.rootLayout = rootLayout;
         this.rootReference = rootReference;
+//        this.firebaseFirestore = firebaseFirestore
     }
 
 
@@ -95,13 +99,13 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
        if(receiverUsers){
            holder.reject.setVisibility(View.GONE);
            holder.accept.setVisibility(View.GONE);
-           holder.requetsTv.setText("has been invited by you");
+           holder.requestTv.setText("has been invited by you");
            holder.cancel.setVisibility(View.VISIBLE);
 
        }else{
            holder.reject.setVisibility(View.VISIBLE);
            holder.accept.setVisibility(View.VISIBLE);
-           holder.requetsTv.setText("has invited you");
+           holder.requestTv.setText("has invited you");
            holder.cancel.setVisibility(View.GONE);
        }
     }
@@ -115,20 +119,21 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         ImageButton accept,reject;
         Button cancel;
         ImageView senderImage;
-        TextView senderName,requetsTv;
+        TextView senderName, requestTv;
         public RequestViewHolder(@NonNull View itemView) {
             super(itemView);
             accept=itemView.findViewById(R.id.accept_button);
             reject=itemView.findViewById(R.id.decline_btn);
             senderImage=itemView.findViewById(R.id.request_user_photo);
             senderName=itemView.findViewById(R.id.user_name);
-            requetsTv=itemView.findViewById(R.id.requested_tv);
+            requestTv =itemView.findViewById(R.id.requested_tv);
             cancel=itemView.findViewById(R.id.cancel_request);
 
             accept.setOnClickListener(v -> {
-                    String title = "Join room";
-                    String message = "Joining this room would remove you from your current room. If you are the only member in your current room, your data will be deleted";
-                    showAcceptDialog(usersList.get(getAdapterPosition()).getUserID() , title , message);
+//                    String title = "Join room";
+//                    String message = "Joining this room would remove you from your current room. If you are the only member in your current room, your data will be deleted";
+//                    showAcceptDialog(usersList.get(getAdapterPosition()).getUserID(), title , message);
+                acceptRequest(usersList.get(getAdapterPosition()).getUserID(), getAdapterPosition());
             });
             reject.setOnClickListener(v -> rejectRequest(usersList.get(getAdapterPosition()).getUserID(), getAdapterPosition()));
             cancel.setOnClickListener(v -> cancelRequest(usersList.get(getAdapterPosition()).getUserID() , getAdapterPosition()));
@@ -137,7 +142,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
         private void rejectRequest(final String senderID , int position) {
             var currentUser = new SessionManager(context).getData();
             var receivedRequests = currentUser.getReceivedRequests();
-            if (receivedRequests.keySet().contains(senderID)){
+            if (receivedRequests.containsKey(senderID)){
                 receivedRequests.remove(senderID);
                 var request = new HashMap<String, Object>();
                 request.put("receivedRequests", receivedRequests);
@@ -186,76 +191,99 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             }
         }
 
-         private void acceptRequest(final String senderID){
-            FirebaseUser firebaseUser=mAuth.getCurrentUser();
-            if (firebaseUser!=null) {
-                firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        String token = task.getResult().getToken();
-                        String apartmentID = (String) task.getResult().getClaims().get(Config.apartmentID);
-                        String role  = (String) task.getResult().getClaims().get(Config.role);
+         private void acceptRequest(final String senderID, int position){
+            CollectionReference apartmentReference = firebaseFirestore.collection(Config.APARTMENT_LIST);
+             var currentUser = new SessionManager(context).getData();
+             var receivedRequests = currentUser.getReceivedRequests();
+            if (receivedRequests.containsKey(senderID) && receivedRequests.get(senderID) != null){
+                var apartmentId = receivedRequests.get(senderID);
+                rejectRequest(senderID, position);
 
-                        JSONObject jsonObject = new JSONObject();
-                        JSONObject data = new JSONObject();
-                        try {
-                            jsonObject.put(Config.receiverID  , firebaseUser.getUid());
-                            jsonObject.put(Config.receiverApartmentID  ,apartmentID );
-                            jsonObject.put(Config.senderID , senderID);
-                            jsonObject.put(Config.role , role);
-                            data.put(Config.data , jsonObject);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ACCEPT_REQUEST, data, response -> {
-                            try {
-                                boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
-                                String message = response.getJSONObject(Config.result).getString(Config.message);
-                                if(success){
-                                    //todo remove ffrom adapter
-                                    usersList.remove(getAdapterPosition());
-                                    notifyItemRemoved(getAdapterPosition());
-                                    Snackbar.make(rootLayout,message, BaseTransientBottomBar.LENGTH_LONG).show();
-                                }else{
-                                    String title = "Maximum members";
-                                    new AlertDialog.Builder(context)
-                                            .setTitle(title)
-                                            .setMessage(message)
-                                            .setIcon(R.drawable.ic_alert)
-                                            .setPositiveButton("ok", (dialog, which) -> dialog.dismiss()).create().show();
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                        }, error -> displayErrorAlert(error , null))
-                        {
-                            @Override
-                            public Map<String, String> getHeaders()  {
-                                Map<String, String> params = new HashMap<>();
-                                params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                                params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                                return params;
-                            }
-                        };
-                        requestQueue.add(jsonObjectRequest);
-                    }else{
-                        displayErrorAlert(null,"Something went wrong!");
-                    }
+                apartmentReference.document(apartmentId).get().addOnSuccessListener(documentSnapshot -> {
+                    var apartment = documentSnapshot.toObject(AiturmApartment.class);
+                    var members = apartment.getApartmentMembers();
+                    members.put(currentUser.getUserID(), currentUser.getUserID());
+                    apartmentReference.document(apartmentId).update(Config.apartmentMembers, members).addOnSuccessListener(task -> {
+                        var request = new HashMap<String, Object>();
+                        request.put("apartmentID", apartmentId);
+                        rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(task1 ->{
+                            Toast.makeText(context, context.getString(R.string.you_are_member), Toast.LENGTH_SHORT).show();
+                        });
+                    });
                 });
+
+//                 FirebaseUser firebaseUser = mAuth.getCurrentUser();
+//                 if (firebaseUser!=null) {
+//                     firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
+//                         if(task.isSuccessful()){
+//                             String token = task.getResult().getToken();
+//                             String apartmentID = (String) task.getResult().getClaims().get(Config.apartmentID);
+//                             String role  = (String) task.getResult().getClaims().get(Config.role);
+//
+//                             JSONObject jsonObject = new JSONObject();
+//                             JSONObject data = new JSONObject();
+//                             try {
+//                                 jsonObject.put(Config.receiverID  , firebaseUser.getUid());
+//                                 jsonObject.put(Config.receiverApartmentID  ,apartmentID );
+//                                 jsonObject.put(Config.senderID , senderID);
+//                                 jsonObject.put(Config.role , role);
+//                                 data.put(Config.data , jsonObject);
+//                             } catch (JSONException e) {
+//                                 e.printStackTrace();
+//                             }
+//                             JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_ACCEPT_REQUEST, data, response -> {
+//                                 try {
+//                                     boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
+//                                     String message = response.getJSONObject(Config.result).getString(Config.message);
+//                                     if(success){
+//                                         //todo remove ffrom adapter
+//                                         usersList.remove(getAdapterPosition());
+//                                         notifyItemRemoved(getAdapterPosition());
+//                                         Snackbar.make(rootLayout,message, BaseTransientBottomBar.LENGTH_LONG).show();
+//                                     }else{
+//                                         String title = "Maximum members";
+//                                         new AlertDialog.Builder(context)
+//                                                 .setTitle(title)
+//                                                 .setMessage(message)
+//                                                 .setIcon(R.drawable.ic_alert)
+//                                                 .setPositiveButton("ok", (dialog, which) -> dialog.dismiss()).create().show();
+//                                     }
+//
+//                                 } catch (JSONException e) {
+//                                     e.printStackTrace();
+//                                 }
+//
+//                             }, error -> displayErrorAlert(error , null))
+//                             {
+//                                 @Override
+//                                 public Map<String, String> getHeaders()  {
+//                                     Map<String, String> params = new HashMap<>();
+//                                     params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+//                                     params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
+//                                     return params;
+//                                 }
+//                             };
+//                             requestQueue.add(jsonObjectRequest);
+//                         }else{
+//                             displayErrorAlert(null,"Something went wrong!");
+//                         }
+//                     });
+//                 }
+             }else{
+                Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
             }
 
         }
         private void showAcceptDialog(String userID , String title , String message) {
-            new AlertDialog.Builder(context)
-                    .setIcon(R.drawable.ic_alert)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setCancelable(false)
-                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                    .setPositiveButton("Accept", (dialog, which) -> acceptRequest(userID))
-                    .create()
-                    .show();
+//            new AlertDialog.Builder(context)
+//                    .setIcon(R.drawable.ic_alert)
+//                    .setTitle(title)
+//                    .setMessage(message)
+//                    .setCancelable(false)
+//                    .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+//                    .setPositiveButton("Accept", (dialog, which) -> acceptRequest(userID))
+//                    .create()
+//                    .show();
 
         }
 

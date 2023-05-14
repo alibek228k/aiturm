@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AiturmApartment implements Parcelable {
-    String apartmentID, adminID;
-    HashMap<String,String> apartmentMembers;
-    Map<String, ExpensesCard> expensesCard;
-    Map<String, TasksCard> taskCard;
+    private String apartmentID, adminID;
+    private HashMap<String,String> apartmentMembers;
+    private Map<String, ExpensesCard> expensesCard;
+    private Map<String, TasksCard> taskCard;
 
     public Map<String, ApartmentLogs> getLogs() {
         return logs;

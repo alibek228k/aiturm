@@ -103,7 +103,8 @@
     <string name="request_sent_success">Request successfully send!</string>
     <string name="request_sent_failed">Failed to send request</string>
 
-    <string name="network_error">Network error</string>
+    <string name="network_error">Network error, try again later</string>
+    <string name="you_are_member">You are now a member of the apartment!</string>
 
 
 </resources>
