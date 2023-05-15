@@ -120,7 +120,11 @@ class UserProfileActivity : AppCompatActivity() {
                 true
             }
             R.id.user_posts_button -> {
-                Toast.makeText(this, "user_posts_button clicked", Toast.LENGTH_SHORT).show()
+                val fragment = PostsDialogFragment()
+                val arguments = Bundle()
+                arguments.putString("USERID", user?.userID)
+                fragment.arguments = arguments
+                fragment.show(supportFragmentManager, null)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -189,7 +193,10 @@ class UserProfileActivity : AppCompatActivity() {
             else -> getString(R.string.undefined)
         }
         groupTextView?.text = user?.group
-        phoneNumberTextView?.text = user?.phoneNumber
+        val ans = "+7(" + user?.phoneNumber?.substring(1, 4) + ") " + user?.phoneNumber?.substring(
+            4, 7
+        ) + "-" + user?.phoneNumber?.substring(7, 9) + "-" + user?.phoneNumber?.substring(9)
+        phoneNumberTextView?.text = ans
         specialityTextView?.text = user?.specialization
     }
 }

@@ -62,6 +62,7 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
     @NonNull
     @Override
     public RecycleViewAdapterApartments.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        System.out.println("View holeder is creating");
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View view = layoutInflater.inflate(R.layout.apartment_card, parent, false);
         return new ViewHolder(view);

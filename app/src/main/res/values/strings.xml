@@ -120,6 +120,8 @@
     <string name="profile">Profile</string>
     <string name="send_message">Send Message</string>
     <string name="user_posts">User Posts</string>
+    <string name="apartment">Apartment</string>
+    <string name="personal">Personal</string>
 
 
 </resources>
