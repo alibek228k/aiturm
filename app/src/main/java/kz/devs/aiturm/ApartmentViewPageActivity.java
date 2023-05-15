@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ import java.util.Objects;
 
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.profile.UserProfileActivity;
 
 public class ApartmentViewPageActivity extends AppCompatActivity implements OnMapReadyCallback {
     private ImageButton messageButton;
@@ -63,15 +65,19 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
     private TextView genderTextView;
     private Apartment apartment;
 
+    private RelativeLayout userProfile;
+
     private ImageView userImageView;
     private User user;
+
+    private FirebaseAuth mAuth;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_apartment_page);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = mAuth.getCurrentUser();
 
 
@@ -98,6 +104,7 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
         genderTextView = findViewById(R.id.gender_text_view);
         MotionLayout readMoreMotionLayout = findViewById(R.id.description_layout);
         Chip readMoreChip = findViewById(R.id.read_more_chip);
+        userProfile = findViewById(R.id.user_info_relative_layout);
 
 
         readMoreMotionLayout.addTransitionListener(new MotionLayout.TransitionListener() {
@@ -247,6 +254,14 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
             }
         });
 
+        userProfile.setOnClickListener(v -> {
+            if (user.getUserID().equals(mAuth.getCurrentUser().getUid())){
+                Toast.makeText(this, getString(R.string.error_cannot_message_with_yourself), Toast.LENGTH_SHORT).show();
+            }else{
+                startActivity(UserProfileActivity.Companion.newInstance(this, user.getUserID()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            }
+        });
+
 
     }
     private void getPostOwnerDetails(String currentUserid,String userUid){
@@ -257,6 +272,7 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 user = new User();
                 user = snapshot.getValue(User.class);
+                user.setUserID(snapshot.getKey());
                 if (user!=null) {
                     if (currentUserid.equals(userUid)) {
                         messageButton.setVisibility(View.GONE);

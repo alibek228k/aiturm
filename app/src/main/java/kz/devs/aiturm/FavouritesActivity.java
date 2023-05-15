@@ -80,6 +80,9 @@ public class FavouritesActivity extends AppCompatActivity implements NotifyEmpty
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("");
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            favouritesToolbar.setNavigationOnClickListener(view -> {
+                onBackPressed();
+            });
         }
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -155,6 +158,7 @@ public class FavouritesActivity extends AppCompatActivity implements NotifyEmpty
 
     private void getApartmentPostFromId() {
         if (apartmentFavouriteSet != null && !apartmentFavouriteSet.isEmpty()) {
+            apartmentList.clear();
             for (String id : apartmentFavouriteSet) {
                 apartmentPostReference.document(id).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -177,6 +181,7 @@ public class FavouritesActivity extends AppCompatActivity implements NotifyEmpty
 
     private void getPersonalPostFromId() {
         if (personalFavouritesSet != null && !personalFavouritesSet.isEmpty()) {
+            personalPostList.clear();
             for (String id : personalFavouritesSet) {
                 personalPostReference.document(id).get().addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {

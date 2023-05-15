@@ -3,6 +3,7 @@ package kz.devs.aiturm;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,7 @@ import java.util.Map;
 
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.profile.UserProfileActivity;
 
 
 public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestViewHolder> {
@@ -116,18 +118,25 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     }
 
     public class RequestViewHolder extends RecyclerView.ViewHolder {
+
+        RelativeLayout rootLayout;
         ImageButton accept,reject;
         Button cancel;
         ImageView senderImage;
         TextView senderName, requestTv;
         public RequestViewHolder(@NonNull View itemView) {
             super(itemView);
+            rootLayout = itemView.findViewById(R.id.root_layout);
             accept=itemView.findViewById(R.id.accept_button);
             reject=itemView.findViewById(R.id.decline_btn);
             senderImage=itemView.findViewById(R.id.request_user_photo);
             senderName=itemView.findViewById(R.id.user_name);
             requestTv =itemView.findViewById(R.id.requested_tv);
             cancel=itemView.findViewById(R.id.cancel_request);
+
+            rootLayout.setOnClickListener(v -> {
+                context.startActivity(UserProfileActivity.Companion.newInstance(context, usersList.get(getAdapterPosition()).getUserID()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            });
 
             accept.setOnClickListener(v -> {
 //                    String title = "Join room";
