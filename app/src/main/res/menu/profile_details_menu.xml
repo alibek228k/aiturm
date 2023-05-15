@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/send_message_button"
+        android:icon="@drawable/ic_message"
+        app:showAsAction="always"
+        android:title="@string/send_message"/>
+    <item
+        android:id="@+id/user_posts_button"
+        android:title="@string/user_posts"
+        android:icon="@drawable/ic_package"
+        app:showAsAction="ifRoom"/>
+
+</menu>

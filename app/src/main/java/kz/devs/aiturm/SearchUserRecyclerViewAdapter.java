@@ -20,6 +20,7 @@ import com.example.shroomies.R;
 import java.util.List;
 
 import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.profile.UserProfileActivity;
 
 public class SearchUserRecyclerViewAdapter extends RecyclerView.Adapter<SearchUserRecyclerViewAdapter.ViewHolder> {
     private final Context context;
@@ -87,10 +88,7 @@ public class SearchUserRecyclerViewAdapter extends RecyclerView.Adapter<SearchUs
             userBio = itemView.findViewById(R.id.user_bio_search_card);
             userCard = itemView.findViewById(R.id.user_card);
             userCard.setOnClickListener(v -> {
-                Intent intent = new Intent(context, ChattingActivity.class);
-                intent.putExtra("USER", userList.get(getAdapterPosition()));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                context.startActivity(UserProfileActivity.Companion.newInstance(context, userList.get(getAdapterPosition()).getUserID()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             });
         }
 

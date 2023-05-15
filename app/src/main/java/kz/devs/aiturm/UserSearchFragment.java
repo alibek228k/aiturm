@@ -127,6 +127,7 @@ public class UserSearchFragment extends Fragment {
                     for (DataSnapshot dataSnapshot
                     :snapshot.getChildren()){
                         User user = dataSnapshot.getValue(User.class);
+                        user.setUserID(dataSnapshot.getKey());
                         userList.add(user);
                     }
                     searchUserRecyclerViewAdapter.notifyDataSetChanged();

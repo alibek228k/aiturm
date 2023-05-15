@@ -15,6 +15,10 @@
 
     <string name="ok">OK</string>
 
+    <string name="bio">Bio</string>
+
+    <string name="name">Name</string>
+
     <string name="hello_world">Hello Square World!</string>
     <string name="api_key">AIzaSyCF5NRNtEAcNX0QAXquDQ68yCYXsLhp2Ao</string>
     <string name="Heading_discover">Discover</string>
@@ -78,6 +82,8 @@
     <string name="gender_select_female">Female</string>
     <string name="add_address">Enter your address</string>
 
+    <string name="undefined">Undefined</string>
+
     <string name="room_post">Room post</string>
     <string name="roommate_post">Roommate post</string>
     <string name="select_type_residential_unit">Select the type of your residential unit</string>
@@ -110,6 +116,10 @@
 
     <string name="you_will_no_longer_be_a_roommate">You will no longer be a roommate in this apartment.</string>
     <string name="you_dont_have_apartment">You don\'t have an apartment, please accept requests before entering here.</string>
+
+    <string name="profile">Profile</string>
+    <string name="send_message">Send Message</string>
+    <string name="user_posts">User Posts</string>
 
 
 </resources>

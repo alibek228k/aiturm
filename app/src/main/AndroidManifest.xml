@@ -27,6 +27,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name="kz.devs.aiturm.presentaiton.profile.UserProfileActivity"
+            android:exported="false" />
+        <activity
             android:name="kz.devs.aiturm.presentaiton.authorization.FillOutDataActivity"
             android:exported="false" />
         <activity
