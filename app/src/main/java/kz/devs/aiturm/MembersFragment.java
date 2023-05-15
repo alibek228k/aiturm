@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
 
 public class MembersFragment extends Fragment {
     //views
@@ -75,6 +76,13 @@ public class MembersFragment extends Fragment {
     private FirebaseFirestore firebaseFirestore;
     private User admin;
 
+    private Callback callback;
+
+    private SessionManager manager;
+
+    public MembersFragment(Callback callback){
+        this.callback = callback;
+    }
 
     @Nullable
     @Override
@@ -84,6 +92,7 @@ public class MembersFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         rootReference = FirebaseDatabase.getInstance().getReference();
         firebaseFirestore = FirebaseFirestore.getInstance();
+        manager = new SessionManager(requireContext());
         return v;
     }
 
@@ -137,7 +146,7 @@ public class MembersFragment extends Fragment {
 
         leaveRoomButton.setOnClickListener(v -> {
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setTitle("Leave group");
             builder.setPositiveButton("Cancel", (dialog, which) -> dialog.dismiss());
             builder.setNegativeButton("leave", (dialog, which) -> {
@@ -145,7 +154,7 @@ public class MembersFragment extends Fragment {
                 leaveRoomButton.setClickable(false);
                 leaveApartment();
             });
-            builder.setMessage("Leaving this group will remove all data and place you in an empty group.");
+            builder.setMessage(getString(R.string.you_will_no_longer_be_a_roommate));
             builder.setIcon(R.drawable.ic_shroomies_yelllow_black_borders);
             builder.setCancelable(true);
             builder.create().show();
@@ -198,6 +207,10 @@ public class MembersFragment extends Fragment {
             request.put("apartmentMembers", members);
             firebaseFirestore.collection(Config.APARTMENT_LIST).document(apartment.getApartmentID()).update(request).addOnSuccessListener(task -> {
                 rootReference.child(Config.users).child(mAuth.getCurrentUser().getUid()).child(Config.apartmentID).removeValue().addOnSuccessListener(task1 -> {
+                    var user = manager.getData();
+                    user.setApartmentID(null);
+                    manager.saveData(user);
+                    callback.leaveApartment();
                     getActivity().finish();
                 }).addOnFailureListener(e -> {
                     customLoadingProgressBar.dismiss();
@@ -295,4 +308,8 @@ public class MembersFragment extends Fragment {
                 .show();
     }
 
+}
+
+interface Callback{
+    void leaveApartment();
 }

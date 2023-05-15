@@ -4,6 +4,8 @@
     <string name="open" />
     <string name="close" />
 
+    <string name="error">Error</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">LoginActivity</string>
     <!--
@@ -105,6 +107,9 @@
 
     <string name="network_error">Network error, try again later</string>
     <string name="you_are_member">You are now a member of the apartment!</string>
+
+    <string name="you_will_no_longer_be_a_roommate">You will no longer be a roommate in this apartment.</string>
+    <string name="you_dont_have_apartment">You don\'t have an apartment, please accept requests before entering here.</string>
 
 
 </resources>

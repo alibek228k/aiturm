@@ -1,6 +1,7 @@
 package kz.devs.aiturm;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -27,7 +28,6 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.shroomies.R;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -59,7 +59,7 @@ import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 
-public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomies , CardUploaded  {
+public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomies , CardUploaded, Callback  {
     //views
     private View v;
     private TabLayout myAiturmTablayout;
@@ -362,9 +362,8 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 
         });
         memberButton.setOnClickListener(v -> {
-//            if(apartment!=null) {
-
-                MembersFragment membersFragment = new MembersFragment();
+            if (apartment != null) {
+                MembersFragment membersFragment = new MembersFragment(this);
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("APARTMENT_DETAILS", apartment);
                 membersFragment.setArguments(bundle1);
@@ -374,7 +373,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 ft.replace(R.id.my_shroomies_container, membersFragment);
                 ft.commit();
-//            }
+            }
         });
         logButton.setOnClickListener(view12 -> {
             slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
@@ -414,7 +413,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             getApartmentDetails(apartmentID);
         }else{
             removeProgressView();
-            Toast.makeText(requireContext(), getString(R.string.request_sent_failed), Toast.LENGTH_SHORT).show();
+            noApartmentErrorAlert(getString(R.string.error), getString(R.string.you_dont_have_apartment));
         }
 
     }
@@ -743,21 +742,26 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         noCardsLayout.animate().alpha(0.0f).setDuration(400);
         noCardsLayout.setVisibility(View.GONE);
     }
-    private void displayErrorAlert(String title, String message){
+    private void noApartmentErrorAlert(String title, String message){
         tasksDecor.setOverScrollStateListener(onOverPullListener);
         expensesDecor.setOverScrollStateListener(onOverPullListener);
         removeProgressView();
-//         new AlertDialog.Builder(getActivity())
-//                .setIcon(R.drawable.ic_alert)
-//                .setTitle(title)
-//                .setMessage(message)
-//                 .setCancelable(false)
-//                 .setNeutralButton("return", (dialog, which) -> {
-//                     getActivity().finish();
-//                     dialog.dismiss();
-//                 })
-//                 .setPositiveButton("refresh", (dialog, which) -> getUserToken())
-//                .create()
-//                .show();
+         new AlertDialog.Builder(getActivity())
+                .setIcon(R.drawable.ic_alert)
+                .setTitle(title)
+                .setMessage(message)
+                 .setCancelable(false)
+                 .setNeutralButton("return", (dialog, which) -> {
+                     getActivity().finish();
+                     dialog.dismiss();
+                 })
+                 .setPositiveButton("refresh", (dialog, which) -> getUserToken())
+                .create()
+                .show();
+    }
+
+    @Override
+    public void leaveApartment() {
+        apartment = null;
     }
 }
