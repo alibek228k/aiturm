@@ -50,6 +50,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TimeZone;
 
 import kz.devs.aiturm.model.User;
@@ -223,7 +224,9 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         groupMessageButton.setOnClickListener(view13 -> {
             Intent intent=new Intent(getActivity(),GroupChatting.class);
             Bundle bundle=new Bundle();
+            System.out.println("Members: " + membersHashMap);
             bundle.putSerializable("MEMBERS",membersHashMap);
+            bundle.putString(Config.apartmentID, apartment.getApartmentID());
             intent.putExtra("extras",bundle);
             startActivity(intent);
 
@@ -449,12 +452,14 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             apartment = documentSnapshot.toObject(AiturmApartment.class);
             apartment.setApartmentID(documentSnapshot.getId());
 
-            var membersIds = apartment.getApartmentMembers().values();
+            var membersIds = new ArrayList<>(apartment.getApartmentMembers().values());
             rootRef.child(Config.users).get().addOnCompleteListener(task -> {
                 task.getResult().getChildren().forEach(children ->{
+                    membersIds.add(apartment.getAdminID());
                     membersIds.forEach(id -> {
                         if (children.getKey().equals(id)){
                             var apartmentMember = children.getValue(User.class);
+                            apartmentMember.setUserID(id);
                             if (apartmentMember != null) {
                                 membersHashMap.put(children.getKey(), apartmentMember);
                             }

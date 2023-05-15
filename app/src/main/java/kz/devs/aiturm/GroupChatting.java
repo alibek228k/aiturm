@@ -59,6 +59,8 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import kz.devs.aiturm.model.User;
+
 public class GroupChatting extends AppCompatActivity {
     private ImageButton addImage;
     private EditText messageBody;
@@ -134,6 +136,8 @@ public class GroupChatting extends AppCompatActivity {
         Bundle bundle= getIntent().getExtras();
         if(bundle!=null) {
             membersHashmap=(HashMap<String, User>) bundle.getBundle("extras").getSerializable("MEMBERS");
+            apartmentID = bundle.getBundle("extras").getString(Config.apartmentID);
+            System.out.println("apartment id " + apartmentID);
             expensesCard=bundle.getParcelable("ExpenseCARD");
             tasksCard=bundle.getParcelable("TaskCARD");
             if (expensesCard!=null){
@@ -209,7 +213,8 @@ public class GroupChatting extends AppCompatActivity {
 
 
     private boolean validToSendTextMessage(String textMessage){
-        return !apartmentID.isEmpty() && currentUser!=null && !textMessage.isEmpty() && expensesCard==null && tasksCard==null;
+        System.out.println("apartmentID " + apartmentID);
+        return !apartmentID.isEmpty() && currentUser!=null && textMessage != null && !textMessage.isEmpty() && expensesCard==null && tasksCard==null;
     }
     private boolean validToSendImageMessage(){
         return  !apartmentID.isEmpty() && currentUser!=null && chosenImage!=null;
@@ -221,14 +226,8 @@ public class GroupChatting extends AppCompatActivity {
         return expensesCard==null && currentUser!=null && !textMessage.isEmpty() && tasksCard!=null && !apartmentID.isEmpty();
     }
     private void getApartmentID(){
-        if(currentUser!=null){
-            currentUser.getIdToken(true).addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
-                    apartmentID=(String) task.getResult().getClaims().get(Config.apartmentID);
-                    loadMessages(apartmentID,currentUser.getUid());
-                }
-
-            }).addOnFailureListener(e -> new CustomToast(this,e.getMessage()));
+        if(apartmentID!=null){
+            loadMessages(apartmentID,currentUser.getUid());
         }
     }
     private void sendOutReplyMessage(String currentUserID,String messageContent,String messageType){
@@ -362,7 +361,11 @@ public class GroupChatting extends AppCompatActivity {
         groupChatMessageAdapter=new GroupChatMessageAdapter(groupMessageList,this,membersHashmap);
         groupChattingRecycler.setAdapter(groupChatMessageAdapter);
         HashMap <String,Object> seenMessageHashmaps=new HashMap();
-        DatabaseReference messageRef=rootRef.child(Config.groupMessages).child(apartmentID).child(Config.messages);
+        System.out.println("Apartment id " + apartmentID);
+        DatabaseReference messageRef=rootRef
+                .child(Config.groupMessages)
+                .child(apartmentID)
+                .child(Config.messages);
         Query messageQuery=messageRef.limitToLast(currentPage*TOTAL_ITEMS_TO_LAOD);
         messageQuery.addChildEventListener(new ChildEventListener() {
             @Override

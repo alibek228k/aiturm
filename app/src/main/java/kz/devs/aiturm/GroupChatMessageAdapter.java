@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import kz.devs.aiturm.model.User;
+
 public class GroupChatMessageAdapter extends RecyclerView.Adapter<GroupChatMessageAdapter.GroupMessageViewHolder>{
     private final ArrayList<GroupMessage> groupMessageList;
     private FirebaseAuth mAuth;
