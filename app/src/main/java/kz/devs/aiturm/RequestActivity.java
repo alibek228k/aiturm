@@ -46,6 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 import kz.devs.aiturm.model.User;
@@ -80,13 +81,14 @@ RequestActivity extends AppCompatActivity {
         setContentView(R.layout.request_activity);
         mAuth=FirebaseAuth.getInstance();
         requestQueue = Volley.newRequestQueue(getApplicationContext());
-        requestRecyclerView =findViewById(R.id.request_recyclerview);
+        requestRecyclerView = findViewById(R.id.request_recyclerview);
         tabLayout=findViewById(R.id.tab_layout_req);
         invitationRecyclerView=findViewById(R.id.invitation_recyclerview);
         rootLayout = findViewById(R.id.request_fragment_root_layout);
         noSentRequestsLayout = findViewById(R.id.no_sent_request_Layout);
         catAnimationView = findViewById(R.id.empty_animation_req);
         MaterialButton goToMyAiturmButton = findViewById(R.id.go_to_shroomies_button);
+        MaterialButton goToPublishPostButton = findViewById(R.id.go_to_publish_post_button);
 
         rootReference = FirebaseDatabase.getInstance().getReference();
         manager = new SessionManager(this);
@@ -97,6 +99,7 @@ RequestActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         noReceivedRequestsLayout = findViewById(R.id.no_received_request_Layout);
         goToMyAiturmButton.setOnClickListener(v -> startActivity(new Intent(this, MyAiturmActivity.class)));
+        goToPublishPostButton.setOnClickListener(v -> startActivity(new Intent(this, PublishPostActivity.class)));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext() , RecyclerView.VERTICAL,false);
         requestRecyclerView.setHasFixedSize(true);

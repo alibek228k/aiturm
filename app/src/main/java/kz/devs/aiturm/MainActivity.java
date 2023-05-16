@@ -27,6 +27,7 @@ import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -267,7 +268,19 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
             rootRef.child(Config.users).child(mAuth.getCurrentUser().getUid()).get().addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
                     user = task.getResult().getValue(User.class);
-                    if (user != null) {
+                    if (user == null) {
+                        rootRef.child("tokens").child(mAuth.getCurrentUser().getUid()).removeValue().addOnSuccessListener(unused -> {
+                            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                                    .requestIdToken(getString(R.string.default_web_client_id))
+                                    .requestEmail()
+                                    .build();
+                            GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+                            mGoogleSignInClient.signOut();
+                            manager.removeUserData();
+                            mAuth.signOut();
+                            finish();
+                        });
+                    }else{
                         user.setUserID(mAuth.getCurrentUser().getUid());
                         manager.saveData(user);
                         if (user.getUsername() == null) {
@@ -283,10 +296,10 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
                                 @OptIn(markerClass = ExperimentalBadgeUtils.class)
                                 public void onGlobalLayout() {
                                     BadgeDrawable badgeDrawable = BadgeDrawable.create(MainActivity.this);
-                                  badgeDrawable.setBackgroundColor(getColor(R.color.lightGrey));
-                                  badgeDrawable.setBadgeTextColor(Color.WHITE);
-                                  BadgeUtils.attachBadgeDrawable(badgeDrawable, requestsButton, requestButtonFrame);
-                                  badgeDrawable.setHorizontalOffset(100);
+                                    badgeDrawable.setBackgroundColor(getColor(R.color.lightGrey));
+                                    badgeDrawable.setBadgeTextColor(Color.WHITE);
+                                    BadgeUtils.attachBadgeDrawable(badgeDrawable, requestsButton, requestButtonFrame);
+                                    badgeDrawable.setHorizontalOffset(100);
                                     badgeDrawable.setVerticalOffset(70);
                                     badgeDrawable.setHotspotBounds(100, 100, 100, 100);
                                     badgeDrawable.setBadgeGravity(BadgeDrawable.BOTTOM_END);

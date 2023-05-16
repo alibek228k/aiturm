@@ -5,24 +5,6 @@
 
 
     <PreferenceCategory
-        app:title="Explore Location"
-        app:allowDividerBelow="true"
-        app:allowDividerAbove="true"
-        app:iconSpaceReserved="false">
-
-        <ListPreference
-            android:key="state_preference"
-            app:title="State"
-            android:entries="@array/malaysian_states"
-            android:entryValues="@array/malaysian_states"
-            app:defaultValue="None"
-            app:iconSpaceReserved="false"
-            app:summary="Limit your search to look for places in some states." />
-
-    </PreferenceCategory>
-
-
-    <PreferenceCategory
         app:title="Explore filters"
         app:allowDividerBelow="true"
         app:allowDividerAbove="true"

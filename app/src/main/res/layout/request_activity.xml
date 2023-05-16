@@ -43,13 +43,13 @@
                         android:id="@+id/received_req"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Received"
+                        android:text="@string/received"
                         />
                     <com.google.android.material.tabs.TabItem
                         android:id="@+id/sent_req"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sent" />
+                        android:text="@string/sent" />
                 </com.google.android.material.tabs.TabLayout>
             </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
@@ -87,7 +87,7 @@
                 android:id="@+id/no_req_txt_rec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="You haven't sent any requests yet, you can go to My aiturm and start sending request now."
+                android:text="@string/empty_sent_request_list"
                 android:layout_margin="20dp"
                 android:gravity="center"
                 android:layout_centerHorizontal="true"
@@ -97,7 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/no_req_txt_rec"
-                android:text="Go to My Aiturm"
+                android:text="@string/go_to_my_aiturm"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/jetBlack"
@@ -109,8 +109,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/request_toolbar"
-        android:visibility="visible"
-        />
+        android:visibility="visible" />
+
     <RelativeLayout
         android:id="@+id/no_received_request_Layout"
         android:layout_width="match_parent"
@@ -126,17 +126,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
            android:layout_centerHorizontal="true"
-            android:text="Add a post"
+            android:text="@string/add_a_post"
             android:textStyle="bold"
             android:textColor="@color/jetBlack"
             android:textAllCaps="false"
-            android:layout_below="@id/no_invit_txt"
-            />
+            android:layout_below="@id/no_invit_txt" />
         <TextView
             android:id="@+id/no_invit_txt"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sorry, you don't have requests to join a room yet. Add a post to let others know about you."
+            android:text="@string/empty_received_request_list"
             android:layout_margin="10dp"
             android:gravity="center"
             android:layout_centerHorizontal="true"

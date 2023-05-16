@@ -19,8 +19,6 @@ import java.util.List;
 
 public class SearchSettingsFragment extends PreferenceFragmentCompat {
     SwitchPreferenceCompat priceFilterSwitchPreference, preferencesSwitch;
-    ListPreference stateDropDownPreference;
-    List<String> statesList;
     RangeBarPreferenceCompat rangeBarPreferenceCompat;
     MultiSelectListPreference multiSelectListPreference;
 
@@ -34,13 +32,11 @@ public class SearchSettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        stateDropDownPreference = findPreference("state_preference");
         rangeBarPreferenceCompat = findPreference("range_preference");
         priceFilterSwitchPreference = findPreference("filter_price");
         preferencesSwitch = findPreference("filter_preferences");
         multiSelectListPreference = findPreference("properties");
 
-        //check if the preferences have been set before
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         boolean filterPrice = prefs.getBoolean("filter_price", false);
@@ -58,14 +54,6 @@ public class SearchSettingsFragment extends PreferenceFragmentCompat {
             rangeBarPreferenceCompat.setEnabled((boolean) newValue);
             return true;
         });
-
-
-        //get any previous selected states
-        stateDropDownPreference.setOnPreferenceChangeListener((preference, newValue) -> {
-            stateDropDownPreference.setSummary((String) newValue);
-            return true;
-        });
-
 
     }
 }

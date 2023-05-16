@@ -17,7 +17,7 @@
         android:layout_marginBottom="5dp"
         android:elevation="3dp"
         android:padding="0dp"
-        android:text="Room post"
+        android:text="@string/apartment_post"
         android:textColor="@color/jetBlack"
         android:textSize="14sp"
         app:chipBackgroundColor="@color/LogoYellow"
@@ -65,7 +65,7 @@
 
 
                 android:hint="talk about yourself"
-                android:maxLength="200"
+                android:maxLength="400"
                 android:padding="5dp"
                 android:textSize="14sp" />
 
