@@ -88,3 +88,6 @@ lint/tmp/
 /app/creds/
 
 /app/prod/release/
+
+firebase.json
+/app/google-services.json
