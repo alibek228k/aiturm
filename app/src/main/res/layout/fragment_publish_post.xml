@@ -188,7 +188,6 @@
                     android:id="@+id/address_input_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
                     android:layout_marginTop="10dp"
                     app:boxBackgroundMode="filled"
                     app:boxStrokeColor="@color/LogoYellow"
@@ -196,7 +195,6 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     app:errorEnabled="true"
-                    android:paddingBottom="10dp"
                     app:hintEnabled="false"
                     app:hintAnimationEnabled="false"
                     app:expandedHintEnabled="false"
@@ -215,6 +213,41 @@
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
                         android:hint="@string/add_address"
+                        android:textAlignment="textStart"
+                        android:textColor="@color/jetBlack"
+                        android:enabled="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/house_number_input_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="filled"
+                    app:boxStrokeColor="@color/LogoYellow"
+                    app:boxStrokeWidth="2dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    app:errorEnabled="true"
+                    app:hintEnabled="false"
+                    app:hintAnimationEnabled="false"
+                    app:expandedHintEnabled="false"
+                    app:textColor="@color/jetBlack"
+                    app:endIconDrawable="@drawable/ic_close_icon"
+                    app:endIconMode="custom"
+                    android:inputType="number"
+                    app:counterTextColor="@color/LogoYellow"
+                    app:endIconTint="@color/LogoYellow"
+                    android:layout_below="@id/address_input_text">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/transparent"
+                        android:inputType="textEmailSubject"
+                        android:paddingTop="5dp"
+                        android:paddingBottom="5dp"
+                        android:maxLength="4"
+                        android:hint="@string/add_house_number"
                         android:textAlignment="textStart"
                         android:textColor="@color/jetBlack"
                         android:enabled="true" />

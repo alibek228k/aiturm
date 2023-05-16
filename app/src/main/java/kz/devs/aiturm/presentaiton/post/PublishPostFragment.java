@@ -48,7 +48,7 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     private Chip postTypeChip;
     private EditText descriptionEditText;
     private RelativeLayout apartmentPostLayout, mainLayout;
-    private TextInputLayout addressInputLayout;
+    private TextInputLayout addressInputLayout, houseNumberInputLayout;
     private FirebaseFirestore firebaseFirestore;
 
     private User user;
@@ -85,6 +85,7 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         userImageView = view.findViewById(R.id.user_image_publish_post);
         postTypeChip = view.findViewById(R.id.post_type_chip);
         addressInputLayout = view.findViewById(R.id.address_input_text);
+        houseNumberInputLayout = view.findViewById(R.id.house_number_input_text);
 
         setupUserImage();
         setupNextButton();
@@ -109,6 +110,7 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         typeOfUnitChipGroup.setSingleSelection(true);
         searchForNameTextView.setVisibility(View.GONE);
         addressInputLayout.setVisibility(View.VISIBLE);
+        houseNumberInputLayout.setVisibility(View.VISIBLE);
         postTypeChip.setText(getString(R.string.apartment_post));
         selectTypeofUnitTextView.setText(getString(R.string.select_type_residential_unit));
     }
@@ -117,6 +119,7 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         typeOfUnitChipGroup.setSingleSelection(false);
         searchForNameTextView.setVisibility(View.GONE);
         addressInputLayout.setVisibility(View.GONE);
+        houseNumberInputLayout.setVisibility(View.GONE);
         selectTypeofUnitTextView.setText(getString(R.string.select_type_preferred_unit));
         postTypeChip.setText(getString(R.string.roommate_post));
 
@@ -177,9 +180,17 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
     private void setupAddressTextField() {
         if (postType.equals(Config.APARTMENT_POST)) {
             addressInputLayout.setVisibility(View.VISIBLE);
+            houseNumberInputLayout.setVisibility(View.VISIBLE);
         } else {
             addressInputLayout.setVisibility(View.GONE);
+            houseNumberInputLayout.setVisibility(View.GONE);
         }
+        addressInputLayout.setEndIconOnClickListener(view -> {
+            addressInputLayout.getEditText().setText("");
+        });
+        houseNumberInputLayout.setEndIconOnClickListener(view -> {
+            houseNumberInputLayout.getEditText().setText("");
+        });
     }
 
     private void setupApartmentTypeChipGroup() {
@@ -247,20 +258,27 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
 
         if (typeOfUnitChipGroup.getCheckedChipId() == View.NO_ID) {
             selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.canceRed));
-            errors.add("Please select the type of your unit");
+            errors.add(getString(R.string.error_select_unit_type));
             status = false;
         } else {
             selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.jetBlack));
         }
         if ((addressInputLayout.getEditText().getText().toString() == null || addressInputLayout.getEditText().getText().toString().isBlank()) && typeOfUnitChipGroup.getCheckedChipId() != R.id.house_type_chip) {
-            errors.add("Please add a locality");
-            addressInputLayout.setError("Please add a locality");
+            errors.add(getString(R.string.error_add_street));
+            addressInputLayout.setError(getString(R.string.error_add_street));
             status = false;
         } else {
             addressInputLayout.setError(null);
         }
+        if ((houseNumberInputLayout.getEditText().getText().toString() == null || houseNumberInputLayout.getEditText().getText().toString().isBlank()) && typeOfUnitChipGroup.getCheckedChipId() != R.id.house_type_chip) {
+            errors.add(getString(R.string.error_add_house_number));
+            houseNumberInputLayout.setError(getString(R.string.error_add_house_number));
+            status = false;
+        } else {
+            houseNumberInputLayout.setError(null);
+        }
         if (descriptionEditText.getText().toString().trim().isEmpty()) {
-            errors.add("Please enter a description");
+            errors.add(getString(R.string.error_enter_description));
             descriptionEditText.setHintTextColor(getActivity().getColor(R.color.canceRed));
             status = false;
         } else {
@@ -279,13 +297,13 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
         ArrayList<String> errors = new ArrayList<>();
         if (getBuildingTypes().isEmpty()) {
             selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.canceRed));
-            errors.add("Please select the type of your unit");
+            errors.add(getString(R.string.error_select_unit_type));
             status = false;
         } else {
             selectTypeofUnitTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.jetBlack));
         }
         if (descriptionEditText.getText().toString().trim().isEmpty()) {
-            errors.add("Please enter a description");
+            errors.add(getString(R.string.error_enter_description));
             descriptionEditText.setHintTextColor(getActivity().getColor(R.color.canceRed));
             status = false;
         } else {

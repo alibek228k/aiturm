@@ -82,7 +82,8 @@
     <string name="username">Username</string>
     <string name="gender_select_male">Male</string>
     <string name="gender_select_female">Female</string>
-    <string name="add_address">Enter your address</string>
+    <string name="add_address">Enter your street</string>
+    <string name="add_house_number">Enter your house number</string>
 
     <string name="undefined">Undefined</string>
 
@@ -101,6 +102,10 @@
     <string name="post_failed">Failed to publish post</string>
     <string name="add_image_of_your_place">Please add an image of your place</string>
     <string name="error_cannot_message_with_yourself">You cannot send messages to yourself</string>
+    <string name="error_select_unit_type">Please select the type of your unit</string>
+    <string name="error_add_street">Please add a street name</string>
+    <string name="error_add_house_number">Please add a house number</string>
+    <string name="error_enter_description">Please enter a description</string>
 
     <string name="already_have_personal_post">You already have a personal post, delete it and create a new one or edit it.</string>
     <string name="already_have_apartment_post">You already have a apartment post, delete it and create a new one or edit it.</string>

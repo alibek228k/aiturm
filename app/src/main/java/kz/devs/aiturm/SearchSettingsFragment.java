@@ -6,7 +6,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
@@ -14,8 +13,6 @@ import androidx.preference.SwitchPreferenceCompat;
 
 import com.example.shroomies.R;
 import com.nfx.android.rangebarpreference.RangeBarPreferenceCompat;
-
-import java.util.List;
 
 public class SearchSettingsFragment extends PreferenceFragmentCompat {
     SwitchPreferenceCompat priceFilterSwitchPreference, preferencesSwitch;
@@ -37,7 +34,7 @@ public class SearchSettingsFragment extends PreferenceFragmentCompat {
         preferencesSwitch = findPreference("filter_preferences");
         multiSelectListPreference = findPreference("properties");
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
 
         boolean filterPrice = prefs.getBoolean("filter_price", false);
         rangeBarPreferenceCompat.setEnabled(filterPrice);
