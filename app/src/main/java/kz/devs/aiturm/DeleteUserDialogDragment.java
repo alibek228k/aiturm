@@ -1,5 +1,6 @@
 package kz.devs.aiturm;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -20,31 +21,26 @@ import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.loading.LoadingManager;
 
 public class DeleteUserDialogDragment extends DialogFragment {
     private FirebaseAuth mAuth;
@@ -54,15 +50,19 @@ public class DeleteUserDialogDragment extends DialogFragment {
     private User user;
     private View v;
     private TextInputLayout userPassword;
+
+    private Dialog loadingDialog;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v= inflater.inflate(R.layout.fragment_delete_user, container, false);
-        mAuth=FirebaseAuth.getInstance();
+        v = inflater.inflate(R.layout.fragment_delete_user, container, false);
+        mAuth = FirebaseAuth.getInstance();
         rootRef = FirebaseDatabase.getInstance().getReference();
         firebaseFirestore = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+        loadingDialog = LoadingManager.getLoadingDialog(requireContext(), false);
         return v;
     }
 
@@ -79,10 +79,12 @@ public class DeleteUserDialogDragment extends DialogFragment {
             if (user!=null) {
                 userEmail.getEditText().setText(user.getEmail());
                 doneButton.setOnClickListener(view1 -> {
+                    loadingDialog.show();
                     if (userPassword.getEditText().getText() != null && !userPassword.getEditText().getText().toString().trim().isBlank()){
                         reAuthenticateUser(user.getEmail(), userPassword.getEditText().getText().toString().trim());
                     }else{
                         Toast.makeText(getContext(), "Password field can not be empty!", Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
                     }
                 });
                 cancelButton.setOnClickListener(view12 -> dismiss());
@@ -126,17 +128,22 @@ public class DeleteUserDialogDragment extends DialogFragment {
     }
     private void reAuthenticateUser(String email, String password) {
         FirebaseUser firebaseUser=mAuth.getCurrentUser();
-        if (firebaseUser!=null) {
-            AuthCredential credential= EmailAuthProvider.getCredential(email,password);
+        if (firebaseUser != null) {
+            AuthCredential credential = EmailAuthProvider.getCredential(email, password);
             firebaseUser.reauthenticate(credential).addOnCompleteListener(task -> {
-               if (task.isSuccessful()) {
-                   deleteAllPosts(user.getUserID());
-                   deleteAllMessages(user.getUserID());
-                   rootRef.child(Config.users).child(user.getUserID()).removeValue();
-                   rootRef.child("tokens").child(user.getUserID()).removeValue();
-                   deleteAccount(firebaseUser);
-               }
-            }).addOnFailureListener(e -> Toast.makeText(getContext(),e.getMessage(),Toast.LENGTH_LONG).show());
+                if (task.isSuccessful()) {
+                    deleteAllPosts(user.getUserID());
+                    deleteAllMessages(user.getUserID());
+                    rootRef.child(Config.users).child(user.getUserID()).removeValue();
+                    rootRef.child("tokens").child(user.getUserID()).removeValue();
+                    deleteAccount(firebaseUser);
+                }
+            }).addOnFailureListener(e -> {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                loadingDialog.dismiss();
+            });
+        } else {
+            loadingDialog.dismiss();
         }
     }
     private void deleteAccount(FirebaseUser firebaseUser) {
@@ -159,22 +166,32 @@ public class DeleteUserDialogDragment extends DialogFragment {
                             mAuth.signOut();
                             mGoogleSignInClient.signOut();
                             Toast.makeText(context, "Successfully signed out", Toast.LENGTH_LONG).show();
+                            loadingDialog.dismiss();
+                            this.getTargetFragment().getActivity().finish();
                         }).addOnFailureListener(e -> {
                             Toast.makeText(context, "Failed to signed out", Toast.LENGTH_LONG).show();
+                            loadingDialog.dismiss();
+                            this.getTargetFragment().getActivity().finish();
                         });
 
                     } catch (Exception e) {
                         e.printStackTrace();
                         Toast.makeText(getContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                        loadingDialog.dismiss();
+                        this.getTargetFragment().getActivity().finish();
                     }
                 } else {
                     manager.removeUserData();
                     mAuth.signOut();
                     Toast.makeText(getContext(), "Successfully signed out", Toast.LENGTH_LONG).show();
+                    loadingDialog.dismiss();
+                    this.getTargetFragment().getActivity().finish();
                 }
-                this.getTargetFragment().getActivity().finish();
             }
-        }).addOnFailureListener(e -> userPassword.setError(e.getMessage()));
+        }).addOnFailureListener(e -> {
+            userPassword.setError(e.getMessage());
+            loadingDialog.dismiss();
+        });
     }
 
     private void deleteAllMessages(String userId){

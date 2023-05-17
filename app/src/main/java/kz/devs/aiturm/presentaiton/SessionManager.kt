@@ -10,6 +10,7 @@ class SessionManager(
 ) {
     companion object {
         private const val PREFERENCES_USERS_KEY = "USERS"
+        private const val PREFERENCES_APP_KEY = "APP"
     }
 
     private var preferences: SharedPreferences? = null
@@ -39,6 +40,20 @@ class SessionManager(
             return true
         }
         return false
+    }
+
+    fun saveDataFirstTime(){
+        preferences = context.getSharedPreferences(PREFERENCES_APP_KEY, Context.MODE_PRIVATE) ?: return
+        preferences?.edit()?.apply {
+            putBoolean("isInitialized", true)
+            apply()
+        }
+    }
+
+    fun isInitialized(): Boolean {
+        preferences =
+            context.getSharedPreferences(PREFERENCES_APP_KEY, Context.MODE_PRIVATE) ?: return false
+        return preferences?.getBoolean("isInitialized", false) ?: false
     }
 
 }

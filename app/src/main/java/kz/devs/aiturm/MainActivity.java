@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
                 mAuth = FirebaseAuth.getInstance();
             }
             FirebaseUser user = mAuth.getCurrentUser();
-            if (mAuth.getCurrentUser() == null) finish();
             String userID = user.getUid();
             DatabaseReference ref = database.getReference("tokens");
             ref.child(userID).setValue(task.getResult());
@@ -287,8 +286,8 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
                         user.setUserID(mAuth.getCurrentUser().getUid());
                         manager.saveData(user);
                         if (user.getUsername() == null) {
-                            finish();
                             startActivity(new Intent(getApplicationContext(), AddUsername.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                            finish();
 
                         } else {
                             usernameDrawer.setText("@" + user.getUsername());
