@@ -27,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Set;
 
+import kz.devs.aiturm.model.User;
+
 public class PersonalPostSingleDialogFragment extends DialogFragment {
     private View v;
     private User user;

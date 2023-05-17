@@ -37,6 +37,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
+import kz.devs.aiturm.model.User;
+
 public class ViewProfileFragment extends Fragment {
     private Button editProfile;
     private TextView viewUsername;

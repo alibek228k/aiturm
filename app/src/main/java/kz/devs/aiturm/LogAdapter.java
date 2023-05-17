@@ -33,6 +33,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kz.devs.aiturm.model.User;
+
 public class LogAdapter extends RecyclerView.Adapter<LogAdapter.LogViewHolder> {
     private final Context context;
     private final ArrayList<ApartmentLogs> apartmentLogsList;

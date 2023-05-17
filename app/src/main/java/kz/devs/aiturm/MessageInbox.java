@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import kz.devs.aiturm.model.User;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 
@@ -50,7 +51,7 @@ public class MessageInbox extends AppCompatActivity {
     private PrivateInboxRecycleViewAdapter messageInboxRecycleViewAdapter;
     private DatabaseReference rootRef;
     private FirebaseAuth mAuth;
-    private HashMap<String , User>userHashMap;
+    private HashMap<String, User>userHashMap;
     private HashSet<String> inboxUserIDs;
     private RequestQueue requestQueue;
     private ValueEventListener valueEventListener;

@@ -86,6 +86,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import kz.devs.aiturm.model.User;
+
 interface CardUploaded {
     void sendData(TasksCard tasksCard, ExpensesCard expensesCard);
 
@@ -218,7 +220,7 @@ public class AddNewCardDialogFragment extends DialogFragment implements SplitExp
                 SplitExpensesDialogFragment split = new SplitExpensesDialogFragment();
                 Bundle bundle1 = new Bundle();
                 bundle1.putParcelable("APARTMENT_DETAILS", apartment);
-                bundle1.putParcelableArrayList("MEMBERS", apartmentMembersArrayList);
+                bundle1.putSerializable("MEMBERS", apartmentMembersArrayList);
                 split.setArguments(bundle1);
                 split.setTargetFragment(AddNewCardDialogFragment.this, DIALOG_RESULT);
                 split.show(getParentFragmentManager(), "split expenses");

@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import kz.devs.aiturm.model.User;
+
 public class PrivateInboxRecycleViewAdapter extends RecyclerView.Adapter<PrivateInboxRecycleViewAdapter.UsersListViewHolder> {
     private final List<RecieverInbox> recieverInboxList;
     private final Context context , applicationContext;

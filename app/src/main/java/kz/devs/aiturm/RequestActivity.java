@@ -256,17 +256,5 @@ RequestActivity extends AppCompatActivity {
         }else{
             message = errorMessage;
         }
-//        new AlertDialog.Builder(getApplicationContext())
-//                .setIcon(R.drawable.ic_alert)
-//                .setTitle("Error")
-//                .setMessage(message)
-//                .setCancelable(false)
-//                .setNeutralButton("return", (dialog, which) -> {
-//                    this.finish();
-//                    dialog.dismiss();
-//                })
-//                .setPositiveButton("refresh", (dialog, which) -> getToken())
-//                .create()
-//                .show();
     }
 }

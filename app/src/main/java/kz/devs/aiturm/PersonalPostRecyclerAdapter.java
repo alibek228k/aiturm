@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import kz.devs.aiturm.model.User;
+
 public class PersonalPostRecyclerAdapter extends RecyclerView.Adapter<PersonalPostRecyclerAdapter.PersonalPostViewHolder> {
     private final List<PersonalPostModel> personalPostModelList;
     private final Context context;

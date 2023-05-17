@@ -45,6 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import kz.devs.aiturm.model.User;
+
 public class NewChatFragment extends DialogFragment {
     private View v;
     private RequestQueue requestQueue;
@@ -158,7 +160,6 @@ public class NewChatFragment extends DialogFragment {
                                                 JSONObject userJsonObject = (JSONObject) jsonArray.get(0);
                                                 boolean requestSent = (boolean)jsonArray.get(1);
                                                 User user =mapper.readValue(userJsonObject.toString() , User.class);
-                                                user.setRequestSent(requestSent);
                                                 suggestedUser.add(user);
 
                                             } catch (JSONException | JsonProcessingException e) {

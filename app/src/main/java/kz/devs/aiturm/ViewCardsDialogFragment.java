@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import kz.devs.aiturm.model.User;
+
 
 public class ViewCardsDialogFragment extends DialogFragment {
     //views

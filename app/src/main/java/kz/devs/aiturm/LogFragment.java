@@ -42,6 +42,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import kz.devs.aiturm.model.User;
 import me.everything.android.ui.overscroll.IOverScrollDecor;
 import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -50,7 +51,7 @@ import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 public class LogFragment extends Fragment {
     private View v;
     private ArrayList<ApartmentLogs> apartmentLogs;
-    private HashMap<String , User > usersMap;
+    private HashMap<String , User> usersMap;
     private ArrayList<String> membersIDs;
     private RecyclerView logRecycler;
     private TextView noLogsTextView;

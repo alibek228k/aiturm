@@ -22,6 +22,8 @@ import com.example.shroomies.R;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kz.devs.aiturm.model.User;
+
 public class UserAdapterSplitExpenses extends RecyclerView.Adapter<UserAdapterSplitExpenses.UserViewHolderSplit> {
    private Context context;
    private Fragment targetedFragment;

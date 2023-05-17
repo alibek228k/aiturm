@@ -1,5 +1,8 @@
 package kz.devs.aiturm;
 
+import static com.firebase.ui.auth.AuthUI.getApplicationContext;
+
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -71,7 +74,7 @@ public class PublishPostPreferancesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_publish_post_preferances, container, false);
         mAuth=FirebaseAuth.getInstance();
-        requestQueue= Volley.newRequestQueue(getActivity());
+        requestQueue= Volley.newRequestQueue(requireContext());
         return v;
     }
 
@@ -90,7 +93,7 @@ public class PublishPostPreferancesFragment extends Fragment {
             description = bundle.getString(Config.DESCRIPTION);
 
         }else{
-            //todo display error
+            displayErrorAlertDialog();
         }
 
         numberOfRoomMatesNumberPicker = v.findViewById(R.id.roommate_number_picker);
@@ -107,7 +110,7 @@ public class PublishPostPreferancesFragment extends Fragment {
 
         if(postType.equals(Config.PERSONAL_POST)){
             numberOfRoommatesLayout.setVisibility(View.GONE);
-            nextButton.setText("Publish post");
+            nextButton.setText(getString(R.string.publish_post));
         }else{
             numberOfRoomMatesNumberPicker.setMinValue(1);
             numberOfRoomMatesNumberPicker.setMaxValue(10);
@@ -213,15 +216,10 @@ public class PublishPostPreferancesFragment extends Fragment {
                     };
                     requestQueue.add(jsonObjectRequest);
                 } else {
-//                    todo handle error
+                    displayErrorAlertDialog();
                 }
                 }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull @NotNull Exception e) {
-//                todo when token is null
-            }
-        });
+        }).addOnFailureListener(e -> displayErrorAlertDialog());
 
 
     }
@@ -253,5 +251,19 @@ public class PublishPostPreferancesFragment extends Fragment {
         ft = fm.beginTransaction();
         ft.replace(R.id.publish_post_container, fragment);
         ft.commit();
+    }
+
+    private void displayErrorAlertDialog(){
+        new AlertDialog.Builder(requireContext())
+                .setIcon(R.drawable.ic_alert)
+                .setTitle(getString(R.string.error))
+                .setMessage(getString(R.string.error_occurred_with_post_creating))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.ok), (dialog, which) -> {
+                    requireActivity().onBackPressed();
+                    dialog.dismiss();
+                })
+                .create()
+                .show();
     }
 }

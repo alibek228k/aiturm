@@ -44,6 +44,8 @@
  import java.util.List;
  import java.util.Set;
 
+ import kz.devs.aiturm.model.User;
+
  public class FindRoommateFragment extends Fragment {
     MotionLayout motionLayout;
     private static final String MAP_FRAGMENT = "MAP_FRAGMENT";

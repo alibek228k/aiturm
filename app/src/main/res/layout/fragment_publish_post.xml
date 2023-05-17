@@ -203,7 +203,9 @@
                     app:endIconMode="custom"
                     app:counterTextColor="@color/LogoYellow"
                     app:endIconTint="@color/LogoYellow"
-                    android:layout_below="@id/divider">
+                    android:layout_below="@id/divider"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="50">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/enter_new_email"
                         android:layout_width="match_parent"
@@ -211,6 +213,7 @@
                         android:backgroundTint="@android:color/transparent"
                         android:paddingTop="5dp"
                         android:paddingBottom="5dp"
+                        android:maxLength="50"
                         android:hint="@string/add_address"
                         android:textAlignment="textStart"
                         android:textColor="@color/jetBlack"

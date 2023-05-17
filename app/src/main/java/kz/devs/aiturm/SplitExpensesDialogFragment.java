@@ -32,6 +32,8 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import kz.devs.aiturm.model.User;
+
 public class SplitExpensesDialogFragment extends DialogFragment implements UserAdapterSplitExpenses.Shares {
   //views
   private View v;
@@ -107,7 +109,7 @@ public class SplitExpensesDialogFragment extends DialogFragment implements UserA
 
         if(bundle!=null){
             apartment=bundle.getParcelable("APARTMENT_DETAILS");
-            memebersList =bundle.getParcelableArrayList("MEMBERS");
+            memebersList = (ArrayList<User>) bundle.getSerializable("MEMBERS");
             setRecycler(memebersList,enteredAmount);
         }
 

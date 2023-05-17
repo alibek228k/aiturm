@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import kz.devs.aiturm.model.User;
+
 public class PersonalPostMapAdapter extends RecyclerView.Adapter<PersonalPostMapAdapter.PersonalPostViewHolder> {
     private final Context context;
     private final List<PersonalPostModel> personalPostModels;
