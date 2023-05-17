@@ -28,6 +28,7 @@
     <string name="favorites">Favorites</string>
     <string name="looks_like_you_have_no_favorite_apartment_posts">Looks like you have no favorite apartment posts....</string>
     <string name="NoPersonalPostText">Looks like you have no favorite personal posts yet...</string>
+    <string name="user_have_not_preferences">The user has not specified any preferences</string>
 
     <string-array name="spinner_options">
         <item>Importance</item>
@@ -35,6 +36,11 @@
         <item>Oldest</item>
         <item>Title</item>
     </string-array>
+
+    <string name="you">You</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
@@ -129,6 +135,7 @@
     <string name="you_will_no_longer_be_a_roommate">You will no longer be a roommate in this apartment.</string>
     <string name="you_dont_have_apartment">You don\'t have an apartment, please accept requests before entering here.</string>
 
+    <string name="place">Place</string>
     <string name="profile">Profile</string>
     <string name="send_message">Send Message</string>
     <string name="user_posts">User Posts</string>
@@ -153,6 +160,25 @@
     <string name="next">Next</string>
     <string name="add_some_images">Add some images for your future roommates</string>
     <string name="add_more_images">Add more images</string>
+
+    <string name="roommates_lower_case">roommates</string>
+    <string name="about_this_post">About this post</string>
+    <string name="read_more">Read more</string>
+    <string name="pets">Pets</string>
+    <string name="smoking">Smoking</string>
+    <string name="alcohol">Alcohol</string>
+    <string name="delete">Delete</string>
+
+    <string name="you_are_allowing">You\'re allowing:</string>
+    <string name="you_are_looking_for">You\'re looking for:</string>
+
+    <string name="allows">allows:</string>
+    <string name="is_looking_for">is looking for:</string>
+    <string name="budget">Budget</string>
+    <string name="prefers">Prefers</string>
+    <string name="no_description_added">No description added</string>
+
+    <string name="delete_post_message">Are you sure you want to delete the post?</string>
 
 
 </resources>

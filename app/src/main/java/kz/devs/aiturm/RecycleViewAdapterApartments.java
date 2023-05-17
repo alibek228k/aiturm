@@ -1,5 +1,6 @@
 package kz.devs.aiturm;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,12 +24,19 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.shroomies.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.make.dots.dotsindicator.DotsIndicator;
 
 import java.util.List;
 import java.util.Set;
+
+import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.loading.LoadingManager;
 
 public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleViewAdapterApartments.ViewHolder> {
     private final List<Apartment> apartmentList;
@@ -38,6 +47,10 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
     private NotifyEmptyApartmentAdapter mNotifyEmptyAdapter;
     private final UserFavourites userFavourites;
 
+    private final User currentUser;
+
+    private final DatabaseReference usersReference = FirebaseDatabase.getInstance().getReference().child(Config.users);
+
     public RecycleViewAdapterApartments(List<Apartment> apartmentList, Context context, boolean isFromFavourites, boolean isFromUserProfile) {
         this.apartmentList = apartmentList;
         this.context = context;
@@ -47,6 +60,7 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         userFavourites = UserFavourites.getInstance(context, mAuth.getCurrentUser().getUid());
         favoriteSet = userFavourites.getApartmentPostFavourites();
+        currentUser = new SessionManager(context).getData();
 
         setHasStableIds(true);
     }
@@ -58,14 +72,17 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
 
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     @NonNull
     @Override
     public RecycleViewAdapterApartments.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        System.out.println("View holeder is creating");
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         View view = layoutInflater.inflate(R.layout.apartment_card, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, viewType);
     }
 
 
@@ -75,32 +92,40 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
         String buildingType = apartmentList.get(position).getBuildingType();
         switch (buildingType) {
             case Config.TYPE_APARTMENT:
-                holder.buildingTypeTextView.setText("Apartment");
+                holder.buildingTypeTextView.setText(context.getString(R.string.apartment_type_apartment));
                 break;
             case Config.TYPE_HOUSE:
-                holder.buildingTypeTextView.setText("Town house");
+                holder.buildingTypeTextView.setText(context.getString(R.string.apartment_type_town_house));
                 break;
             case Config.TYPE_FLAT:
-                holder.buildingTypeTextView.setText("Flat");
+                holder.buildingTypeTextView.setText(context.getString(R.string.apartment_type_flat));
                 break;
             case Config.TYPE_CONDO:
-                holder.buildingTypeTextView.setText("Condominium");
+                holder.buildingTypeTextView.setText(context.getString(R.string.apartment_type_condominium));
                 break;
         }
         String buildingName = apartmentList.get(position).getBuildingAddress();
         if (buildingName != null) {
             holder.addressTV.setText(buildingName);
         }
-        //set the description
-        holder.descriptionTV.setText(apartmentList.get(position).getDescription());
+        if (apartmentList.get(position).getUserID() == null) {
+            holder.descriptionTV.setText(apartmentList.get(position).getDescription());
+        } else {
+            usersReference.child(apartmentList.get(position).getUserID()).child(Config.name).get().addOnSuccessListener(dataSnapshot -> {
+                var username = dataSnapshot.getValue(String.class);
+                holder.descriptionTV.setText(username);
+            }).addOnFailureListener(e -> {
+                holder.descriptionTV.setText(apartmentList.get(position).getDescription());
+            });
+        }
         // set the price of the apartment
         int price = apartmentList.get(position).getPrice();
         int numRoomMates = apartmentList.get(position).getNumberOfRoommates();
         if (price > 0) {
-            holder.priceTV.setText(price + " RM");
-            holder.numRoomMateTV.setText(" • " + numRoomMates + " roommates");
+            holder.priceTV.setText(price + " ₸");
+            holder.numRoomMateTV.setText(" • " + numRoomMates + " " + context.getString(R.string.roommates_lower_case));
         } else {
-            holder.numRoomMateTV.setText(numRoomMates + " roommates");
+            holder.numRoomMateTV.setText(numRoomMates + " " + context.getString(R.string.roommates_lower_case));
         }
 //        holder.priceTV.setText(apartmentList.get(position).getPrice());
         //set the number of roommates
@@ -176,7 +201,7 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
         RelativeLayout apartmentCardRelativeLayout;
         LinearLayout prefereanceLinearLayout;
 
-        public ViewHolder(@NonNull final View itemView) {
+        public ViewHolder(@NonNull final View itemView, int position) {
             super(itemView);
             priceTV = itemView.findViewById(R.id.price_text_view_apartment_card);
             buildingTypeTextView = itemView.findViewById(R.id.building_type);
@@ -195,8 +220,10 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
             deletePostButton = itemView.findViewById(R.id.apartment_post_delete_button);
             prefereanceLinearLayout = itemView.findViewById(R.id.preference_linear_layout);
 
-            if (isFromUserProfile) {
-//                deletePostButton.setVisibility(View.VISIBLE);
+            if (apartmentList.get(position).getUserID().equals(currentUser.getUserID())) {
+                deletePostButton.setVisibility(View.VISIBLE);
+            } else {
+                deletePostButton.setVisibility(View.GONE);
             }
 
             // on click go to the apartment view
@@ -210,6 +237,40 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
                     removeFromFavourites(favoriteButton, getAdapterPosition());
                 }
             });
+
+            deletePostButton.setOnClickListener(v -> {
+                showDeletePersonalPostDialog(position);
+            });
+        }
+
+        private void showDeletePersonalPostDialog(int position) {
+            new AlertDialog.Builder(context)
+                    .setTitle(R.string.attention)
+                    .setMessage(R.string.delete_post_message)
+                    .setPositiveButton(R.string.delete, (dialogInterface, i) -> {
+                        deletePersonalPost(position);
+                        dialogInterface.dismiss();
+                    })
+                    .setNegativeButton(R.string.fui_cancel, ((dialogInterface, i) -> {
+                        dialogInterface.dismiss();
+                    })).show();
+        }
+
+        private void deletePersonalPost(int position) {
+            var dialog = LoadingManager.getLoadingDialog(context, false);
+            dialog.show();
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            firestore.collection(Config.APARTMENT_POST)
+                    .document(apartmentList.get(position).getApartmentID()).delete()
+                    .addOnSuccessListener(aVoid -> {
+                        apartmentList.remove(position);
+                        notifyItemRemoved(position);
+                        dialog.dismiss();
+                    }).addOnFailureListener(e -> {
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    });
+
         }
 
     }
@@ -243,8 +304,6 @@ public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleVi
 
     private void goToApartmentViewPage(int position) {
         Intent intent = new Intent(context, ApartmentViewPageActivity.class);
-        // add the parcelable apartment object to the intent and use it's values to
-        //update the apartment view class
         intent.putExtra("apartment", apartmentList.get(position));
         context.startActivity(intent);
     }

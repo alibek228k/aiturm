@@ -142,7 +142,7 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
 
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setSubtitle("Place");
+        getSupportActionBar().setSubtitle(getString(R.string.place));
         getSupportActionBar().setTitle("");
         if (getIntent().getExtras() != null) {
             apartment = new Apartment();
@@ -153,7 +153,7 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
                     getPostOwnerDetails(firebaseUser.getUid(), apartment.getUserID());
                 }
                 //format and set date
-                if (apartment.getTimeStamp() == -1) {
+                if (apartment.getTimeStamp() != -1) {
                     long timestamp = apartment.getTimeStamp();
                     Date formattedDate = new Date(timestamp);
                     SimpleDateFormat sfd = new SimpleDateFormat("HH:mm, dd-MM-yyyy", Locale.getDefault());
@@ -167,25 +167,25 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
                 int price = apartment.getPrice();
                 int numRoomMates = apartment.getNumberOfRoommates();
                 if (price > 0) {
-                    priceTextView.setText(price + " RM");
+                    priceTextView.setText(price + " ₸");
                 }
-                numberOfRoomMates.setText(numRoomMates + " roommates");
+                numberOfRoomMates.setText(numRoomMates + " " + getString(R.string.roommates_lower_case));
 
 
                 //set the location address
                 String buildingType = apartment.getBuildingType();
                 switch (buildingType) {
                     case Config.TYPE_APARTMENT:
-                        buildingTypeTextView.setText("Apartment");
+                        buildingTypeTextView.setText(getString(R.string.apartment_type_apartment));
                         break;
                     case Config.TYPE_HOUSE:
-                        buildingTypeTextView.setText("Town house");
+                        buildingTypeTextView.setText(getString(R.string.apartment_type_town_house));
                         break;
                     case Config.TYPE_FLAT:
-                        buildingTypeTextView.setText("Flat");
+                        buildingTypeTextView.setText(getString(R.string.apartment_type_flat));
                         break;
                     case Config.TYPE_CONDO:
-                        buildingTypeTextView.setText("Condominium");
+                        buildingTypeTextView.setText(getString(R.string.apartment_type_condominium));
                         break;
                 }
 
@@ -255,9 +255,9 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
         });
 
         userProfile.setOnClickListener(v -> {
-            if (user.getUserID().equals(mAuth.getCurrentUser().getUid())){
-                Toast.makeText(this, getString(R.string.error_cannot_message_with_yourself), Toast.LENGTH_SHORT).show();
-            }else{
+            if (user.getUserID() == null) {
+                Toast.makeText(this, getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+            } else {
                 startActivity(UserProfileActivity.Companion.newInstance(this, user.getUserID()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
             }
         });
@@ -276,14 +276,14 @@ public class ApartmentViewPageActivity extends AppCompatActivity implements OnMa
                 if (user!=null) {
                     if (currentUserid.equals(userUid)) {
                         messageButton.setVisibility(View.GONE);
-                        username.setText("You");
-                        preferencesTextView.setText("You're allowing:");
-                        genderTextView.setText("You're looking for");
+                        username.setText(getString(R.string.you));
+                        preferencesTextView.setText(getString(R.string.you_are_allowing));
+                        genderTextView.setText(getString(R.string.you_are_looking_for));
                     } else {
                         String userName = user.getUsername();
                         username.setText(userName);
-                        preferencesTextView.setText(userName + " allows:");
-                        genderTextView.setText(userName + " is looking for");
+                        preferencesTextView.setText(userName + " " + getString(R.string.allows));
+                        genderTextView.setText(userName + " " + getString(R.string.is_looking_for));
                     }
 
                     if (user.getImage() != null && !user.getImage().isEmpty()) {

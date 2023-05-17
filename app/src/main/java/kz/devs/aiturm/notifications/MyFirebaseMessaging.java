@@ -13,15 +13,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import kz.devs.aiturm.ChattingActivity;
-import kz.devs.aiturm.Config;
-import kz.devs.aiturm.GroupChatting;
-import kz.devs.aiturm.MyAiturmActivity;
 import com.example.shroomies.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,6 +24,11 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
+
+import kz.devs.aiturm.ChattingActivity;
+import kz.devs.aiturm.Config;
+import kz.devs.aiturm.GroupChatting;
+import kz.devs.aiturm.MyAiturmActivity;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
 
@@ -171,9 +171,11 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String s){
         super.onNewToken(s);
-        FirebaseUser firebaseUser=mAuth.getCurrentUser();
-        if(firebaseUser!=null) {
-            updateToken(s,firebaseUser);
+        if (mAuth != null) {
+            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+            if (firebaseUser != null) {
+                updateToken(s, firebaseUser);
+            }
         }
     }
     private void updateToken(String tokenReferesh,FirebaseUser firebaseUser){

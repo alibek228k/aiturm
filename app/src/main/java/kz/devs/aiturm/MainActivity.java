@@ -27,7 +27,6 @@ import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -175,7 +174,11 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
     private void setupFirebaseMessaging() {
         com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             FirebaseDatabase database = FirebaseDatabase.getInstance();
+            if (mAuth == null) {
+                mAuth = FirebaseAuth.getInstance();
+            }
             FirebaseUser user = mAuth.getCurrentUser();
+            if (mAuth.getCurrentUser() == null) finish();
             String userID = user.getUid();
             DatabaseReference ref = database.getReference("tokens");
             ref.child(userID).setValue(task.getResult());

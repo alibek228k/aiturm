@@ -16,12 +16,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,14 +32,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
-import kz.devs.aiturm.presentaiton.authorization.FillOutDataActivity;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.authorization.FillOutDataActivity;
 
 
 public class LoginActivity extends AppCompatActivity implements ValueEventListener {
@@ -72,8 +68,6 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        FirebaseApp.initializeApp(getApplicationContext());
-
         emailEditText = findViewById(R.id.email_login);
         loginButton = findViewById(R.id.login_button);
         signup = findViewById(R.id.sign_up_button);
@@ -81,9 +75,9 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
         microsoftSignInButton = findViewById(R.id.microsoft_sign_up);
         customLoadingProgressBar = new CustomLoadingProgressBar(this, "Loading", R.raw.loading_animation);
 
+        initFirebaseArguments();
         setupSignUpButtons();
         setupLoginButton();
-        initFirebaseArguments();
     }
 
     private boolean validEmail(String enteredEmail) {
@@ -242,6 +236,7 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
                 rootRef.child(Config.users).child(firebaseUser.getUid()).get().addOnCompleteListener(task -> {
                     User user = task.getResult().getValue(User.class);
                     user.setUserID(firebaseUser.getUid());
+                    user.setSignInMethod(method);
                     SessionManager manager = new SessionManager(LoginActivity.this);
                     if (user.getSignInMethod() != method){
                         HashMap<String, Object> signInMethodMap = new HashMap<>();
@@ -256,15 +251,16 @@ public class LoginActivity extends AppCompatActivity implements ValueEventListen
                             manager.removeUserData();
                             manager.saveData(user);
                         });
-                    }else{
+                    } else {
                         user.setSignInMethod(method);
                         manager.removeUserData();
                         manager.saveData(user);
                     }
+                    manager.removeUserData();
+                    manager.saveData(user);
+                    startActivity(MainActivity.newInstance(LoginActivity.this));
+                    finish();
                 });
-
-                startActivity(MainActivity.newInstance(LoginActivity.this));
-                finish();
                 Log.d("MICROSOFT SIGN IN", "not new user");
             }
         } else {

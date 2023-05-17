@@ -50,7 +50,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TimeZone;
 
 import kz.devs.aiturm.model.User;
@@ -224,7 +223,6 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         groupMessageButton.setOnClickListener(view13 -> {
             Intent intent=new Intent(getActivity(),GroupChatting.class);
             Bundle bundle=new Bundle();
-            System.out.println("Members: " + membersHashMap);
             bundle.putSerializable("MEMBERS",membersHashMap);
             bundle.putString(Config.apartmentID, apartment.getApartmentID());
             intent.putExtra("extras",bundle);

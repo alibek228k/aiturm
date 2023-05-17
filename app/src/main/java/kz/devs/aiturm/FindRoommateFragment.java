@@ -210,7 +210,7 @@
                     lastCardKey = null;
                     apartmentList = new ArrayList<>();
                     recyclerView.setLayoutManager(layoutManager);
-                    recycleViewAdapterApartments = new RecycleViewAdapterApartments(apartmentList,getActivity()  , false,false);
+                    recycleViewAdapterApartments = new RecycleViewAdapterApartments(apartmentList, getActivity(), false, false);
                     recyclerView.setAdapter(recycleViewAdapterApartments);
 
                     searchView.clearFocus();
@@ -489,10 +489,6 @@
     }
 
     void setAdapterData(Task<QuerySnapshot> task) {
-        // initialize an integer to check if the filtered
-        // data is less than the required per pagination
-        // this is needed because we have to filter for price on the  client side
-        // and if the amount of data retrieved is too low the the user has to pull down and retrieve  a small sets of data
 
         int dataRetrieved = 0;
         if(apartmentList.size()==0){

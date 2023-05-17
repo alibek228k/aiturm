@@ -1,16 +1,5 @@
 package kz.devs.aiturm;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -22,7 +11,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -31,10 +19,20 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-
 import com.example.shroomies.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -137,7 +135,6 @@ public class GroupChatting extends AppCompatActivity {
         if(bundle!=null) {
             membersHashmap=(HashMap<String, User>) bundle.getBundle("extras").getSerializable("MEMBERS");
             apartmentID = bundle.getBundle("extras").getString(Config.apartmentID);
-            System.out.println("apartment id " + apartmentID);
             expensesCard=bundle.getParcelable("ExpenseCARD");
             tasksCard=bundle.getParcelable("TaskCARD");
             if (expensesCard!=null){
@@ -213,7 +210,6 @@ public class GroupChatting extends AppCompatActivity {
 
 
     private boolean validToSendTextMessage(String textMessage){
-        System.out.println("apartmentID " + apartmentID);
         return !apartmentID.isEmpty() && currentUser!=null && textMessage != null && !textMessage.isEmpty() && expensesCard==null && tasksCard==null;
     }
     private boolean validToSendImageMessage(){
@@ -361,7 +357,6 @@ public class GroupChatting extends AppCompatActivity {
         groupChatMessageAdapter=new GroupChatMessageAdapter(groupMessageList,this,membersHashmap);
         groupChattingRecycler.setAdapter(groupChatMessageAdapter);
         HashMap <String,Object> seenMessageHashmaps=new HashMap();
-        System.out.println("Apartment id " + apartmentID);
         DatabaseReference messageRef=rootRef
                 .child(Config.groupMessages)
                 .child(apartmentID)

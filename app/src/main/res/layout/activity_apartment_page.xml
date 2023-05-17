@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layoutDescription="@xml/activity_apartment_page_scene">
@@ -84,7 +85,8 @@
                 android:textColor="@color/jetBlack"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="Room cost" />
 
             <TextView
                 android:id="@+id/number_of_roommates_text_view"
@@ -93,8 +95,8 @@
                 android:layout_below="@id/price_text_view_apartment_card"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="5dp"
-
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="Roommate count" />
 
             <TextView
                 android:id="@+id/building_type"
@@ -103,7 +105,8 @@
                 android:layout_below="@id/number_of_roommates_text_view"
                 android:textColor="@color/LogoYellow"
                 android:layout_marginStart="15dp"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="5dp"
+                tools:text="Flat" />
 
             <RelativeLayout
                 android:id="@+id/user_info_relative_layout"
@@ -134,11 +137,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:layout_toEndOf="@id/user_image_view"
-
                     android:layout_marginEnd="10dp"
                     android:lines="1"
                     android:textColor="@color/jetBlack"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    tools:text="Alibek Joldybayev" />
 
                 <TextView
                     android:id="@+id/date_of_post_text_view"
@@ -147,7 +150,8 @@
                     android:layout_below="@+id/name_of_user_text_view"
                     android:layout_toEndOf="@id/user_image_view"
                     android:textColor="@color/lightGrey"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    tools:text="Post date" />
 
             </RelativeLayout>
 
@@ -162,9 +166,9 @@
                     android:id="@+id/about_user_final_text_View"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
+                    android:layout_marginStart="15dp"
                     android:layout_marginTop="5dp"
-                    android:text="About this post"
+                    android:text="@string/about_this_post"
                     android:textSize="14dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -175,11 +179,11 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@id/about_user_final_text_View"
                     android:padding="10dp"
-
                     android:textColor="@color/jetBlack"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/about_user_final_text_View" />
+                    app:layout_constraintTop_toBottomOf="@id/about_user_final_text_View"
+                    tools:text="Description  about post. " />
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
@@ -194,7 +198,7 @@
                         android:id="@+id/read_more_chip"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:text="Read more"
+                        android:text="@string/read_more"
                         android:textAlignment="center"
                         android:textSize="12sp"
                         android:textStyle="bold"
@@ -233,7 +237,8 @@
                         android:textSize="12sp"
                         android:gravity="center_vertical"
                         android:maxLines="2"
-                        android:ellipsize="end" />
+                        android:ellipsize="end"
+                        tools:text="Turkestan region"/>
 
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
@@ -255,7 +260,8 @@
                     android:layout_marginLeft="5dp"
                     android:gravity="center_vertical"
                     android:textSize="12sp"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    tools:text="alibek228kz is looking for" />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/gender_chip_group"
@@ -266,7 +272,7 @@
                         android:id="@+id/male_chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Males"
+                        android:text="@string/gender_select_male"
                         app:chipIcon="@drawable/male_icon_15dp"
                         app:chipBackgroundColor="@color/white"
                         app:chipStrokeWidth="1dp"
@@ -285,7 +291,7 @@
                         android:id="@+id/female_chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Females"
+                        android:text="@string/gender_select_female"
                         app:chipIcon="@drawable/female_icon_15dp"
                         app:chipBackgroundColor="@color/white"
                         app:chipStrokeWidth="1dp"
@@ -307,7 +313,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginStart="5dp"
-                    android:textSize="12sp" />
+                    android:textSize="12sp"
+                    tools:text="alibek228kz allows"  />
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/preferences_chip_group"
@@ -318,7 +325,7 @@
                         android:id="@+id/pet_chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Pets"
+                        android:text="@string/pets"
                         app:chipIcon="@drawable/pet_icon_15dp"
                         app:chipBackgroundColor="@color/white"
                         app:chipStrokeWidth="1dp"
@@ -336,7 +343,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/smoking_chip"
-                        android:text="Smoking"
+                        android:text="@string/smoking"
                         app:chipIcon="@drawable/smoking_icon_15dp"
                         app:chipBackgroundColor="@color/white"
                         app:chipStrokeWidth="1dp"
@@ -352,7 +359,7 @@
                         android:id="@+id/alcohol_chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Alcohol"
+                        android:text="@string/alcohol"
                         app:chipIcon="@drawable/ic_alcohol"
                         app:iconEndPadding="0dp"
                         app:chipBackgroundColor="@color/white"
