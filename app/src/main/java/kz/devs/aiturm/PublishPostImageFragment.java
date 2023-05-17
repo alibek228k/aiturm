@@ -305,7 +305,7 @@ public class PublishPostImageFragment extends Fragment {
                         publishApartmentPost(imageUrls, uniqueId);
                     }
                 } else {
-                    showCustomToast("An error occurred while uploading your images ");
+                    showCustomToast(getString(R.string.network_error_uploading_image));
                 }
             });
             counter++;

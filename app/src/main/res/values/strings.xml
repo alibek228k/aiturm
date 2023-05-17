@@ -112,6 +112,8 @@
 
     <string name="already_apartment_member">You are already a member of the apartment, leave the apartment before creating your post.</string>
 
+    <string name="field_should_contains_only_letters">This field must contain only letters</string>
+
 
     <string name="publishing_post">Publishing your post!</string>
     <string name="add_users_to_group">Add users to your current group to add cards and manage your unit</string>
@@ -120,6 +122,7 @@
     <string name="request_sent_success">Request successfully send!</string>
     <string name="request_sent_failed">Failed to send request</string>
 
+    <string name="network_error_uploading_image">An error occurred while uploading your images</string>
     <string name="network_error">Network error, try again later</string>
     <string name="you_are_member">You are now a member of the apartment!</string>
 
@@ -140,6 +143,16 @@
     <string name="received">Received</string>
     <string name="sent">Sent</string>
     <string name="choose_type_of_post">Choose the type of your post</string>
+    <string name="roommates">Roommates</string>
+    <string name="talk_about_yourself">Talk about yourself</string>
+    <string name="apartment_type_condominium">Condominium</string>
+    <string name="apartment_type_apartment">Apartment</string>
+    <string name="apartment_type_flat">Flat</string>
+    <string name="apartment_type_town_house">Town house</string>
+    <string name="search_building_name">You must search for the building name</string>
+    <string name="next">Next</string>
+    <string name="add_some_images">Add some images for your future roommates</string>
+    <string name="add_more_images">Add more images</string>
 
 
 </resources>

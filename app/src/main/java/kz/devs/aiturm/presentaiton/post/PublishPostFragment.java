@@ -135,7 +135,7 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
                                 getFragment(PublishPostPreferencesFragment.getInstance(
                                         getBuildingType(),
                                         null,
-                                        addressInputLayout.getEditText().getText().toString(),
+                                        addressInputLayout.getEditText().getText().toString() + " " + houseNumberInputLayout.getEditText().getText().toString(),
                                         descriptionEditText.getText().toString().trim(),
                                         postType
                                 ));
@@ -267,7 +267,11 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
             errors.add(getString(R.string.error_add_street));
             addressInputLayout.setError(getString(R.string.error_add_street));
             status = false;
-        } else {
+        } else if(!addressInputLayout.getEditText().getText().toString().matches("^(?=.*[a-zA-Zа-яА-ЯҢңӘәҒғҚқҮүӨөҰұҺһІі])[a-zA-Zа-яА-ЯҢңӘәҒғҚқҮүӨөҰұҺһІі\\\\s]+$")) {
+            errors.add(getString(R.string.field_should_contains_only_letters));
+            addressInputLayout.setError(getString(R.string.field_should_contains_only_letters));
+            status = false;
+        }else{
             addressInputLayout.setError(null);
         }
         if ((houseNumberInputLayout.getEditText().getText().toString() == null || houseNumberInputLayout.getEditText().getText().toString().isBlank()) && typeOfUnitChipGroup.getCheckedChipId() != R.id.house_type_chip) {
