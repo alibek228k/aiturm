@@ -385,7 +385,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                 ArrayList<String> members;
                 if (apartment.getApartmentMembers() != null) {
                     //put the members and add the admin
-                    members = new ArrayList<>(apartment.getApartmentMembers().values());
+                    members = new ArrayList<>(apartment.getApartmentMembers());
                 } else {
                     members = new ArrayList<>();
                 }
@@ -450,7 +450,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             apartment = documentSnapshot.toObject(AiturmApartment.class);
             apartment.setApartmentID(documentSnapshot.getId());
 
-            var membersIds = new ArrayList<>(apartment.getApartmentMembers().values());
+            var membersIds = new ArrayList<>(apartment.getApartmentMembers());
             rootRef.child(Config.users).get().addOnCompleteListener(task -> {
                 task.getResult().getChildren().forEach(children ->{
                     membersIds.add(apartment.getAdminID());

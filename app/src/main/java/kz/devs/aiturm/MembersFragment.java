@@ -220,7 +220,7 @@ public class MembersFragment extends Fragment {
         userAdapter = new UserAdapter(membersList, getContext(),apartment,getView());
         membersRecyclerView.setAdapter(userAdapter);
 
-        var membersIds = aiturmApartment.getApartmentMembers().values();
+        var membersIds = aiturmApartment.getApartmentMembers();
         rootReference.child(Config.users).get().addOnSuccessListener(dataSnapshot -> {
             var newList = new ArrayList<User>();
             for (DataSnapshot child : dataSnapshot.getChildren()) {

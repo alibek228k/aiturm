@@ -114,7 +114,8 @@ public class AddNewCardDialogFragment extends DialogFragment implements SplitExp
     private FirebaseStorage mStorage;
     //data structures
     private ArrayList<User> apartmentMembersArrayList =new ArrayList<>();
-    private final HashMap<String, String> nameAndIdHashMap =new HashMap<>(), apartmentMembersHashMap =new HashMap<>();
+    private final HashMap<String, String> nameAndIdHashMap =new HashMap<>();
+    private final List<String> apartmentList = new ArrayList<>();
     private HashMap<String, Integer> sharedAmountsHashMap;
     //variables
     private AiturmApartment apartment;
@@ -195,10 +196,10 @@ public class AddNewCardDialogFragment extends DialogFragment implements SplitExp
             expensesCardSelected = bundle.getBoolean("Expenses");
             apartment=bundle.getParcelable("APARTMENT_DETAILS");
             if(apartment.getApartmentMembers()!=null) {
-                apartmentMembersHashMap.putAll(apartment.getApartmentMembers());
+                apartmentList.addAll(apartment.getApartmentMembers());
 
             }
-            getMemberUserNames(apartmentMembersHashMap);
+            getMemberUserNames(apartmentList);
             if (!expensesCardSelected) {
                 attachFileButton.setVisibility(View.GONE);
                 splitExpensesButton.setVisibility(View.GONE);
@@ -346,11 +347,11 @@ public class AddNewCardDialogFragment extends DialogFragment implements SplitExp
         return true;
     }
 
-    private void getMemberUserNames(final HashMap<String,String> membersHashMap) {
+    private void getMemberUserNames(final List<String> membersHashMap) {
         ArrayList<String> members = new ArrayList<>();
         //add the the admin to the members
         if(membersHashMap!=null){
-            members.addAll(membersHashMap.values());
+            members.addAll(membersHashMap);
         }
         members.add(apartment.getAdminID());
         apartmentMembersArrayList = new ArrayList<>();

@@ -211,7 +211,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                 apartmentReference.document(apartmentId).get().addOnSuccessListener(documentSnapshot -> {
                     var apartment = documentSnapshot.toObject(AiturmApartment.class);
                     var members = apartment.getApartmentMembers();
-                    members.put(currentUser.getUserID(), currentUser.getUserID());
+                    members.add(currentUser.getUserID());
                     apartmentReference.document(apartmentId).update(Config.apartmentMembers, members).addOnSuccessListener(task -> {
                         var request = new HashMap<String, Object>();
                         request.put("apartmentID", apartmentId);

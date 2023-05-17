@@ -4,11 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AiturmApartment implements Parcelable {
     private String apartmentID, adminID;
-    private HashMap<String,String> apartmentMembers;
+    private List<String> apartmentMembers;
     private Map<String, ExpensesCard> expensesCard;
     private Map<String, TasksCard> taskCard;
 
@@ -42,7 +43,7 @@ public class AiturmApartment implements Parcelable {
 
     }
 
-    public AiturmApartment(String apartmentID, String adminID, HashMap<String, String> apartmentMembers, Map<String ,TasksCard> taskCard, Map<String,ExpensesCard> expensesCard) {
+    public AiturmApartment(String apartmentID, String adminID, List<String> apartmentMembers, Map<String ,TasksCard> taskCard, Map<String,ExpensesCard> expensesCard) {
         this.apartmentID = apartmentID;
         this.adminID = adminID;
         this.apartmentMembers = apartmentMembers;
@@ -67,20 +68,17 @@ public class AiturmApartment implements Parcelable {
         this.adminID = adminID;
     }
 
-    public HashMap<String,String> getApartmentMembers() {
+    public List<String> getApartmentMembers() {
         return apartmentMembers;
     }
 
-    public void setApartmentMembers(HashMap<String,String> apartmentMembers) {
+    public void setApartmentMembers(List<String> apartmentMembers) {
         this.apartmentMembers = apartmentMembers;
     }
 
     protected AiturmApartment(Parcel in) {
         apartmentID = in.readString();
         adminID = in.readString();
-        apartmentMembers=in.readHashMap(HashMap.class.getClassLoader());
-
-
 
     }
 
@@ -106,7 +104,7 @@ public class AiturmApartment implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(apartmentID);
         parcel.writeString(adminID);
-        parcel.writeMap(apartmentMembers);
+        parcel.writeList(apartmentMembers);
 
     }
 }

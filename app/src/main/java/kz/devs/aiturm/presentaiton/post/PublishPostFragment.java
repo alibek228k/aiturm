@@ -1,6 +1,7 @@
 package kz.devs.aiturm.presentaiton.post;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -127,26 +128,26 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
 
     private void setupNextButton() {
         nextButton.setOnClickListener(v -> {
-            if (user.getApartmentID() == null){
-                if (postType.equals(Config.APARTMENT_POST)) {
-                    firebaseFirestore.collection(Config.APARTMENT_POST).whereEqualTo(Config.userID, user.getUserID()).get().addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (queryDocumentSnapshots.getDocuments().isEmpty()) {
-                            if (checkDataForApartmentPost()) {
-                                getFragment(PublishPostPreferencesFragment.getInstance(
-                                        getBuildingType(),
-                                        null,
-                                        addressInputLayout.getEditText().getText().toString() + " " + houseNumberInputLayout.getEditText().getText().toString(),
-                                        descriptionEditText.getText().toString().trim(),
-                                        postType
-                                ));
-                            }
-                        } else {
-                            Toast.makeText(requireContext(), getString(R.string.already_have_apartment_post), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else if (postType.equals(Config.PERSONAL_POST)) {
+
+            if (postType.equals(Config.APARTMENT_POST)) {
+                if (user.getApartmentID() == null) {
+                    createApartmentPost();
+                }else{
+                    new AlertDialog.Builder(requireContext())
+                            .setTitle(R.string.attention)
+                            .setMessage(R.string.already_have_apartment)
+                            .setPositiveButton(R.string.yes, ((dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                                createApartmentPost();
+                            })).setNegativeButton(R.string.no, ((dialogInterface, i) -> {
+                                dialogInterface.dismiss();
+                            }))
+                            .show();
+                }
+            } else if (postType.equals(Config.PERSONAL_POST)) {
+                if (user.getApartmentID() == null) {
                     firebaseFirestore.collection(Config.PERSONAL_POST).whereEqualTo(Config.userID, user.getUserID()).get().addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (queryDocumentSnapshots.getDocuments().isEmpty()){
+                        if (queryDocumentSnapshots.getDocuments().isEmpty()) {
                             if (checkDataForPersonalPost()) {
                                 getFragment(PublishPostPreferencesFragment.getInstance(
                                         null,
@@ -156,15 +157,33 @@ public class PublishPostFragment extends Fragment implements PostTypeDialogFragm
                                         postType
                                 ));
                             }
-                        }else{
+                        } else {
                             Toast.makeText(requireContext(), getString(R.string.already_have_personal_post), Toast.LENGTH_SHORT).show();
                         }
                     });
+                } else {
+                    Toast.makeText(requireContext(), getString(R.string.already_apartment_member), Toast.LENGTH_SHORT).show();
                 }
-            }else{
-                Toast.makeText(requireContext(), getString(R.string.already_apartment_member), Toast.LENGTH_SHORT).show();
             }
 
+        });
+    }
+
+    private void createApartmentPost(){
+        firebaseFirestore.collection(Config.APARTMENT_POST).whereEqualTo(Config.userID, user.getUserID()).get().addOnSuccessListener(queryDocumentSnapshots -> {
+            if (queryDocumentSnapshots.getDocuments().isEmpty()) {
+                if (checkDataForApartmentPost()) {
+                    getFragment(PublishPostPreferencesFragment.getInstance(
+                            getBuildingType(),
+                            null,
+                            addressInputLayout.getEditText().getText().toString() + " " + houseNumberInputLayout.getEditText().getText().toString(),
+                            descriptionEditText.getText().toString().trim(),
+                            postType
+                    ));
+                }
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.already_have_apartment_post), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

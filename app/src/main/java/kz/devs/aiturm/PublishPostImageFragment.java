@@ -42,6 +42,7 @@ import com.make.dots.dotsindicator.DotsIndicator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,6 @@ public class PublishPostImageFragment extends Fragment {
     private RelativeLayout rootLayout;
 
     private CustomLoadingProgressBar progressBar;
-
 
     private ArrayList<Uri> imageUris;
     private ViewPagerAdapter viewPagerAdapter;
@@ -333,51 +333,145 @@ public class PublishPostImageFragment extends Fragment {
         var manager = new SessionManager(requireContext());
         var currentUser = manager.getData();
 
-        Map<String, Object> apartment = new HashMap<>();
-        apartment.put(Config.adminID, currentUser.getUserID());
-        apartment.put(Config.apartmentMembers, new HashMap<String, String>());
-        apartment.put(Config.taskCards, new HashMap<String, TasksCard>());
-        apartment.put(Config.expensesCards, new HashMap<String, ExpensesCard>());
+        if (currentUser.getApartmentID() == null) {
+            Map<String, Object> apartment = new HashMap<>();
+            List<String> emptyList = Collections.emptyList();
+            apartment.put(Config.adminID, currentUser.getUserID());
+            apartment.put(Config.apartmentMembers, emptyList);
+            apartment.put(Config.taskCards, new HashMap<String, TasksCard>());
+            apartment.put(Config.expensesCards, new HashMap<String, ExpensesCard>());
 
-        fireStoreDatabase.collection(Config.APARTMENT_LIST).add(apartment).addOnSuccessListener(documentReference -> {
-
-
-            Map<String, Object> apartmentId = new HashMap<>();
-
-            apartmentId.put(Config.apartmentID, documentReference.getId());
-
-            realTimeDatabaseReference.child(Config.users).child(currentUser.getUserID()).updateChildren(apartmentId);
-            currentUser.setApartmentID(documentReference.getId());
-            manager.saveData(currentUser);
-
-            Map<String, Object> apartmentPost = new HashMap<>();
-            apartmentPost.put(Config.apartmentID, documentReference.getId());
-            apartmentPost.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
-            apartmentPost.put(Config.DESCRIPTION, description);
-            apartmentPost.put(Config.userID, currentUser.getUserID());
-            apartmentPost.put(Config.PRICE, budget);
-            apartmentPost.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
-            apartmentPost.put(Config.PREFERENCE, preferences);
-            apartmentPost.put(Config.IMAGE_URL, imageUris);
-            apartmentPost.put(Config.TIME_STAMP, System.currentTimeMillis());
-            apartmentPost.put(Config.BUILDING_ADDRESS, buildingAddress);
-            apartmentPost.put(Config.BUILDING_TYPE, buildingType);
+            fireStoreDatabase.collection(Config.APARTMENT_LIST).add(apartment).addOnSuccessListener(documentReference -> {
 
 
-            fireStoreDatabase.collection(Config.APARTMENT_POST).add(apartmentPost).addOnSuccessListener(reference -> {
-                progressBar.dismiss();
-                showCustomToast(requireActivity().getString(R.string.post_success));
-                requireActivity().onBackPressed();
+                Map<String, Object> apartmentId = new HashMap<>();
+
+                apartmentId.put(Config.apartmentID, documentReference.getId());
+
+                realTimeDatabaseReference.child(Config.users).child(currentUser.getUserID()).updateChildren(apartmentId);
+                currentUser.setApartmentID(documentReference.getId());
+                manager.saveData(currentUser);
+
+
+                Map<String, Object> apartmentPost = new HashMap<>();
+                apartmentPost.put(Config.apartmentID, documentReference.getId());
+                apartmentPost.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
+                apartmentPost.put(Config.DESCRIPTION, description);
+                apartmentPost.put(Config.userID, currentUser.getUserID());
+                apartmentPost.put(Config.PRICE, budget);
+                apartmentPost.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
+                apartmentPost.put(Config.PREFERENCE, preferences);
+                apartmentPost.put(Config.IMAGE_URL, imageUris);
+                apartmentPost.put(Config.TIME_STAMP, System.currentTimeMillis());
+                apartmentPost.put(Config.BUILDING_ADDRESS, buildingAddress);
+                apartmentPost.put(Config.BUILDING_TYPE, buildingType);
+
+
+                fireStoreDatabase.collection(Config.APARTMENT_POST).add(apartmentPost).addOnSuccessListener(reference -> {
+                    progressBar.dismiss();
+                    showCustomToast(requireActivity().getString(R.string.post_success));
+                    requireActivity().onBackPressed();
+                }).addOnFailureListener(e -> {
+                    e.printStackTrace();
+                    progressBar.dismiss();
+                    showCustomToast(requireActivity().getString(R.string.post_failed));
+                    requireActivity().onBackPressed();
+                });
             }).addOnFailureListener(e -> {
-                e.printStackTrace();
                 progressBar.dismiss();
                 showCustomToast(requireActivity().getString(R.string.post_failed));
+            });
+        } else {
+            var oldApartmentId = currentUser.getApartmentID();
+
+            fireStoreDatabase.collection(Config.APARTMENT_LIST).document(oldApartmentId).get().addOnSuccessListener(documentSnapshot ->{
+                var oldApartment = documentSnapshot.toObject(AiturmApartment.class);
+                var members = oldApartment.getApartmentMembers();
+                var tasks = oldApartment.getTaskCard();
+                var expenses = oldApartment.getExpensesCard();
+                if (members == null || members.isEmpty()){
+                    members = Collections.emptyList();
+                }
+                if (tasks == null || members.isEmpty()){
+                    tasks = new HashMap();
+                }
+                if (expenses == null || members.isEmpty()){
+                    expenses = new HashMap();
+                }
+
+                Map<String, Object> apartment = new HashMap<>();
+                apartment.put(Config.adminID, currentUser.getUserID());
+                apartment.put(Config.apartmentMembers, members);
+                apartment.put(Config.taskCards, tasks);
+                apartment.put(Config.expensesCards, expenses);
+
+                var previousMembersIds = members;
+
+                fireStoreDatabase.collection(Config.APARTMENT_LIST).add(apartment).addOnSuccessListener(documentReference -> {
+
+
+                    Map<String, Object> apartmentId = new HashMap<>();
+
+                    apartmentId.put(Config.apartmentID, documentReference.getId());
+
+                    realTimeDatabaseReference.child(Config.users).child(currentUser.getUserID()).updateChildren(apartmentId);
+
+                    for (int i = 0; i < previousMembersIds.size(); i++) {
+                        var request = new HashMap<String, Object>();
+                        var index = i;
+                        request.put(Config.apartmentID, documentReference.getId());
+                        realTimeDatabaseReference.child(Config.users).child(previousMembersIds.get(i)).updateChildren(request).addOnSuccessListener(v -> {
+
+                            if (index == previousMembersIds.size()-1){
+                                currentUser.setApartmentID(documentReference.getId());
+                                manager.saveData(currentUser);
+
+
+                                Map<String, Object> apartmentPost = new HashMap<>();
+                                apartmentPost.put(Config.apartmentID, documentReference.getId());
+                                apartmentPost.put(Config.IMAGE_FOLDER_PATH, imageFolderPath);
+                                apartmentPost.put(Config.DESCRIPTION, description);
+                                apartmentPost.put(Config.userID, currentUser.getUserID());
+                                apartmentPost.put(Config.PRICE, budget);
+                                apartmentPost.put(Config.NUMBER_OF_ROOMMATES, numberOfRoomMates);
+                                apartmentPost.put(Config.PREFERENCE, preferences);
+                                apartmentPost.put(Config.IMAGE_URL, imageUris);
+                                apartmentPost.put(Config.TIME_STAMP, System.currentTimeMillis());
+                                apartmentPost.put(Config.BUILDING_ADDRESS, buildingAddress);
+                                apartmentPost.put(Config.BUILDING_TYPE, buildingType);
+
+
+                                fireStoreDatabase.collection(Config.APARTMENT_POST).add(apartmentPost).addOnSuccessListener(reference -> {
+                                    fireStoreDatabase.collection(Config.APARTMENT_LIST).document(oldApartmentId).delete().addOnSuccessListener(v1 -> {
+                                        progressBar.dismiss();
+                                        showCustomToast(requireActivity().getString(R.string.post_success));
+                                        requireActivity().onBackPressed();
+                                    }).addOnFailureListener(e -> {
+                                        e.printStackTrace();
+                                        progressBar.dismiss();
+                                        showCustomToast(requireActivity().getString(R.string.post_failed));
+                                        requireActivity().onBackPressed();
+                                    });
+                                }).addOnFailureListener(e -> {
+                                    e.printStackTrace();
+                                    progressBar.dismiss();
+                                    showCustomToast(requireActivity().getString(R.string.post_failed));
+                                    requireActivity().onBackPressed();
+                                });
+                            }
+                        });
+                    }
+
+                }).addOnFailureListener(e -> {
+                    progressBar.dismiss();
+                    showCustomToast(requireActivity().getString(R.string.post_failed));
+                });
+
+            }).addOnFailureListener(e -> {
                 requireActivity().onBackPressed();
             });
-        }).addOnFailureListener(e -> {
-            progressBar.dismiss();
-            showCustomToast(requireActivity().getString(R.string.post_failed));
-        });
+
+        }
     }
 
 

@@ -113,10 +113,12 @@
     <string name="error_add_house_number">Please add a house number</string>
     <string name="error_enter_description">Please enter a description</string>
 
+    <string name="already_have_apartment">Now you already live in an apartment. Do you want to create a new advertisement?.</string>
+
     <string name="already_have_personal_post">You already have a personal post, delete it and create a new one or edit it.</string>
     <string name="already_have_apartment_post">You already have a apartment post, delete it and create a new one or edit it.</string>
 
-    <string name="already_apartment_member">You are already a member of the apartment, leave the apartment before creating your post.</string>
+    <string name="already_apartment_member">You are already a member of the apartment, leave the apartment before creating your personal post.</string>
 
     <string name="field_should_contains_only_letters">This field must contain only letters</string>
 

@@ -360,7 +360,6 @@ public class FindRoomFragment extends Fragment {
     private Query buildQuery(String searchQuery) {
         Query query;
         List<String> addedPostProperties = getPropertiesPreference();
-        String selectedState = getSelectedState();
         MinMaxPrice minMaxPrice = getMinMaxPrice();
 
         query = apartmentPostReference;
@@ -387,10 +386,6 @@ public class FindRoomFragment extends Fragment {
             // whereArrayContainsAny cannot be combined with
             //whereGreaterThanOrEqualTo
         } else {
-
-            if (!(selectedState == null || selectedState.equals(Config.NONE) || selectedState.isEmpty())) {
-                query = query.whereEqualTo(Config.LOCALITY, selectedState);
-            }
             if (minMaxPrice != null) {
                 query = query.orderBy(Config.PRICE).whereGreaterThanOrEqualTo(Config.PRICE, minMaxPrice.getMin())
                         .whereLessThanOrEqualTo(Config.PRICE, minMaxPrice.getMax());
