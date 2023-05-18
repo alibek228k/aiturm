@@ -2,6 +2,7 @@ package kz.devs.aiturm;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -48,6 +49,7 @@ import java.util.Map;
 
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
+import kz.devs.aiturm.presentaiton.loading.LoadingManager;
 import kz.devs.aiturm.presentaiton.profile.UserProfileActivity;
 
 
@@ -63,12 +65,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
     DatabaseReference rootReference;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
+    private Dialog loadingDialog;
+
     public RequestAdapter(Context context, RelativeLayout rootLayout, ArrayList<User> usersList, Boolean receiverUsers, DatabaseReference rootReference) {
         this.context = context;
         this.usersList = usersList;
         this.receiverUsers = receiverUsers;
         this.rootLayout = rootLayout;
         this.rootReference = rootReference;
+        loadingDialog = LoadingManager.getLoadingDialog(context, false);
 //        this.firebaseFirestore = firebaseFirestore
     }
 
@@ -155,6 +160,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                 receivedRequests.remove(senderID);
                 var request = new HashMap<String, Object>();
                 request.put("receivedRequests", receivedRequests);
+                loadingDialog.show();
                 rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(dataSnapshot -> {
                     var sendRequests = usersList.get(position).getSendRequests();
                     sendRequests.remove(currentUser.getUserID());
@@ -165,9 +171,13 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                     }).addOnSuccessListener(dataSnapshot1 -> {
                         usersList.remove(position);
                         notifyItemRemoved(position);
+                        loadingDialog.dismiss();
+                    }).addOnFailureListener(e -> {
+                        loadingDialog.dismiss();
                     });
                 }).addOnFailureListener(e -> {
                     Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                 });
             }else{
                 Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
@@ -181,6 +191,9 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                 sendRequests.remove(recipientId);
                 var request = new HashMap<String, Object>();
                 request.put("sendRequests", sendRequests);
+
+                loadingDialog.show();
+
                 rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(dataSnapshot -> {
                     var receivedRequests = usersList.get(position).getReceivedRequests();
                     receivedRequests.remove(currentUser.getUserID());
@@ -191,9 +204,13 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                     }).addOnSuccessListener(dataSnapshot1 -> {
                         usersList.remove(position);
                         notifyItemRemoved(position);
+                        loadingDialog.dismiss();
+                    }).addOnFailureListener(e -> {
+                        loadingDialog.dismiss();
                     });
                 }).addOnFailureListener(e -> {
                     Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                    loadingDialog.dismiss();
                 });
             }else{
                 Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
@@ -207,7 +224,7 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
             if (receivedRequests.containsKey(senderID) && receivedRequests.get(senderID) != null){
                 var apartmentId = receivedRequests.get(senderID);
                 rejectRequest(senderID, position);
-
+                loadingDialog.dismiss();
                 apartmentReference.document(apartmentId).get().addOnSuccessListener(documentSnapshot -> {
                     var apartment = documentSnapshot.toObject(AiturmApartment.class);
                     var members = apartment.getApartmentMembers();
@@ -217,8 +234,15 @@ public class RequestAdapter extends RecyclerView.Adapter<RequestAdapter.RequestV
                         request.put("apartmentID", apartmentId);
                         rootReference.child(Config.users).child(currentUser.getUserID()).updateChildren(request).addOnSuccessListener(task1 ->{
                             Toast.makeText(context, context.getString(R.string.you_are_member), Toast.LENGTH_SHORT).show();
+                            loadingDialog.dismiss();
+                        }).addOnFailureListener(e -> {
+                            loadingDialog.dismiss();
                         });
+                    }).addOnFailureListener(e -> {
+                        loadingDialog.dismiss();
                     });
+                }).addOnFailureListener(e -> {
+                    loadingDialog.dismiss();
                 });
 
 //                 FirebaseUser firebaseUser = mAuth.getCurrentUser();

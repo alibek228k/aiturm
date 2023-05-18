@@ -159,74 +159,74 @@
             android:paddingBottom="10dp"
             android:src="@drawable/ic_expand" />
 
-        <LinearLayout
-            android:id="@+id/shroomie_linearlayout_filter"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:orientation="horizontal"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/shroomie_linearlayout_filter"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:paddingTop="10dp"-->
+<!--            android:paddingBottom="10dp">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
-                android:drawableStart="@drawable/ic_sort_by_icon"
-                android:drawablePadding="10dp"
-                android:gravity="start"
-                android:text="Sort by:"
-                android:textColor="@color/jetBlack"
-                android:textStyle="bold" />
-
-
-            <com.skydoves.powerspinner.PowerSpinnerView
-                android:id="@+id/shroomie_spinner_filter"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:background="@android:color/transparent"
-                android:gravity="center_vertical"
-                android:hint="None"
-                android:padding="10dp"
-                android:textColor="@color/jetBlack"
-                android:textColorHint="@color/jetBlack"
-                android:textStyle="bold"
-                app:drawableRightCompat="@drawable/ic_filter"
-                app:spinner_arrow_gravity="end"
-                app:spinner_arrow_padding="8dp"
-                app:spinner_arrow_tint="@color/jetBlack"
-                app:spinner_divider_color="@color/jetBlack"
-                app:spinner_divider_show="true"
-                app:spinner_divider_size="0.1dp"
-                app:spinner_item_array="@array/spinner_options"
-                app:spinner_popup_animation="dropdown"
-                app:spinner_popup_background="#E3E3E3"
-                app:spinner_popup_elevation="14dp" />
-
-        </LinearLayout>
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:layout_marginStart="20dp"-->
+<!--                android:drawableStart="@drawable/ic_sort_by_icon"-->
+<!--                android:drawablePadding="10dp"-->
+<!--                android:gravity="start"-->
+<!--                android:text="Sort by:"-->
+<!--                android:textColor="@color/jetBlack"-->
+<!--                android:textStyle="bold" />-->
 
 
+<!--            <com.skydoves.powerspinner.PowerSpinnerView-->
+<!--                android:id="@+id/shroomie_spinner_filter"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_vertical"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:hint="None"-->
+<!--                android:padding="10dp"-->
+<!--                android:textColor="@color/jetBlack"-->
+<!--                android:textColorHint="@color/jetBlack"-->
+<!--                android:textStyle="bold"-->
+<!--                app:drawableRightCompat="@drawable/ic_filter"-->
+<!--                app:spinner_arrow_gravity="end"-->
+<!--                app:spinner_arrow_padding="8dp"-->
+<!--                app:spinner_arrow_tint="@color/jetBlack"-->
+<!--                app:spinner_divider_color="@color/jetBlack"-->
+<!--                app:spinner_divider_show="true"-->
+<!--                app:spinner_divider_size="0.1dp"-->
+<!--                app:spinner_item_array="@array/spinner_options"-->
+<!--                app:spinner_popup_animation="dropdown"-->
+<!--                app:spinner_popup_background="#E3E3E3"-->
+<!--                app:spinner_popup_elevation="14dp" />-->
 
-        <com.google.android.material.button.MaterialButton
-            android:layout_width="match_parent"
-            android:id="@+id/my_shroomies_log"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:padding="20dp"
-            android:text="Activity Logs"
-            android:gravity="center_vertical"
-            android:textColor="@color/jetBlack"
-            android:textAllCaps="false"
-            app:icon="@drawable/ic_log_icon"
-            app:iconGravity="start"
-            app:iconTint="@color/jetBlack"
-            android:insetBottom="0dp"
-            android:insetTop="0dp"
-            android:stateListAnimator="@null" />
+<!--        </LinearLayout>-->
+
+
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:id="@+id/my_shroomies_log"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:textStyle="bold"-->
+<!--            android:padding="20dp"-->
+<!--            android:text="Activity Logs"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:textColor="@color/jetBlack"-->
+<!--            android:textAllCaps="false"-->
+<!--            app:icon="@drawable/ic_log_icon"-->
+<!--            app:iconGravity="start"-->
+<!--            app:iconTint="@color/jetBlack"-->
+<!--            android:insetBottom="0dp"-->
+<!--            android:insetTop="0dp"-->
+<!--            android:stateListAnimator="@null" />-->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/my_shroomies_add_member_btn"
@@ -245,25 +245,25 @@
                 android:insetTop="0dp"
                 android:stateListAnimator="@null" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/my_shroomies_archive_btn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:padding="20dp"
-                android:text="Archive"
-                android:textStyle="bold"
-                android:textColor="@color/jetBlack"
-                android:lines="1"
-                android:drawablePadding="10dp"
-                android:textAllCaps="false"
-                app:icon="@drawable/ic_archive_icon"
-                app:iconTint="@color/jetBlack"
-                app:iconGravity="start"
-                android:insetBottom="0dp"
-                android:insetTop="0dp"
-                app:elevation="0dp"
-                android:stateListAnimator="@null" />
+<!--            <com.google.android.material.button.MaterialButton-->
+<!--                android:id="@+id/my_shroomies_archive_btn"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:padding="20dp"-->
+<!--                android:text="Archive"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textColor="@color/jetBlack"-->
+<!--                android:lines="1"-->
+<!--                android:drawablePadding="10dp"-->
+<!--                android:textAllCaps="false"-->
+<!--                app:icon="@drawable/ic_archive_icon"-->
+<!--                app:iconTint="@color/jetBlack"-->
+<!--                app:iconGravity="start"-->
+<!--                android:insetBottom="0dp"-->
+<!--                android:insetTop="0dp"-->
+<!--                app:elevation="0dp"-->
+<!--                android:stateListAnimator="@null" />-->
 
             <FrameLayout
                 android:id="@+id/frame_layout_message_button"

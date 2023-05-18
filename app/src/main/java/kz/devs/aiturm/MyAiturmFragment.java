@@ -144,15 +144,15 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 
         myAiturmTablayout = v.findViewById(R.id.my_shroomies_tablayout);
         myExpensesRecyclerView = v.findViewById(R.id.my_expenses_recycler_view);
-        PowerSpinnerView shroomieSpinnerFilter = v.findViewById(R.id.shroomie_spinner_filter);
+//        PowerSpinnerView shroomieSpinnerFilter = v.findViewById(R.id.shroomie_spinner_filter);
         expandButton = v.findViewById(R.id.expand_button);
         slidingLayout = v.findViewById(R.id.sliding_layout);
         noCardsLayout =  v.findViewById(R.id.no_cards_layout);
         groupMessageButton=v.findViewById(R.id.my_shroomies_group_message_btn);
         messageButtonFrame=v.findViewById(R.id.frame_layout_message_button);
         MaterialButton memberButton = v.findViewById(R.id.my_shroomies_member_btn);
-        MaterialButton logButton = v.findViewById(R.id.my_shroomies_log);
-        MaterialButton archiveButton = v.findViewById(R.id.my_shroomies_archive_btn);
+//        MaterialButton logButton = v.findViewById(R.id.my_shroomies_log);
+//        MaterialButton archiveButton = v.findViewById(R.id.my_shroomies_archive_btn);
         MaterialButton addMemberButton = v.findViewById(R.id.my_shroomies_add_member_btn);
         badgeDrawable = BadgeDrawable.create(getContext());
         Toolbar toolbar = getActivity().findViewById(R.id.my_shroomies_toolbar);
@@ -243,7 +243,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                     expandButton.animate().rotation(180).setDuration(100).start();
 
                 }else{
-                    shroomieSpinnerFilter.dismiss();
+//                    shroomieSpinnerFilter.dismiss();
                     expandButton.animate().rotation(0).setDuration(100).start();
                 }
             }
@@ -292,27 +292,27 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
             }
         });
 
-        shroomieSpinnerFilter.setOnSpinnerItemSelectedListener((i, o, i1, t1) -> {
-            int selectedTab=  myAiturmTablayout.getSelectedTabPosition();
-            switch (i) {
-                case 0:
-                    sortAccordingtoImportance(selectedTab);
-                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                    break;
-                case 1:
-                    sortAccordingToLatest(selectedTab);
-                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                    break;
-                case 2:
-                    sortAccordingToOldest(selectedTab);
-                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                    break;
-                case 3:
-                    sortAccordingToTitle(selectedTab);
-                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-                    break;
-            }
-        });
+//        shroomieSpinnerFilter.setOnSpinnerItemSelectedListener((i, o, i1, t1) -> {
+//            int selectedTab=  myAiturmTablayout.getSelectedTabPosition();
+//            switch (i) {
+//                case 0:
+//                    sortAccordingtoImportance(selectedTab);
+//                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                    break;
+//                case 1:
+//                    sortAccordingToLatest(selectedTab);
+//                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                    break;
+//                case 2:
+//                    sortAccordingToOldest(selectedTab);
+//                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                    break;
+//                case 3:
+//                    sortAccordingToTitle(selectedTab);
+//                    slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//                    break;
+//            }
+//        });
 
         addCardButton.setOnClickListener(view1 -> {
             if(apartment!=null) {
@@ -346,22 +346,22 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         });
 
 
-        archiveButton.setOnClickListener(v -> {
-            if(apartment!=null){
-                ArchiveFragment archiveFragment = new ArchiveFragment();
-                Bundle bundle=new Bundle();
-                bundle.putString(Config.apartmentID,apartment.getApartmentID());
-                bundle.putSerializable(Config.members , membersHashMap);
-                archiveFragment.setArguments(bundle);
-                fm = getActivity().getSupportFragmentManager();
-                ft = fm.beginTransaction();
-                ft.addToBackStack(null);
-                ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
-                ft.replace(R.id.my_shroomies_container, archiveFragment);
-                ft.commit();
-            }
-
-        });
+//        archiveButton.setOnClickListener(v -> {
+//            if(apartment!=null){
+//                ArchiveFragment archiveFragment = new ArchiveFragment();
+//                Bundle bundle=new Bundle();
+//                bundle.putString(Config.apartmentID,apartment.getApartmentID());
+//                bundle.putSerializable(Config.members , membersHashMap);
+//                archiveFragment.setArguments(bundle);
+//                fm = getActivity().getSupportFragmentManager();
+//                ft = fm.beginTransaction();
+//                ft.addToBackStack(null);
+//                ft.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_OPEN );
+//                ft.replace(R.id.my_shroomies_container, archiveFragment);
+//                ft.commit();
+//            }
+//
+//        });
         memberButton.setOnClickListener(v -> {
             if (apartment != null) {
                 MembersFragment membersFragment = new MembersFragment(this);
@@ -376,31 +376,31 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
                 ft.commit();
             }
         });
-        logButton.setOnClickListener(view12 -> {
-            slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-            if(apartment!=null) {
-                LogFragment logFragment = new LogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList("LOG_LIST", apartmentLogs);
-                ArrayList<String> members;
-                if (apartment.getApartmentMembers() != null) {
-                    //put the members and add the admin
-                    members = new ArrayList<>(apartment.getApartmentMembers());
-                } else {
-                    members = new ArrayList<>();
-                }
-                members.add(apartment.getAdminID());
-                bundle.putStringArrayList("MEMBERS", members);
-                logFragment.setArguments(bundle);
-                logFragment.setTargetFragment(MyAiturmFragment.this, RESULT_CODE);
-                fm = getParentFragmentManager();
-                ft = fm.beginTransaction();
-                ft.addToBackStack(null);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.replace(R.id.my_shroomies_container, logFragment);
-                ft.commit();
-            }
-        });
+//        logButton.setOnClickListener(view12 -> {
+//            slidingLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+//            if(apartment!=null) {
+//                LogFragment logFragment = new LogFragment();
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelableArrayList("LOG_LIST", apartmentLogs);
+//                ArrayList<String> members;
+//                if (apartment.getApartmentMembers() != null) {
+//                    //put the members and add the admin
+//                    members = new ArrayList<>(apartment.getApartmentMembers());
+//                } else {
+//                    members = new ArrayList<>();
+//                }
+//                members.add(apartment.getAdminID());
+//                bundle.putStringArrayList("MEMBERS", members);
+//                logFragment.setArguments(bundle);
+//                logFragment.setTargetFragment(MyAiturmFragment.this, RESULT_CODE);
+//                fm = getParentFragmentManager();
+//                ft = fm.beginTransaction();
+//                ft.addToBackStack(null);
+//                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+//                ft.replace(R.id.my_shroomies_container, logFragment);
+//                ft.commit();
+//            }
+//        });
 
         getUserToken();
 

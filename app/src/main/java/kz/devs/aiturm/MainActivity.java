@@ -168,7 +168,9 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setTitle(null);
         myAiturm.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MyAiturmActivity.class)));
-        inboxButton.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MessageInbox.class)));
+        inboxButton.setOnClickListener(v -> {
+//            startActivity(new Intent(getApplicationContext(), MessageInbox.class);
+        });
     }
 
     private void setupFirebaseMessaging() {
