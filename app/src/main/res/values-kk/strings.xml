@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">AITUrm</string>
 
@@ -26,7 +27,7 @@
     <string name="Heading_discover">Discover</string>
     <string name="title_activity_group_chatting">GroupChattingActivity</string>
     <string name="favorites">Favorites</string>
-    <string name="looks_like_you_have_no_favorite_apartment_posts">Looks like you have no favorite apartment posts...</string>
+    <string name="looks_like_you_have_no_favorite_apartment_posts">Looks like you have no favorite apartment posts....</string>
     <string name="NoPersonalPostText">Looks like you have no favorite personal posts yet...</string>
     <string name="user_have_not_preferences">The user has not specified any preferences</string>
 
@@ -188,6 +189,4 @@
 
     <string name="delete_post_message">Are you sure you want to delete the post?</string>
     <string name="choose_the_language">Choose the language</string>
-
-
 </resources>

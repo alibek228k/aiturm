@@ -19,6 +19,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -54,6 +57,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import kz.devs.aiturm.model.User;
 import me.everything.android.ui.overscroll.IOverScrollDecor;
@@ -89,6 +93,24 @@ public class ChattingActivity extends AppCompatActivity {
     private boolean loading = true, scrollFromTop;
     private Uri chosenImage;
 
+    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    chosenImage = uri;
+                    Glide.with(getApplication())
+                            .load(chosenImage)
+                            .transform(new CenterCrop(),new RoundedCorners(20) )
+                            .error(R.drawable.ic_no_file_added)
+                            .into(selectedImageView);
+                    selectedImageView.setVisibility(View.VISIBLE);
+                    imageTextView.setVisibility(View.VISIBLE);
+                    addImage.setVisibility(View.GONE);
+                    messageBody.setVisibility(View.GONE);
+                    //Save to firebase
+                } else {
+                }
+            });
+
 //    @Override
 //    protected void onStop() {
 //        rootRef.removeEventListener(seenLisenter);
@@ -116,6 +138,19 @@ public class ChattingActivity extends AppCompatActivity {
 //        rootRef.removeEventListener(seenLisenter);
 //        super.onDestroy();
 //    }
+
+    final String[] PERMISSIONS = {
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.READ_MEDIA_AUDIO,
+    };
+
+    private ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract = new ActivityResultContracts.RequestMultiplePermissions();;
+    private ActivityResultLauncher<String[]> multiplePermissionLauncher = registerForActivityResult(multiplePermissionsContract, isGranted -> {
+        System.out.println("Launcher result: " + isGranted.toString());
+        if (isGranted.containsValue(false)) {
+        }
+    });
 
     @Override
     protected void onStart() {
@@ -316,9 +351,11 @@ public class ChattingActivity extends AppCompatActivity {
                                 firstMessageID = dataSnapshot.getKey();
                             }
                             Messages message = dataSnapshot.getValue(Messages.class);
+                            message.setMessageId(dataSnapshot.getKey());
                             if (message.getType().equals("text")) {
                                 message.setText(message.getText());
                             }
+                            System.out.println("It inserted here 2");
                             messagesArrayList.add(message);
                             count++;
                         }
@@ -349,13 +386,17 @@ public class ChattingActivity extends AppCompatActivity {
                         if(snapshot.exists()){
                             Log.d("snapshot child event listener" , snapshot.toString());
                             Messages message = snapshot.getValue(Messages.class);
+                            message.setMessageId(snapshot.getKey());
                             if (message.getType().equals("text")) {
                                 message.setText(message.getText());
                             }else{
                                 //todo add implementation for  images
                             }
-                            messagesArrayList.add(message);
-                            messagesAdapter.notifyItemInserted(chattingRecycler.getAdapter().getItemCount());
+                            if (!isMessageRepeating(message)){
+                                messagesArrayList.add(message);
+                                messagesAdapter.notifyItemInserted(chattingRecycler.getAdapter().getItemCount());
+                                System.out.println("It inserted here 1");
+                            }
                         }
 
                     }
@@ -400,18 +441,46 @@ public class ChattingActivity extends AppCompatActivity {
     }
 
     private void pickFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            pickMedia.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        }else{
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
+        }
+    }
+
+    private boolean isMessageRepeating(Messages newMessage){
+        AtomicBoolean bool = new AtomicBoolean(false);
+        messagesArrayList.forEach(message -> {
+            if (message.messageId.equals(newMessage.messageId)) {
+                bool.set(true);
+            }
+        });
+        return bool.get();
     }
 
     private boolean checkStoragePermisson() {
-        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
+        boolean result = false;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == (PackageManager.PERMISSION_GRANTED)
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) == (PackageManager.PERMISSION_GRANTED)
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) == (PackageManager.PERMISSION_GRANTED);
+        }else{
+            result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED)
+                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        }
         return result;
     }
 
     private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            multiplePermissionLauncher.launch(PERMISSIONS);
+        }else{
+            ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
+        }
     }
 
     //this method is called when user oress allow or deny form permission request dialog

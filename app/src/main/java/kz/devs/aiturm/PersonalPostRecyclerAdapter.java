@@ -34,7 +34,7 @@ import java.util.Set;
 
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
-import kz.devs.aiturm.presentaiton.loading.LoadingManager;
+import kz.devs.aiturm.presentaiton.utils.LoadingManager;
 
 public class PersonalPostRecyclerAdapter extends RecyclerView.Adapter<PersonalPostRecyclerAdapter.PersonalPostViewHolder> {
     private final List<PersonalPostModel> personalPostModelList;

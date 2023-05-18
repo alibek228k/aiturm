@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AITUrm</string>
+
+    <string name="open" />
+    <string name="close" />
+
+    <string name="error">Ошибка</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+
+    <string name="ok">OK</string>
+
+    <string name="bio">Био</string>
+
+    <string name="name">Имя</string>
+
+    <string name="requests">Запросы</string>
+
+    <string name="hello_world">Hello Square World!</string>
+    <string name="api_key">AIzaSyCF5NRNtEAcNX0QAXquDQ68yCYXsLhp2Ao</string>
+    <string name="Heading_discover">Discover</string>
+    <string name="title_activity_group_chatting">GroupChattingActivity</string>
+    <string name="favorites">Избранные</string>
+    <string name="looks_like_you_have_no_favorite_apartment_posts">Похоже, у вас нет избранных постов о квартире...</string>
+    <string name="NoPersonalPostText">Похоже, у вас нет избранных персональных постов...</string>
+    <string name="user_have_not_preferences">Пользователь не указал никаких предпочтений</string>
+
+    <string-array name="spinner_options">
+        <item>Importance</item>
+        <item>latest</item>
+        <item>Oldest</item>
+        <item>Title</item>
+    </string-array>
+
+    <string-array name="spinner_language">
+        <item>English</item>
+        <item>Руский</item>
+        <item>Қазақша</item>
+    </string-array>
+
+    <string name="you">Вы</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Сообщения</string>
+    <string name="sync_header">Синхронизация</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="mark_card_as_done">Отметить как выполненное</string>
+    <string name="done">Выпонено!</string>
+    <string name="no_due_date">нет срока</string>
+    <string name="due_today">Крайний срок сегодня</string>
+    <string name="due">Due</string>
+    <string name="day_left"> день остался</string>
+    <string name="days_left"> дни остались</string>
+    <string name="parsing_error">Ошибка разбора! Пожалуйста, повторите попытку позже</string>
+    <string name="server_error">Ошибка сервера. Пожалуйста, повторите попытку позже</string>
+    <string name="no_internet">Не удается подключиться к Интернету</string>
+    <string name="delete_card_error">Произошла ошибка при удалении карты</string>
+    <string name="card_deleted">Карта удалена</string>
+    <string name="authentication_error">Мы обнаружили ошибку при аутентификации вашей учетной записи</string>
+    <string name="archving_error">Произошла ошибка при архивации карты</string>
+    <string name="card_archived">Карта заархивирована</string>
+    <string name="marking_error">Не удалось отметить карту</string>
+    <string name="card_marked_as_done">Карта отмечена как выполненная</string>
+    <string name="unexpected_error">Произошла непредвиденная ошибка</string>
+    <string name="card_marked_as_not_done">Карта помечена как невыполненная</string>
+    <string name="forgot_password"><u>Забыли пароль?</u></string>
+    <string name="search_for_building_name">Вы должны искать название здания</string>
+    <string name="search_for_the_nearest_place">Найдите ближайшее место или перетащите булавку</string>
+    <string name="last_name">Фимилия</string>
+    <string name="first_name">Имя</string>
+    <string name="gender">Пол</string>
+    <string name="group">Группа</string>
+    <string name="speciality">Специальность</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="patronymic_name">Отчество</string>
+    <string name="email">Электронная почта</string>
+    <string name="username">Имя пользовотеля</string>
+    <string name="gender_select_male">Мужской</string>
+    <string name="gender_select_female">Женский</string>
+    <string name="add_address">Укажите улицу</string>
+    <string name="add_house_number">Укажите номер дома</string>
+
+    <string name="undefined">Неопределенный</string>
+
+    <string name="apartment_post">Пост о поиске квартиры</string>
+    <string name="roommate_post">Пост о поиске сожителя</string>
+    <string name="select_type_residential_unit">Выберите тип вашего жилого помещения</string>
+    <string name="select_type_preferred_unit">Выберите типы жилого помищения, где вы хотели бы жить</string>
+
+    <string name="attention">Внимание!</string>
+    <string name="error_occurred_with_post_creating">Произошла ошибка при создании поста, повторите попытку позже</string>
+
+    <string name="error_room_members_can_not_be_empty">Поле "Участники" комнаты не могут быть пустыми!</string>
+    <string name="error_budget_can_not_be_empty">Поле "Бюджет" комнаты не могут быть пустыми!</string>
+    <string name="publish_post">Опубликовать пост</string>
+    <string name="post_success">Сообщение успешно опубликовано</string>
+    <string name="post_failed">Не удалось опубликовать пост</string>
+    <string name="add_image_of_your_place">Пожалуйста, добавьте изображение вашего места проживания</string>
+    <string name="error_cannot_message_with_yourself">Вы не можете отправлять сообщения самому себе</string>
+    <string name="error_select_unit_type">Пожалуйста, выберите тип вашего жилья</string>
+    <string name="error_add_street">Пожалуйста, добавьте название улицы</string>
+    <string name="error_add_house_number">Пожалуйста, добавьте номер дома</string>
+    <string name="error_enter_description">Пожалуйста, введите описание</string>
+
+    <string name="already_have_apartment">Теперь вы уже живете в квартире. Вы хотите создать новое объявление?.</string>
+
+    <string name="already_have_personal_post">У вас уже есть личная запись, удалите ее и создайте новую или отредактируйте ее.</string>
+    <string name="already_have_apartment_post">У вас уже есть объявление о квартире, удалите его и создайте новое или отредактируйте его.</string>
+
+    <string name="already_apartment_member">Вы уже зарегистрированы в квартире, покиньте квартиру, прежде чем создавать личную публикацию.</string>
+
+    <string name="field_should_contains_only_letters">Это поле должно содержать только буквы</string>
+
+
+    <string name="publishing_post">Публикация вашего поста!</string>
+    <string name="add_users_to_group">Добавьте пользователей в текущую группу, чтобы добавлять карточки и управлять своим подразделением</string>
+    <string name="no_such_user_found">Такой пользователь не найден</string>
+
+    <string name="request_sent_success">Запрос успешно отправлен!</string>
+    <string name="request_sent_failed">Не удалось отправить запрос</string>
+
+    <string name="network_error_uploading_image">Произошла ошибка при загрузке изображений</string>
+    <string name="network_error">Ошибка сети, повторите попытку позже</string>
+    <string name="you_are_member">еперь вы являетесь участником квартиры!</string>
+
+    <string name="you_will_no_longer_be_a_roommate">Вы больше не будете соседом по комнате в этой квартире.</string>
+    <string name="you_dont_have_apartment">У вас нет квартиры, пожалуйста, примите запросы, прежде чем войти сюда.</string>
+
+    <string name="place">Место</string>
+    <string name="profile">Профиль</string>
+    <string name="send_message">Отправить сообщение</string>
+    <string name="user_posts">Посты пользователя</string>
+    <string name="apartment">Апартаменты</string>
+    <string name="personal">Персональный</string>
+    <string name="settings">Настройки</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="go_to_my_aiturm">Перейти в мой AITUrm</string>
+    <string name="empty_sent_request_list">Вы еще не отправили ни одного запроса, вы можете перейти в My AITUrm и начать отправку запроса прямо сейчас.</string>
+    <string name="add_a_post">Добавить публикацию</string>
+    <string name="empty_received_request_list">Извините, у вас пока нет запросов на присоединение к комнате. Добавьте сообщение, чтобы другие узнали о вас.</string>
+    <string name="received">Полученные</string>
+    <string name="sent">Отправленные</string>
+    <string name="choose_type_of_post">Выберите тип вашего поста</string>
+    <string name="roommates">Соседи по комнате</string>
+    <string name="talk_about_yourself">Расскажите о себе</string>
+    <string name="apartment_type_condominium">Кондоминиум</string>
+    <string name="apartment_type_apartment">Апартаменты</string>
+    <string name="apartment_type_flat">Квартира</string>
+    <string name="apartment_type_town_house">Town house</string>
+    <string name="search_building_name">Вы должны искать название здания</string>
+    <string name="next">Далее</string>
+    <string name="add_some_images">Добавьте несколько изображений для ваших будущих соседей по комнате</string>
+    <string name="add_more_images">Добавьте больше изображений</string>
+
+    <string name="roommates_lower_case">соседи по комнате</string>
+    <string name="about_this_post">Об этом посте</string>
+    <string name="read_more">Читать больше</string>
+    <string name="pets">Животные</string>
+    <string name="smoking">Курение</string>
+    <string name="alcohol">Алкоголь</string>
+    <string name="delete">Удалить</string>
+
+    <string name="you_are_allowing">Вы разрешаете:</string>
+    <string name="you_are_looking_for">Вы ищите:</string>
+
+    <string name="allows">разрешает:</string>
+    <string name="is_looking_for">ищет:</string>
+    <string name="budget">Бюджет</string>
+    <string name="prefers">Предпочтения</string>
+    <string name="no_description_added">Описание не добавлено</string>
+
+    <string name="delete_post_message">Вы уверены, что хотите удалить сообщение??</string>
+    <string name="choose_the_language">Выберите язык</string>
+</resources>

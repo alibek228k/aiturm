@@ -45,13 +45,14 @@ import java.util.List;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
+import kz.devs.aiturm.presentaiton.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity implements UserCallback {
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
     private ImageButton myAiturm, inboxButton;
     private TextView usernameDrawer;
-    private Button logoutButton, requestsButton, favoriteButton;
+    private Button logoutButton, requestsButton, favoriteButton, settingsButton;
     private ImageView profilePic, drawerButton;
     private BottomNavigationView bottomNavigationview;
     private FrameLayout requestButtonFrame;
@@ -92,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
         bottomNavigationview = findViewById(R.id.bottomNavigationView);
         requestButtonFrame = findViewById(R.id.drawer_nav_request_button_frame_layout);
         favoriteButton = findViewById(R.id.my_favorite_menu);
+//        settingsButton = findViewById(R.id.settings_button);
 
         manager = new SessionManager(this);
 
@@ -145,6 +147,11 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
             startActivity(new Intent(getApplicationContext(), FavouritesActivity.class));
             drawerLayout.close();
         });
+
+//        settingsButton.setOnClickListener(view -> {
+//            startActivity(SettingsActivity.Companion.newInstance(this));
+//            drawerLayout.close();
+//        });
 
         logoutButton.setOnClickListener(view -> {
             if (fUser != null) {

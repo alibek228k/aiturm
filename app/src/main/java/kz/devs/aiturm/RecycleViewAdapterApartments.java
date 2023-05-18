@@ -36,7 +36,7 @@ import java.util.Set;
 
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
-import kz.devs.aiturm.presentaiton.loading.LoadingManager;
+import kz.devs.aiturm.presentaiton.utils.LoadingManager;
 
 public class RecycleViewAdapterApartments extends RecyclerView.Adapter<RecycleViewAdapterApartments.ViewHolder> {
     private final List<Apartment> apartmentList;

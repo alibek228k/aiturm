@@ -1,4 +1,4 @@
-package kz.devs.aiturm.presentaiton.loading;
+package kz.devs.aiturm.presentaiton.utils;
 
 import android.app.Dialog;
 import android.content.Context;

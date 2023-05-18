@@ -40,7 +40,7 @@ import java.util.List;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
-import kz.devs.aiturm.presentaiton.loading.LoadingManager;
+import kz.devs.aiturm.presentaiton.utils.LoadingManager;
 
 public class DeleteUserDialogDragment extends DialogFragment {
     private FirebaseAuth mAuth;
