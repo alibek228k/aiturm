@@ -16,6 +16,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +27,9 @@ import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.shroomies.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -32,11 +38,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.MultiplePermissionsReport;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.make.dots.dotsindicator.DotsIndicator;
 
 import java.text.SimpleDateFormat;
@@ -49,6 +50,7 @@ import java.util.Map;
 
 import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
+import kz.devs.aiturm.utils.PermissionManager;
 
 public class PublishPostImageFragment extends Fragment {
     private static final int PICK_IMAGE_MULTIPLE = 1;
@@ -73,6 +75,37 @@ public class PublishPostImageFragment extends Fragment {
 
     private FirebaseFirestore fireStoreDatabase;
     private DatabaseReference realTimeDatabaseReference;
+
+    private final ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract = new ActivityResultContracts.RequestMultiplePermissions();
+    ;
+    private final ActivityResultLauncher<String[]> multiplePermissionLauncher = registerForActivityResult(multiplePermissionsContract, mapResult -> {
+        var permissions = new ArrayList<>(mapResult.keySet());
+        boolean areAllPermissionsGranted = true;
+
+        for (int i = 0; i < permissions.size(); i++) {
+            if (!shouldShowRequestPermissionRationale(permissions.get(i))) {
+                areAllPermissionsGranted = false;
+            }
+        }
+
+        if (!areAllPermissionsGranted) {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", requireActivity().getPackageName(), null);
+            intent.setData(uri);
+            Toast.makeText(requireContext(), getString(R.string.grant_permissions_for_photos), Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }
+    });
+
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    if (!imageUris.contains(uri)) {
+                        addToViewPager(uri);
+                    }
+                }
+            });
+
 
     public static PublishPostImageFragment getInstance(
             String preferences,
@@ -160,75 +193,14 @@ public class PublishPostImageFragment extends Fragment {
     }
 
 
-
     private void pickFromGallery() {
-        Dexter.withContext(getActivity()).withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .withListener(new MultiplePermissionsListener() {
-                    @Override
-                    public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
-                        if (multiplePermissionsReport.isAnyPermissionPermanentlyDenied()) {
-                            // navigate user to app settings
-                            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                            Uri uri = Uri.fromParts("package", getActivity().getPackageName(), null);
-                            intent.setData(uri);
-                            startActivity(intent);
-                        } else {
-                            Intent image = new Intent();
-                            image.setAction(Intent.ACTION_GET_CONTENT);
-                            image.setType("image/*");
-                            image.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                            startActivityForResult(image, PICK_IMAGE_MULTIPLE);
-                        }
-
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
-                        permissionToken.continuePermissionRequest();
-                    }
-
-                }).onSameThread().check();
-
-
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        boolean duplicateFound = false;
-        Uri selectedImageUri;
-        int spaceAvailable = NUMBER_OF_IMAGES_ALLOWED - imageUris.size();
-
-        getActivity();
-        if (resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE_MULTIPLE) {
-            if (data.getClipData() != null) {
-                int count = data.getClipData().getItemCount(); //evaluate the count before the for loop
-                Snackbar.make(rootLayout, "space is  " + spaceAvailable, Snackbar.LENGTH_SHORT).show();
-
-                for (int i = 0; i < count; i++) {
-                    if (i > spaceAvailable) {
-                        break;
-                    }
-                    selectedImageUri = data.getClipData().getItemAt(i).getUri();
-                    if (!imageUris.contains(selectedImageUri)) {
-                        addToViewPager(selectedImageUri);
-                    }
-                }
-            }
-            else if (data.getData() != null) {
-                selectedImageUri = data.getData();
-                for (Uri uri : imageUris) {
-                    if (data.getData().equals(uri)) {
-                        duplicateFound = true;
-                        break;
-                    }
-                }
-                if (!duplicateFound) {
-                    addToViewPager(selectedImageUri);
-                }
-            }
+        if (!PermissionManager.INSTANCE.checkStoragePermissions(requireContext())) {
+            multiplePermissionLauncher.launch(PermissionManager.INSTANCE.getStoragePermissions());
+        } else {
+            pickMedia.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
         }
-
     }
 
     void addToViewPager(Uri newImageUri) {

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -18,7 +19,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.shroomies.R;
@@ -58,8 +64,9 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.utils.PermissionManager;
 
-public class GroupChatting extends AppCompatActivity {
+public class GroupChattingActivity extends AppCompatActivity {
     private ImageButton addImage;
     private EditText messageBody;
     private RecyclerView groupChattingRecycler;
@@ -91,6 +98,51 @@ public class GroupChatting extends AppCompatActivity {
     private String imageUrl;
     private String apartmentID= "";
 
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+            registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                if (uri != null) {
+                    chosenImage = uri;
+                    Glide.with(getApplication())
+                            .load(chosenImage)
+                            .transform(new CenterCrop(),new RoundedCorners(20) )
+                            .error(R.drawable.ic_no_file_added)
+                            .into(selectedImageView);
+                    selectedImageView.setVisibility(View.VISIBLE);
+                    imageTextView.setVisibility(View.VISIBLE);
+                    addImage.setVisibility(View.GONE);
+                    messageBody.setVisibility(View.GONE);
+                    //Save to firebase
+                } else {
+                }
+            });
+
+    private final ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract = new ActivityResultContracts.RequestMultiplePermissions();
+
+    private final ActivityResultLauncher<String[]> multiplePermissionLauncher = registerForActivityResult(multiplePermissionsContract, mapResult -> {
+        var permissions = new ArrayList<>(mapResult.keySet());
+        boolean areAllPermissionsGranted = true;
+        var grantedList = new ArrayList<>(mapResult.values());
+
+        if (grantedList.contains(false)){
+            for (int i = 0; i < permissions.size(); i++) {
+                if (!shouldShowRequestPermissionRationale(permissions.get(i))) {
+                    areAllPermissionsGranted = false;
+                }
+            }
+        }else{
+            pickMedia.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        }
+
+        if (!areAllPermissionsGranted) {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            Toast.makeText(this, getString(R.string.grant_permissions_for_photos), Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }
+    });
 
     // static variables
     private static final int TOTAL_ITEMS_TO_LAOD=10;
@@ -291,7 +343,7 @@ public class GroupChatting extends AppCompatActivity {
 
                 }else{
                     swipeRefreshLayout.setRefreshing(false);
-                    new CustomToast(GroupChatting.this,"No more message exist");
+                    new CustomToast(GroupChattingActivity.this,"No more message exist");
                 }
             }
 
@@ -350,7 +402,7 @@ public class GroupChatting extends AppCompatActivity {
                     messageBody.setText("");
                 }
             }
-        }).addOnFailureListener(e -> new CustomToast(GroupChatting.this,e.getMessage()));
+        }).addOnFailureListener(e -> new CustomToast(GroupChattingActivity.this,e.getMessage()));
     }
     private void loadMessages(String apartmentID, String currentUserID){
         groupMessageList=new ArrayList<>();
@@ -453,58 +505,21 @@ public class GroupChatting extends AppCompatActivity {
     }
 
     private void showImagePickDialog() {
-        String[] options = {"Gallery"};
+        String[] options = {getString(R.string.gallery)};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose Image from");
-        builder.setItems(options, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if (which == 0) {
-                    if (!checkStoragePermisson()) {
-                        requestStoragePermission();
-                    } else {
-                        pickFromGallery();
-                    }
+        builder.setTitle(getString(R.string.get_image_from));
+        builder.setItems(options, (dialog, which) -> {
+            if (which == 0) {
+                if (!PermissionManager.INSTANCE.checkStoragePermissions(this)) {
+                    multiplePermissionLauncher.launch(PermissionManager.INSTANCE.getStoragePermissions());
+                } else {
+                    pickMedia.launch(new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build());
                 }
             }
         });
         builder.create().show();
-    }
-
-    private void pickFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
-    }
-
-    private boolean checkStoragePermisson() {
-        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
-    }
-
-    private void requestStoragePermission() {
-        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
-    }
-
-    //this method is called when user press allow or deny form permission request dialog
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case STORAGE_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if (storageAccepted) {
-                        pickFromGallery();
-                    } else {
-                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_REQUEST_CODE);
-                        new CustomToast(GroupChatting.this, " storage permission is neccessary....");
-                        pickFromGallery();
-
-                    }
-                }
-            }
-            break;
-        }
     }
 
 

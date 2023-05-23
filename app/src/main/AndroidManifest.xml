@@ -43,7 +43,7 @@
             android:name="kz.devs.aiturm.PasswordSignUpActivity"
             android:parentActivityName="kz.devs.aiturm.SignUpActivity" />
         <activity
-            android:name="kz.devs.aiturm.GroupChatting"
+            android:name="kz.devs.aiturm.GroupChattingActivity"
             android:parentActivityName="kz.devs.aiturm.MyAiturmActivity" />
 
         <provider

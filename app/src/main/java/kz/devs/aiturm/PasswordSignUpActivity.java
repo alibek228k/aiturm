@@ -173,8 +173,9 @@ public class PasswordSignUpActivity extends AppCompatActivity {
                                     kz.devs.aiturm.presentaiton.SessionManager manager = new SessionManager(PasswordSignUpActivity.this);
                                     manager.removeUserData();
                                     Boolean result = manager.saveData(currentUser);
+                                    startActivity(MainActivity.newInstance(PasswordSignUpActivity.this));
                                 });
-                                startActivity(MainActivity.newInstance(PasswordSignUpActivity.this));
+
                             }
                         }).addOnFailureListener(e -> {
                             loadingAnimation.setVisibility(View.GONE);

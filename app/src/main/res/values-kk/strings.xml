@@ -44,6 +44,8 @@
         <item>Қазақша</item>
     </string-array>
 
+    <string name="gallery">Gallery</string>
+
     <string name="you">You</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -189,4 +191,11 @@
 
     <string name="delete_post_message">Are you sure you want to delete the post?</string>
     <string name="choose_the_language">Choose the language</string>
+
+    <string name="grant_permissions_for_photos">Grant permissions to send photos</string>
+
+    <string name="sending_image">Sending image…</string>
+
+    <string name="get_image_from">Choose Image from</string>
+
 </resources>

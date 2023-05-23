@@ -44,6 +44,8 @@
         <item>Қазақша</item>
     </string-array>
 
+    <string name="gallery">Галерея</string>
+
     <string name="you">Вы</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
@@ -189,4 +191,11 @@
 
     <string name="delete_post_message">Вы уверены, что хотите удалить сообщение??</string>
     <string name="choose_the_language">Выберите язык</string>
+
+    <string name="grant_permissions_for_photos">Предоставьте разрешения для отправки фотографий</string>
+
+    <string name="sending_image">Идет отправка фотографии…</string>
+
+    <string name="get_image_from">Выбрать фотографию из</string>
+
 </resources>

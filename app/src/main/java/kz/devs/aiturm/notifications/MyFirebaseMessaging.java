@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import kz.devs.aiturm.ChattingActivity;
 import kz.devs.aiturm.Config;
-import kz.devs.aiturm.GroupChatting;
+import kz.devs.aiturm.GroupChattingActivity;
 import kz.devs.aiturm.MyAiturmActivity;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
@@ -149,7 +149,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
             if (contentType.equals(Config.groupMessage)) {
                 String messageID=msg.getData().get("messageID");
                 String messageType=msg.getData().get("messageType");
-                Intent intent = new Intent(this, GroupChatting.class);
+                Intent intent = new Intent(this, GroupChattingActivity.class);
                 intent.putExtra("MESSAGEID",messageID);
                 pendingIntent=PendingIntent.getActivity(this,i,intent,PendingIntent.FLAG_ONE_SHOT);
             }

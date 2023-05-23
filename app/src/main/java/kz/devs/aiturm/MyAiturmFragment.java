@@ -41,7 +41,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.skydoves.powerspinner.PowerSpinnerView;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import org.jetbrains.annotations.NotNull;
@@ -221,7 +220,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
         };
 
         groupMessageButton.setOnClickListener(view13 -> {
-            Intent intent=new Intent(getActivity(),GroupChatting.class);
+            Intent intent=new Intent(getActivity(), GroupChattingActivity.class);
             Bundle bundle=new Bundle();
             bundle.putSerializable("MEMBERS",membersHashMap);
             bundle.putString(Config.apartmentID, apartment.getApartmentID());

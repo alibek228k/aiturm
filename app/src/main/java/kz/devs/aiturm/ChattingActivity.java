@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +28,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -60,6 +60,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import kz.devs.aiturm.model.User;
+import kz.devs.aiturm.utils.PermissionManager;
 import me.everything.android.ui.overscroll.IOverScrollDecor;
 import me.everything.android.ui.overscroll.IOverScrollStateListener;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -84,7 +85,6 @@ public class ChattingActivity extends AppCompatActivity {
     private List<Messages> messagesArrayList = new ArrayList<>();
     private MessagesAdapter messagesAdapter;
     //variables
-    private String[] cameraPermissions, storagePermissions;
     private String imageUrl, senderID, saveCurrentDate, saveCurrentTime, receiverID;
     private int messageStartPosition = 0, messageEndPosition = 0;
     private final int MESSAGE_PAGINATION_AMOUNT = 30;
@@ -93,7 +93,7 @@ public class ChattingActivity extends AppCompatActivity {
     private boolean loading = true, scrollFromTop;
     private Uri chosenImage;
 
-    ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
             registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
                 if (uri != null) {
                     chosenImage = uri;
@@ -110,6 +110,34 @@ public class ChattingActivity extends AppCompatActivity {
                 } else {
                 }
             });
+
+    private final ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract = new ActivityResultContracts.RequestMultiplePermissions();
+
+    private final ActivityResultLauncher<String[]> multiplePermissionLauncher = registerForActivityResult(multiplePermissionsContract, mapResult -> {
+        var permissions = new ArrayList<>(mapResult.keySet());
+        boolean areAllPermissionsGranted = true;
+        var grantedList = new ArrayList<>(mapResult.values());
+
+        if (grantedList.contains(false)){
+            for (int i = 0; i < permissions.size(); i++) {
+                if (!shouldShowRequestPermissionRationale(permissions.get(i))) {
+                    areAllPermissionsGranted = false;
+                }
+            }
+        }else{
+            pickMedia.launch(new PickVisualMediaRequest.Builder()
+                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                    .build());
+        }
+
+        if (!areAllPermissionsGranted) {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            Toast.makeText(this, getString(R.string.grant_permissions_for_photos), Toast.LENGTH_SHORT).show();
+            startActivity(intent);
+        }
+    });
 
 //    @Override
 //    protected void onStop() {
@@ -139,19 +167,6 @@ public class ChattingActivity extends AppCompatActivity {
 //        super.onDestroy();
 //    }
 
-    final String[] PERMISSIONS = {
-            Manifest.permission.READ_MEDIA_IMAGES,
-            Manifest.permission.READ_MEDIA_VIDEO,
-            Manifest.permission.READ_MEDIA_AUDIO,
-    };
-
-    private ActivityResultContracts.RequestMultiplePermissions multiplePermissionsContract = new ActivityResultContracts.RequestMultiplePermissions();;
-    private ActivityResultLauncher<String[]> multiplePermissionLauncher = registerForActivityResult(multiplePermissionsContract, isGranted -> {
-        System.out.println("Launcher result: " + isGranted.toString());
-        if (isGranted.containsValue(false)) {
-        }
-    });
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -180,7 +195,7 @@ public class ChattingActivity extends AppCompatActivity {
             }
 
         } else {
-            //todo handle error
+            displayErrorAlert();
         }
 
         onOverPullListener = (decor, oldState, newState) -> {
@@ -188,10 +203,6 @@ public class ChattingActivity extends AppCompatActivity {
                 scrollFromTop=true;
             }
             if (newState == 0 && scrollFromTop) {
-                //fetch new data when over scrolled from top
-                // remove the listener to prevent the user from over scrolling
-                // again while the data is still being fetched
-                //the listener will be set again when the data has been retrieved
                 scrollFromTop=false;
                 getMoreMessages();
             }
@@ -225,6 +236,7 @@ public class ChattingActivity extends AppCompatActivity {
                 }
                 messagesArrayList.addAll(0,paginatedMessages);
                 messagesAdapter.notifyItemRangeInserted(0 , count);
+                chattingRecycler.smoothScrollToPosition(chattingRecycler.getAdapter().getItemCount());
 
             }
         });
@@ -254,19 +266,16 @@ public class ChattingActivity extends AppCompatActivity {
         chattingRecycler.setHasFixedSize(true);
 
         chattingRecyclerViewDecor = OverScrollDecoratorHelper.setUpOverScroll(chattingRecycler, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
-
-        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
     }
 
     private void sendMessageToUser() {
         String encryptedMessage;
         final String messageText = messageBody.getText().toString();
-        if(chosenImage!=null){
+        if (chosenImage != null) {
             sendImageMessage(chosenImage);
             return;
         }
-        if (TextUtils.isEmpty(messageText)) {
+        if (TextUtils.isEmpty(messageText.trim())) {
             //todo remove the send button if the edit
             // text is empty and only show when text is entered
             Toast.makeText(getApplicationContext(), "please enter a message", Toast.LENGTH_LONG).show();
@@ -310,15 +319,12 @@ public class ChattingActivity extends AppCompatActivity {
             messageBodyDetails.put(messageSenderRef + "/" + messagePushId, senderMessageTextBody);
 
             messageBodyDetails.put(messageReceiverRef + "/" + messagePushId, recieverMessageTextBody);
-            rootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        chattingRecycler.smoothScrollToPosition(messagesAdapter.getItemCount());
-                    } else {
-                        String message = task.getException().getMessage();
-                        Toast.makeText(getApplicationContext(), "Error " + message, Toast.LENGTH_SHORT).show();
-                    }
+            rootRef.updateChildren(messageBodyDetails).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    chattingRecycler.smoothScrollToPosition(messagesAdapter.getItemCount());
+                } else {
+                    String message = task.getException().getMessage();
+                    Toast.makeText(getApplicationContext(), "Error " + message, Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -395,6 +401,7 @@ public class ChattingActivity extends AppCompatActivity {
                             if (!isMessageRepeating(message)){
                                 messagesArrayList.add(message);
                                 messagesAdapter.notifyItemInserted(chattingRecycler.getAdapter().getItemCount());
+                                chattingRecycler.smoothScrollToPosition(chattingRecycler.getAdapter().getItemCount());
                                 System.out.println("It inserted here 1");
                             }
                         }
@@ -425,31 +432,21 @@ public class ChattingActivity extends AppCompatActivity {
     }
 
     private void showImagePickDialog() {
-        String[] options = {"Gallery"};
+        String[] options = {getString(R.string.gallery)};
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose Image from");
+        builder.setTitle(getString(R.string.get_image_from));
         builder.setItems(options, (dialog, which) -> {
             if (which == 0) {
-                if (!checkStoragePermisson()) {
-                    requestStoragePermission();
+                if (!PermissionManager.INSTANCE.checkStoragePermissions(this)) {
+                    multiplePermissionLauncher.launch(PermissionManager.INSTANCE.getStoragePermissions());
                 } else {
-                    pickFromGallery();
+                    pickMedia.launch(new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build());
                 }
             }
         });
         builder.create().show();
-    }
-
-    private void pickFromGallery() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            pickMedia.launch(new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                    .build());
-        }else{
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType("image/*");
-            startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
-        }
     }
 
     private boolean isMessageRepeating(Messages newMessage){
@@ -462,72 +459,9 @@ public class ChattingActivity extends AppCompatActivity {
         return bool.get();
     }
 
-    private boolean checkStoragePermisson() {
-        boolean result = false;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            result = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES) == (PackageManager.PERMISSION_GRANTED)
-                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_AUDIO) == (PackageManager.PERMISSION_GRANTED)
-                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_VIDEO) == (PackageManager.PERMISSION_GRANTED);
-        }else{
-            result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED)
-                    && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        }
-        return result;
-    }
-
-    private void requestStoragePermission() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            multiplePermissionLauncher.launch(PERMISSIONS);
-        }else{
-            ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
-        }
-    }
-
-    //this method is called when user oress allow or deny form permission request dialog
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case STORAGE_REQUEST_CODE: {
-                if (grantResults.length > 0) {
-                    boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if (storageAccepted) {
-                        pickFromGallery();
-                    } else {
-                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, STORAGE_REQUEST_CODE);
-                        Toast.makeText(this, " storage permission is neccessary....", Toast.LENGTH_SHORT).show();
-                        pickFromGallery();
-                    }
-                }
-            }
-            break;
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (resultCode == RESULT_OK) {
-            if (requestCode == IMAGE_PICK_GALLERY_CODE) {
-                chosenImage = data.getData();
-                Glide.with(getApplication())
-                        .load(chosenImage)
-                        .transform(new CenterCrop(),new RoundedCorners(20) )
-                        .error(R.drawable.ic_no_file_added)
-                        .into(selectedImageView);
-                selectedImageView.setVisibility(View.VISIBLE);
-                imageTextView.setVisibility(View.VISIBLE);
-                addImage.setVisibility(View.GONE);
-                messageBody.setVisibility(View.GONE);
-                //Save to firebase
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-
-    }
-
     private void sendImageMessage(Uri image) {
         final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("sending image...");
+        progressDialog.setMessage(getString(R.string.sending_image));
         progressDialog.show();
 
         StorageReference storageReference = FirebaseStorage.getInstance().getReference();
@@ -559,7 +493,6 @@ public class ChattingActivity extends AppCompatActivity {
         filePathName.putBytes(byteArray).addOnCompleteListener(task -> {
             chosenImage=null;
             if (task.isSuccessful()) {
-                Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
                 imageUrl = task.getResult().getMetadata().getReference().getPath();
                 selectedImageView.setVisibility(View.GONE);
@@ -645,19 +578,32 @@ public class ChattingActivity extends AppCompatActivity {
                                         HashMap<String, Object> hash = new HashMap<>();
                                         hash.put("isSeen", true);
                                         sp.getRef().updateChildren(hash);
+                                    }
+                                }
                             }
+                            MainActivity.setBadgeToNumberOfNotifications(rootRef, mAuth);
                         }
                     }
-                    MainActivity.setBadgeToNumberOfNotifications(rootRef, mAuth);
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                    }
+                });
 
 
+    }
+
+    private void displayErrorAlert() {
+        new android.app.AlertDialog.Builder(this)
+                .setTitle(getString(R.string.attention))
+                .setMessage(getString(R.string.network_error))
+                .setPositiveButton(getString(R.string.ok), (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                })
+                .setOnDismissListener(dialogInterface -> {
+                    onBackPressed();
+                }).create()
+                .show();
     }
 }

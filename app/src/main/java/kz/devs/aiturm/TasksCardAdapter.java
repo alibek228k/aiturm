@@ -127,7 +127,7 @@ public class TasksCardAdapter extends RecyclerView.Adapter<TasksCardAdapter.Task
             taskCardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    Intent intent=new Intent(context,GroupChatting.class);
+                    Intent intent=new Intent(context, GroupChattingActivity.class);
                     Bundle bundle=new Bundle();
                     bundle.putSerializable("MEMBERS",memberHashMap);
                     intent.putExtra("TaskCARD",tasksCardsList.get(getAdapterPosition()));

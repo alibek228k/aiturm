@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="kz.devs.aiturm.GroupChatting">
+    tools:context="kz.devs.aiturm.GroupChattingActivity">
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/group_chatting_activity_toolbar"
         android:background="@color/LogoYellow"
@@ -119,13 +119,14 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:layout_margin="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="5dp"
                 android:background="@null"
-                android:src="@drawable/ic_photo_camera"
-                />
+                android:src="@drawable/ic_photo_camera" />
             <TextView
                 android:id="@+id/group_chat_image_text_view"
                 android:layout_width="wrap_content"
