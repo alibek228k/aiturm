@@ -361,7 +361,6 @@ public class ChattingActivity extends AppCompatActivity {
                             if (message.getType().equals("text")) {
                                 message.setText(message.getText());
                             }
-                            System.out.println("It inserted here 2");
                             messagesArrayList.add(message);
                             count++;
                         }
@@ -402,7 +401,6 @@ public class ChattingActivity extends AppCompatActivity {
                                 messagesArrayList.add(message);
                                 messagesAdapter.notifyItemInserted(chattingRecycler.getAdapter().getItemCount());
                                 chattingRecycler.smoothScrollToPosition(chattingRecycler.getAdapter().getItemCount());
-                                System.out.println("It inserted here 1");
                             }
                         }
 
