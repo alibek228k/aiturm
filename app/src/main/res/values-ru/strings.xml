@@ -198,4 +198,6 @@
 
     <string name="get_image_from">Выбрать фотографию из</string>
 
+    <string name="change_settings_message">Вы уверены что хотите изменить настройки</string>
+
 </resources>

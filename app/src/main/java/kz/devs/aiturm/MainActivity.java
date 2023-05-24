@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
         bottomNavigationview = findViewById(R.id.bottomNavigationView);
         requestButtonFrame = findViewById(R.id.drawer_nav_request_button_frame_layout);
         favoriteButton = findViewById(R.id.my_favorite_menu);
-//        settingsButton = findViewById(R.id.settings_button);
+        settingsButton = findViewById(R.id.settings_button);
 
         manager = new SessionManager(this);
 
@@ -148,10 +148,10 @@ public class MainActivity extends AppCompatActivity implements UserCallback {
             drawerLayout.close();
         });
 
-//        settingsButton.setOnClickListener(view -> {
-//            startActivity(SettingsActivity.Companion.newInstance(this));
-//            drawerLayout.close();
-//        });
+        settingsButton.setOnClickListener(view -> {
+            startActivity(SettingsActivity.Companion.newInstance(this));
+            drawerLayout.close();
+        });
 
         logoutButton.setOnClickListener(view -> {
             if (fUser != null) {

@@ -14,7 +14,19 @@
         app:title="@string/settings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/done_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_done"
+            android:visibility="visible"
+            tools:visibility="visible"/>
+
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <LinearLayout
         android:id="@+id/shroomie_linearlayout_filter"
@@ -37,6 +49,12 @@
             android:text="@string/choose_the_language"
             android:textColor="@color/jetBlack"
             android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/language_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp" />
 
     </LinearLayout>
 

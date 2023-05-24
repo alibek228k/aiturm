@@ -197,5 +197,6 @@
 
     <string name="get_image_from">Choose Image from</string>
 
+    <string name="change_settings_message">Are you sure you want to change the settings</string>
 
 </resources>

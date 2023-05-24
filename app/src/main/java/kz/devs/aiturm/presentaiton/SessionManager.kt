@@ -11,6 +11,7 @@ class SessionManager(
     companion object {
         private const val PREFERENCES_USERS_KEY = "USERS"
         private const val PREFERENCES_APP_KEY = "APP"
+        private const val PREFERENCES_LANGUAGE_KEY = "APP"
     }
 
     private var preferences: SharedPreferences? = null
@@ -54,6 +55,29 @@ class SessionManager(
         preferences =
             context.getSharedPreferences(PREFERENCES_APP_KEY, Context.MODE_PRIVATE) ?: return false
         return preferences?.getBoolean("isInitialized", false) ?: false
+    }
+
+    fun saveLanguageDate(languageId: Long){
+        preferences = context.getSharedPreferences(PREFERENCES_LANGUAGE_KEY, Context.MODE_PRIVATE) ?: return
+        preferences?.edit()?.apply {
+            putLong("language", languageId)
+            apply()
+        }
+    }
+
+    fun removeLanguageData(): Boolean{
+        preferences = context.getSharedPreferences(PREFERENCES_LANGUAGE_KEY, Context.MODE_PRIVATE) ?: return false
+        preferences?.edit()?.apply {
+            remove("language")
+            apply()
+            return true
+        }
+        return false
+    }
+
+    fun getLanguageDate(): Long{
+        preferences = context.getSharedPreferences(PREFERENCES_LANGUAGE_KEY, Context.MODE_PRIVATE) ?: return -1L
+        return preferences?.getLong("language", -1L) ?: -1L
     }
 
 }
