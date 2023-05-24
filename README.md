@@ -8,3 +8,6 @@
 ## To start interacting with the app
 1. Sign up with email and password
 2. **Kindly do not sign in with google since this sign up method requires you to add your android studio SHA key to firebase project** 
+
+
+## Diploma work of Joldybaev Alibek, Makulbay Azamat and Begassilov Nursultan
