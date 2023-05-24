@@ -65,16 +65,6 @@ class SessionManager(
         }
     }
 
-    fun removeLanguageData(): Boolean{
-        preferences = context.getSharedPreferences(PREFERENCES_LANGUAGE_KEY, Context.MODE_PRIVATE) ?: return false
-        preferences?.edit()?.apply {
-            remove("language")
-            apply()
-            return true
-        }
-        return false
-    }
-
     fun getLanguageDate(): Long{
         preferences = context.getSharedPreferences(PREFERENCES_LANGUAGE_KEY, Context.MODE_PRIVATE) ?: return -1L
         return preferences?.getLong("language", -1L) ?: -1L

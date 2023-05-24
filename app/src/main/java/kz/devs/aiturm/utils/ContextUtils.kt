@@ -2,6 +2,8 @@ package kz.devs.aiturm.utils
 
 import android.content.Context
 import android.content.ContextWrapper
+import android.view.WindowManager
+import kz.devs.aiturm.presentaiton.SessionManager
 import java.util.*
 
 class ContextUtils(
@@ -12,14 +14,34 @@ class ContextUtils(
         fun newInstance(context: Context): ContextUtils = ContextUtils(context)
     }
 
-    fun updateLocale(language: String): Context{
-        val locale = Locale(language)
-        Locale.setDefault(locale)
+    fun updateLanguage(selectedLanguageId: Long?): Context {
 
-        val configuration = context.resources.configuration
-        configuration.setLocale(locale)
-        configuration.setLayoutDirection(locale)
-
-        return context.createConfigurationContext(configuration)
+        return when (selectedLanguageId) {
+            0L -> {
+                val locale = Locale("en")
+                Locale.setDefault(locale)
+                val configuration = context.resources.configuration
+                configuration.setLocale(locale)
+                configuration.setLayoutDirection(locale)
+                this.context.createConfigurationContext(configuration)
+            }
+            1L -> {
+                val locale = Locale("ru")
+                Locale.setDefault(locale)
+                val configuration = context.resources.configuration
+                configuration.setLocale(locale)
+                configuration.setLayoutDirection(locale)
+                this.context.createConfigurationContext(configuration)
+                }
+            2L -> {
+                val locale = Locale("kk")
+                Locale.setDefault(locale)
+                val configuration = context.resources.configuration
+                configuration.setLocale(locale)
+                configuration.setLayoutDirection(locale)
+                this.context.createConfigurationContext(configuration)
+            }
+            else -> this
+        }
     }
 }

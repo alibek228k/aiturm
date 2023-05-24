@@ -44,7 +44,11 @@
         <item>Қазақша</item>
     </string-array>
 
+    <string name="cancel">Жою</string>
+
     <string name="gallery">Gallery</string>
+
+    <string name="remove_member">Бөлмелесті жою</string>
 
     <string name="you">You</string>
     <string name="yes">Yes</string>
@@ -71,13 +75,14 @@
     <string name="due">Due</string>
     <string name="day_left"> day left</string>
     <string name="days_left"> days_left</string>
-    <string name="parsing_error">Parsing error! Please try again later</string>
+    <string name="parsing_error">Сервер табылмады. Кейінірек қайталап көріңіз</string>
     <string name="server_error">Server error. Please try again later</string>
     <string name="no_internet">Cannot connect to Internet</string>
     <string name="delete_card_error">We encountered an error while deleting the card</string>
     <string name="card_deleted">Card deleted</string>
     <string name="authentication_error">We encountered an error while authenticating your account</string>
-    <string name="archving_error">We encountered an error while archiving the card</string>
+    <string name="archiving_error">We encountered an error while archiving the card</string>
+    <string name="user_deleting_error">Пайдаланушыны жою кезінде қате орын алды</string>
     <string name="card_archived">Card archived</string>
     <string name="marking_error">Couldn\'t mark the card</string>
     <string name="card_marked_as_done">Card marked as done</string>
@@ -107,7 +112,7 @@
     <string name="select_type_residential_unit">Select the type of your residential unit</string>
     <string name="select_type_preferred_unit">Select your preferred unit types</string>
 
-    <string name="attention">Attention!</string>
+    <string name="attention">Назар аударыңыз!</string>
     <string name="error_occurred_with_post_creating">An error occurred while creating the post, please try again later</string>
 
     <string name="error_room_members_can_not_be_empty">Room members can not be empty!</string>
@@ -146,13 +151,15 @@
     <string name="you_will_no_longer_be_a_roommate">You will no longer be a roommate in this apartment.</string>
     <string name="you_dont_have_apartment">You don\'t have an apartment, please accept requests before entering here.</string>
 
+    <string name="sending">Жіберілуде…</string>
+
     <string name="place">Place</string>
     <string name="profile">Profile</string>
     <string name="send_message">Send Message</string>
     <string name="user_posts">User Posts</string>
     <string name="apartment">Apartment</string>
     <string name="personal">Personal</string>
-    <string name="settings">Settings</string>
+    <string name="settings">Баптаулар</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="go_to_my_aiturm">Go to My Aiturm</string>
     <string name="empty_sent_request_list">You haven\'t sent any requests yet, you can go to My aiturm and start sending request now.</string>
@@ -160,6 +167,7 @@
     <string name="empty_received_request_list">Sorry, you don\'t have requests to join a room yet. Add a post to let others know about you.</string>
     <string name="received">Received</string>
     <string name="sent">Sent</string>
+    <string name="request">Сұраныс</string>
     <string name="choose_type_of_post">Choose the type of your post</string>
     <string name="roommates">Roommates</string>
     <string name="talk_about_yourself">Talk about yourself</string>
@@ -199,6 +207,13 @@
     <string name="get_image_from">Choose Image from</string>
 
     <string name="change_settings_message">Баптауларды өзгерткіңіз келетініне сенімдісіз бе?</string>
+    <string name="delete_member_message">Сіз бұл көршіңізді жоюға сенімдісіз бе?</string>
+
+    <string name="cannot_connect_internet">Интернетке қосылу мүмкін емес</string>
+
+    <string name="server_could_not_be_found">Сервер табылмады. Кейінірек қайталап көріңіз</string>
+
+    <string name="user_has_been_removed">%s жойылды</string>
 
 
 </resources>

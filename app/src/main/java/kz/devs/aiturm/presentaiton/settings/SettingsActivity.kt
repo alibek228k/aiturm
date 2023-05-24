@@ -2,6 +2,7 @@ package kz.devs.aiturm.presentaiton.settings
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -13,14 +14,18 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.shroomies.R
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.imageview.ShapeableImageView
+import kz.devs.aiturm.MainActivity
 import kz.devs.aiturm.presentaiton.SessionManager
 import kz.devs.aiturm.utils.ContextUtils
+import kz.garage.locale.base.LocaleManagerBaseActivity
 import java.util.*
 
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : LocaleManagerBaseActivity() {
 
     companion object {
+        const val KEY_SETTINGS = "SETTINGS_KEY"
+
         fun newInstance(context: Context): Intent {
             return Intent(context, SettingsActivity::class.java)
         }
@@ -52,12 +57,6 @@ class SettingsActivity : AppCompatActivity() {
         setupLanguagePicker()
         setupDoneButton()
     }
-
-//    override fun attachBaseContext(newBase: Context) {
-//        val localeToSwitch = Locale("lv")
-//        val localeUpdatedContext = ContextUtils.updateLocale(newBase, localeToSwitch)
-//        super.attachBaseContext(localeUpdatedContext)
-//    }
 
     private fun setupLanguagePicker() {
         ArrayAdapter.createFromResource(
@@ -102,28 +101,15 @@ class SettingsActivity : AppCompatActivity() {
                     dialog.dismiss()
                 }.setPositiveButton(R.string.yes) { dialog, _ ->
                     dialog.dismiss()
-                    updateLanguage()
-                    onBackPressed()
+                    manager?.saveLanguageDate(selectedLanguage)
+                    val locale = when (selectedLanguage) {
+                        0L -> "en"
+                        1L -> "ru"
+                        2L -> "kk"
+                        else -> return@setPositiveButton
+                    }
+                    setLocale(Locale(locale))
                 }.show()
         }
     }
-
-    private fun updateLanguage() {
-        val contextUtils = ContextUtils.newInstance(this)
-        when (selectedLanguage) {
-            0L -> {
-                val resources = contextUtils.updateLocale("en").resources
-                val configuration = resources.configuration
-
-            }
-            1L -> {
-                contextUtils.updateLocale("kk")
-            }
-            2L -> {
-                contextUtils.updateLocale("ru")
-            }
-        }
-        manager?.saveLanguageDate(selectedLanguage)
-    }
-
 }

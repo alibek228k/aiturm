@@ -31,6 +31,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
+        android:configChanges="locale|orientation"
         android:localeConfig="@xml/locales_config"
         tools:targetApi="tiramisu">
         <activity

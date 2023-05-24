@@ -45,9 +45,13 @@
 
     <string name="gallery">Gallery</string>
 
+    <string name="remove_member">Remove member</string>
+
     <string name="you">You</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    <string name="cancel">Cancel</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -76,7 +80,8 @@
     <string name="delete_card_error">We encountered an error while deleting the card</string>
     <string name="card_deleted">Card deleted</string>
     <string name="authentication_error">We encountered an error while authenticating your account</string>
-    <string name="archving_error">We encountered an error while archiving the card</string>
+    <string name="archiving_error">We encountered an error while archiving the card</string>
+    <string name="user_deleting_error">We encountered an error while deleting the use</string>
     <string name="card_archived">Card archived</string>
     <string name="marking_error">Couldn\'t mark the card</string>
     <string name="card_marked_as_done">Card marked as done</string>
@@ -145,6 +150,8 @@
     <string name="you_will_no_longer_be_a_roommate">You will no longer be a roommate in this apartment.</string>
     <string name="you_dont_have_apartment">You don\'t have an apartment, please accept requests before entering here.</string>
 
+    <string name="sending">Sending…</string>
+
     <string name="place">Place</string>
     <string name="profile">Profile</string>
     <string name="send_message">Send Message</string>
@@ -158,7 +165,8 @@
     <string name="add_a_post">Add a post</string>
     <string name="empty_received_request_list">Sorry, you don\'t have requests to join a room yet. Add a post to let others know about you.</string>
     <string name="received">Received</string>
-    <string name="sent">Sent</string>
+    <string name="sent">Sent!</string>
+    <string name="request">Request</string>
     <string name="choose_type_of_post">Choose the type of your post</string>
     <string name="roommates">Roommates</string>
     <string name="talk_about_yourself">Talk about yourself</string>
@@ -198,5 +206,12 @@
     <string name="get_image_from">Choose Image from</string>
 
     <string name="change_settings_message">Are you sure you want to change the settings</string>
+    <string name="delete_member_message">Are you sure you would like to remove this member?</string>
+
+    <string name="cannot_connect_internet">Cannot connect to Internet</string>
+
+    <string name="server_could_not_be_found">The server could not be found. Please try again later</string>
+    
+    <string name="user_has_been_removed">%s has been removed</string>
 
 </resources>

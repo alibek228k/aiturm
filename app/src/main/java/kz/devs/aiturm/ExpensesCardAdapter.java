@@ -393,7 +393,7 @@ public class ExpensesCardAdapter extends RecyclerView.Adapter<ExpensesCardAdapte
                 if(success){
                     displaySnackBar(context.getString(R.string.card_archived));
                 }else{
-                    displaySnackBar(context.getString(R.string.archving_error));
+                    displaySnackBar(context.getString(R.string.archiving_error));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

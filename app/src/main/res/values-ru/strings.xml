@@ -44,7 +44,11 @@
         <item>Қазақша</item>
     </string-array>
 
+    <string name="cancel">Отменить</string>
+
     <string name="gallery">Галерея</string>
+
+    <string name="remove_member">Удалить сожителя</string>
 
     <string name="you">Вы</string>
     <string name="yes">Да</string>
@@ -77,7 +81,8 @@
     <string name="delete_card_error">Произошла ошибка при удалении карты</string>
     <string name="card_deleted">Карта удалена</string>
     <string name="authentication_error">Мы обнаружили ошибку при аутентификации вашей учетной записи</string>
-    <string name="archving_error">Произошла ошибка при архивации карты</string>
+    <string name="archiving_error">Произошла ошибка при архивации карты</string>
+    <string name="user_deleting_error">Произошла ошибка при удалении пользователя</string>
     <string name="card_archived">Карта заархивирована</string>
     <string name="marking_error">Не удалось отметить карту</string>
     <string name="card_marked_as_done">Карта отмечена как выполненная</string>
@@ -146,6 +151,8 @@
     <string name="you_will_no_longer_be_a_roommate">Вы больше не будете соседом по комнате в этой квартире.</string>
     <string name="you_dont_have_apartment">У вас нет квартиры, пожалуйста, примите запросы, прежде чем войти сюда.</string>
 
+    <string name="sending">Отправка…</string>
+
     <string name="place">Место</string>
     <string name="profile">Профиль</string>
     <string name="send_message">Отправить сообщение</string>
@@ -160,6 +167,7 @@
     <string name="empty_received_request_list">Извините, у вас пока нет запросов на присоединение к комнате. Добавьте сообщение, чтобы другие узнали о вас.</string>
     <string name="received">Полученные</string>
     <string name="sent">Отправленные</string>
+    <string name="request">Запрос</string>
     <string name="choose_type_of_post">Выберите тип вашего поста</string>
     <string name="roommates">Соседи по комнате</string>
     <string name="talk_about_yourself">Расскажите о себе</string>
@@ -199,5 +207,12 @@
     <string name="get_image_from">Выбрать фотографию из</string>
 
     <string name="change_settings_message">Вы уверены что хотите изменить настройки</string>
+    <string name="delete_member_message">Вы уверены, что хотели бы удалить этого сожителя?</string>
+
+    <string name="cannot_connect_internet">Не удается подключиться к Интернету</string>
+
+    <string name="server_could_not_be_found">Сервер не удалось найти. Пожалуйста, повторите попытку позже</string>
+
+    <string name="user_has_been_removed">Пользователь %s был удален</string>
 
 </resources>

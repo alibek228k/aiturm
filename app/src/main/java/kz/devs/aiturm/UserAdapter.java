@@ -36,6 +36,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,6 +54,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private final Context context;
     private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
+    private FirebaseFirestore firestore;
     private boolean fromSearchMember = false;
     private RequestQueue requestQueue;
     private final AiturmApartment apartment;
@@ -64,12 +66,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         this.context = context;
         this.apartment = apartment;
         this.parentView = parentView;
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        firestore = FirebaseFirestore.getInstance();
     }
     public UserAdapter(ArrayList<User> userList, Context context, Boolean fromSearchMember, AiturmApartment apartment) {
         this.userList = userList;
         this.context = context;
         this.fromSearchMember=fromSearchMember;
         this.apartment=apartment;
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        firestore = FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -122,7 +128,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 holder.removeMember.setVisibility(View.INVISIBLE);
                 if (userList.get(position).getUserID().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                     holder.msgMember.setVisibility(View.INVISIBLE);
-                    holder.userName.setText("You");
+                    holder.userName.setText(context.getString(R.string.you));
                 }else{
                     holder.msgMember.setVisibility(View.VISIBLE);
                 }
@@ -169,76 +175,90 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
             removeMember.setOnClickListener(v -> new AlertDialog.Builder(context)
             .setIcon(R.drawable.ic_alert)
-            .setTitle("Remove member")
-            .setMessage("Are you sure you would like to remove this member?")
+            .setTitle(R.string.remove_member)
+            .setMessage(R.string.delete_member_message)
             .setCancelable(true)
-            .setNegativeButton("Yes", (dialog, which) -> {
+            .setNegativeButton(R.string.yes, (dialog, which) -> {
                 dialog.dismiss();
-                removeMember(apartment.getApartmentID() , getAdapterPosition());
+                removeMember(getAdapterPosition());
             })
-            .setPositiveButton("Cancel", (dialog, which) -> dialog.dismiss())
+            .setPositiveButton(R.string.cancel, (dialog, which) -> dialog.dismiss())
             .create()
             .show());
 
             sendRequest.setOnClickListener(v -> sendRequestToUser(userList.get(getAdapterPosition()), apartment.getApartmentID()));
         }
 
-        private void removeMember(String apartmentID, int position) {
+        private void removeMember(int position) {
             User removedUser = userList.remove(position);
-            notifyItemRemoved(position);
-            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-            firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
-                if(task.isSuccessful()){
-                    String token = task.getResult().getToken();
-                    JSONObject jsonObject = new JSONObject();
-                    JSONObject data = new JSONObject();
-                    try {
-                        jsonObject.put(Config.apartmentID , apartmentID);
-                        jsonObject.put(Config.userID , removedUser.getUserID());
-                        data.put(Config.data , jsonObject);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_REMOVE_MEMBER, data, response -> {
-                        try {
-                            boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
-                            if(success){
 
-                                Snackbar snack=Snackbar.make(parentView,removedUser.getUsername()+" has been removed", BaseTransientBottomBar.LENGTH_SHORT);
-                                snack.show();
-                            }else{
-                                //return the user back
-                                userList.add(removedUser);
-                                notifyDataSetChanged();
-                                Snackbar snack=Snackbar.make(parentView,"We encountered an error while deleting the user", BaseTransientBottomBar.LENGTH_SHORT);
-                                snack.show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }, error -> displayErrorAlert( error , null))
-                    {
-                        @Override
-                        public Map<String, String> getHeaders() {
-                            Map<String, String> params = new HashMap<>();
-                            params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
-                            params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
-                            return params;
-                        }
-                    };
-                    requestQueue.add(jsonObjectRequest);
-
-                }else{
-                    String message = "We encountered a problem while authenticating your account";
-                    displayErrorAlert(null, message);
-                }
+            databaseReference.child(Config.users).child(removedUser.getUserID()).child(Config.apartmentID).removeValue().addOnFailureListener(e -> {
+                Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+            }).addOnSuccessListener(v -> {
+                var members = apartment.getApartmentMembers();
+                members.remove(removedUser.getUserID());
+                var request = new HashMap<String, Object>();
+                request.put("apartmentMembers", members);
+                firestore.collection(Config.APARTMENT_LIST).document(apartment.getApartmentID()).update(request).addOnSuccessListener(task -> {
+                    Toast.makeText(context, context.getString(R.string.user_has_been_removed, removedUser.getUsername()), Toast.LENGTH_SHORT).show();
+                    notifyItemRemoved(position);
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(context, context.getString(R.string.network_error), Toast.LENGTH_SHORT).show();
+                });
             });
+
+
+//            firebaseUser.getIdToken(true).addOnCompleteListener(task -> {
+//                if(task.isSuccessful()){
+//                    String token = task.getResult().getToken();
+//                    JSONObject jsonObject = new JSONObject();
+//                    JSONObject data = new JSONObject();
+//                    try {
+//                        jsonObject.put(Config.apartmentID , apartmentID);
+//                        jsonObject.put(Config.userID , removedUser.getUserID());
+//                        data.put(Config.data , jsonObject);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                    JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, Config.URL_REMOVE_MEMBER, data, response -> {
+//                        try {
+//                            boolean success = response.getJSONObject(Config.result).getBoolean(Config.success);
+//                            if(success){
+//
+//                                Snackbar snack=Snackbar.make(parentView, context.getString(R.string.user_has_been_removed, removedUser.getUsername()), BaseTransientBottomBar.LENGTH_SHORT);
+//                                snack.show();
+//                            }else{
+//                                //return the user back
+//                                userList.add(removedUser);
+//                                notifyDataSetChanged();
+//                                Snackbar snack=Snackbar.make(parentView, context.getString(R.string.user_deleting_error), BaseTransientBottomBar.LENGTH_SHORT);
+//                                snack.show();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }, error -> displayErrorAlert( error , null))
+//                    {
+//                        @Override
+//                        public Map<String, String> getHeaders() {
+//                            Map<String, String> params = new HashMap<>();
+//                            params.put(HttpHeaders.CONTENT_TYPE, "application/json; charset=UTF-8");
+//                            params.put(HttpHeaders.AUTHORIZATION,"Bearer "+token);
+//                            return params;
+//                        }
+//                    };
+//                    requestQueue.add(jsonObjectRequest);
+//
+//                }else{
+//                    String message = context.getString(R.string.authentication_error);
+//                    displayErrorAlert(null, message);
+//                }
+//            });
         }
 
         private void sendRequestToUser(User user, String apartmentID) {
-            sendRequest.setText("Sending...");
+            sendRequest.setText(context.getString(R.string.sending));
             sendRequest.setClickable(false);
-            databaseReference = FirebaseDatabase.getInstance().getReference();
             var currentUser = new SessionManager(context).getData();
 
             HashMap<String, Object> map = new HashMap<>();
@@ -253,20 +273,20 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
                 databaseReference.child(Config.users).child(currentUser.getUserID()).updateChildren(map1).addOnCompleteListener(task1 -> {
                     if (task1.isSuccessful()) {
-                        sendRequest.setText("Sent!");
+                        sendRequest.setText(context.getString(R.string.sent));
                         sendRequest.setClickable(false);
                         Toast.makeText(context, context.getString(R.string.request_sent_success), Toast.LENGTH_SHORT).show();
                         ;
                     } else {
                         Toast.makeText(context, context.getString(R.string.request_sent_failed), Toast.LENGTH_SHORT).show();
-                        sendRequest.setText("Request");
+                        sendRequest.setText(context.getString(R.string.request));
                         sendRequest.setClickable(true);
 
                     }
                 });
             }).addOnFailureListener(e -> {
                 Toast.makeText(context, context.getString(R.string.request_sent_failed), Toast.LENGTH_SHORT).show();
-                sendRequest.setText("Request");
+                sendRequest.setText(context.getString(R.string.request));
                 sendRequest.setClickable(true);
             });
         }
@@ -275,11 +295,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         String message = null; // error message, show it in toast or dialog, whatever you want
         if(error!=null) {
             if (error instanceof NetworkError || error instanceof AuthFailureError || error instanceof NoConnectionError || error instanceof TimeoutError) {
-                message = "Cannot connect to Internet";
+                message = context.getString(R.string.cannot_connect_internet);
             } else if (error instanceof ServerError) {
-                message = "The server could not be found. Please try again later";
+                message = context.getString(R.string.server_could_not_be_found);
             } else if (error instanceof ParseError) {
-                message = "Parsing error! Please try again later";
+                message = context.getString(R.string.server_could_not_be_found);
             }
         }else{
             message = errorMessage;

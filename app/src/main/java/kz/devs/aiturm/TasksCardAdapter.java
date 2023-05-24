@@ -336,7 +336,7 @@ public class TasksCardAdapter extends RecyclerView.Adapter<TasksCardAdapter.Task
 
                 }else {
 
-                    displaySnackBar(context.getString(R.string.archving_error));
+                    displaySnackBar(context.getString(R.string.archiving_error));
 
                 }
             } catch (JSONException e) {

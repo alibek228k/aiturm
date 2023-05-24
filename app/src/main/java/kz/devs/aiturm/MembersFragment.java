@@ -217,7 +217,7 @@ public class MembersFragment extends Fragment {
 
 
     private void getMemberDetail(AiturmApartment aiturmApartment) {
-        userAdapter = new UserAdapter(membersList, getContext(),apartment,getView());
+        userAdapter = new UserAdapter(membersList, getContext(), apartment, getView());
         membersRecyclerView.setAdapter(userAdapter);
 
         var membersIds = aiturmApartment.getApartmentMembers();
