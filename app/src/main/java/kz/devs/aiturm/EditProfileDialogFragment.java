@@ -57,7 +57,7 @@ import kz.devs.aiturm.presentaiton.edit.ChangeGroupDialogFragment;
 import kz.devs.aiturm.presentaiton.edit.ChangePhoneDialogFragment;
 import kz.devs.aiturm.presentaiton.edit.ChangeSpecialityDialogFragment;
 
-public class EditProfileDialogFragment extends DialogFragment implements ChangeSpecialityDialogFragment.SpecialityChangeCallback, ChangePhoneDialogFragment.PhoneChangeCallback, ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
+public class EditProfileDialogFragment extends DialogFragment implements ChangePhoneDialogFragment.PhoneChangeCallback, ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
 
     private EditProfileCallback callback;
 
@@ -167,15 +167,6 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
                 changeUsernameDialog.setArguments(bundle);
                 changeUsernameDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
                 changeUsernameDialog.show(getParentFragmentManager(), null);
-            });
-
-            changeSpeciality.setOnClickListener(v -> {
-                ChangeSpecialityDialogFragment changeSpecialityDialog = new ChangeSpecialityDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("USER", user);
-                changeSpecialityDialog.setArguments(bundle);
-                changeSpecialityDialog.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
-                changeSpecialityDialog.show(getParentFragmentManager(), null);
             });
 
             changeEmail.setOnClickListener(v -> {
@@ -445,12 +436,14 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
     }
 
 
-    public void onGroupChanged(String groupTxt) {
-        user.setGroup(groupTxt);
+    public void onGroupChanged(String group, String specialization) {
+        user.setGroup(group);
+        user.setSpecialization(specialization);
         callback.onProfileDataChanged(user);
         manager.removeUserData();
         manager.saveData(user);
-        this.groupTextView.setText(groupTxt);
+        this.groupTextView.setText(group);
+        this.specialityTextView.setText(specialization);
     }
     @Override
     public void onPhoneChanged(String phoneTxt) {
@@ -460,16 +453,6 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeS
         manager.saveData(user);
         setupPhoneNumberFormatting(phoneTxt);
     }
-
-    @Override
-    public void onSpecialityChanged(String speciality) {
-        user.setSpecialization(speciality);
-        callback.onProfileDataChanged(user);
-        manager.removeUserData();
-        manager.saveData(user);
-        this.specialityTextView.setText(speciality);
-    }
-
 
     @Override
     public void onGenderChanged(User.Gender gender) {

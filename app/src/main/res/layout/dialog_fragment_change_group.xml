@@ -44,42 +44,64 @@
             android:textSize="14sp"
             android:textStyle="bold"/>
     </RelativeLayout>
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/change_group_input_text"
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginTop="10dp"
-        app:boxBackgroundMode="filled"
-        app:boxStrokeColor="@color/LogoYellow"
-        app:boxStrokeWidth="2dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        app:errorEnabled="true"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal"
+        android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        app:hintEnabled="false"
-        app:hintAnimationEnabled="false"
-        app:expandedHintEnabled="false"
-        app:textColor="@color/jetBlack"
-        app:endIconDrawable="@drawable/ic_close_icon"
-        app:endIconMode="custom"
-        app:counterTextColor="@color/LogoYellow"
-        app:endIconTint="@color/LogoYellow"
-        android:layout_below="@+id/change_group_upper_page"
-        >
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/enter_new_group"
+        android:layout_below="@+id/change_group_upper_page">
+
+        <TextView
+            android:id="@+id/speciality_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:drawablePadding="10dp"
+            android:gravity="start"
+            android:text="@string/speciality"
+            android:textColor="@color/jetBlack"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/speciality_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@android:color/transparent"
-            android:inputType="text"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:hint="Group"
-            android:textAlignment="textStart"
+            android:layout_marginStart="25dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:orientation="horizontal"
+        android:layout_marginTop="25dp"
+        android:paddingBottom="10dp"
+        android:layout_below="@+id/linear_layout">
+
+        <TextView
+            android:id="@+id/group_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:drawablePadding="10dp"
+            android:gravity="start"
+            android:text="@string/group"
             android:textColor="@color/jetBlack"
-            android:enabled="true"
-            />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/group_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

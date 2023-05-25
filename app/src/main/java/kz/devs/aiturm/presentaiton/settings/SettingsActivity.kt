@@ -58,7 +58,7 @@ class SettingsActivity : LocaleManagerBaseActivity() {
     private fun setupLanguagePicker() {
         ArrayAdapter.createFromResource(
             this,
-            R.array.spinner_speciality,
+            R.array.spinner_language,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

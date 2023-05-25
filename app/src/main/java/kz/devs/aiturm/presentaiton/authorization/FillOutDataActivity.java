@@ -370,15 +370,17 @@ public class FillOutDataActivity extends AppCompatActivity {
             } else {
                 phoneNumberInputLayout.setError(null);
             }
-            if (speciality != null || speciality.isBlank()) {
+            if (speciality == null || speciality.isBlank()) {
                 Toast.makeText(this, R.string.field_can_not_be_empty, Toast.LENGTH_SHORT).show();
                 specialityError = getString(R.string.field_can_not_be_empty);
+                System.out.println("It is here speciality");
             } else {
                 specialityError = null;
             }
-            if (group != null || group.isBlank()) {
+            if (group == null || group.isBlank()) {
                 Toast.makeText(this, R.string.field_can_not_be_empty, Toast.LENGTH_SHORT).show();
                 groupError = getString(R.string.field_can_not_be_empty);
+                System.out.println("It is here group $");
             } else {
                 groupError = null;
             }

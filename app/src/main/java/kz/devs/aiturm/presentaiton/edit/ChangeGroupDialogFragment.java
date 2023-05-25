@@ -8,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,7 +22,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.shroomies.R;
-import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -39,15 +41,18 @@ public class ChangeGroupDialogFragment extends DialogFragment {
     private FirebaseAuth mAuth;
     private DatabaseReference rootRef;
 
-    private TextInputLayout newGroup;
+    private Spinner groupSpinner, specialitySpinner;
+
     private User user;
     private View v;
     private GroupChangeCallback changedGroupChangeCallback;
 
+    private String selectedSpeciality, selectedGroup, error;
+
     @Override
     public void onStart() {
         super.onStart();
-        if(getDialog()!=null) {
+        if (getDialog() != null) {
             getDialog().getWindow().setLayout(ActionBar.LayoutParams.MATCH_PARENT, Toolbar.LayoutParams.MATCH_PARENT);
             getDialog().getWindow().setGravity(Gravity.VERTICAL_GRAVITY_MASK);
             getDialog().getWindow().setBackgroundDrawableResource(R.drawable.create_group_fragment_background);
@@ -69,7 +74,7 @@ public class ChangeGroupDialogFragment extends DialogFragment {
     }
 
     public interface GroupChangeCallback {
-        void onGroupChanged(String groupTxt);
+        void onGroupChanged(String group, String specialization);
 }
 
     @Override
@@ -87,34 +92,29 @@ public class ChangeGroupDialogFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        newGroup = v.findViewById(R.id.change_group_input_text);
-        newGroup.requestFocus();
+        specialitySpinner = v.findViewById(R.id.speciality_spinner);
+        groupSpinner = v.findViewById(R.id.group_spinner);
         showKeyboard();
+        setupSpecialitySpinner();
         Button doneButton = v.findViewById(R.id.change_group_done_button);
         ImageButton backButton = v.findViewById(R.id.change_group_back_button);
-        Bundle bundle=this.getArguments();
-        if (bundle!=null) {
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
             user = (User) bundle.getSerializable("USER");
-            if (!(user.getGroup() == null || user.getGroup().equals(""))) {
-                newGroup.getEditText().setText(user.getGroup());
-                newGroup.getEditText().setSelection(newGroup.getEditText().getText().length());
-            } else {
-                newGroup.setHint("my group");
-            }
+            setupUserData(user);
+
         } else {
             closeKeyboard();
             dismiss();
-
         }
-        newGroup.setEndIconOnClickListener(view1 -> newGroup.getEditText().setText(""));
         doneButton.setOnClickListener(v -> {
-            String txtGroup = newGroup.getEditText().getText().toString().trim();
+            String txtGroup = selectedGroup;
             if (txtGroup.equals(user.getGroup())){
-                newGroup.setError("No changes have been made");
+                error = "No changes have been made";
             } else if (txtGroup.isBlank()) {
-                newGroup.setError("Group can not be empty");
+                error = "Group can not be empty";
             } else {
-                newGroup.setError(null);
+                error = null;
                 FirebaseUser firebaseUser = mAuth.getCurrentUser();
                 if (firebaseUser != null) {
                     updateGroup(txtGroup);
@@ -123,27 +123,349 @@ public class ChangeGroupDialogFragment extends DialogFragment {
 
         });
         backButton.setOnClickListener(v -> {
-            if ((user.getGroup() != null && !user.getGroup().equals(newGroup.getEditText().getText().toString()))) {
-                Toast.makeText(getContext(), "unSaved Changes", Toast.LENGTH_LONG).show();
-            } else {
-                closeKeyboard();
-                dismiss();
-            }
+            dismiss();
         });
 
 
     }
+
+    private void setupUserData(User user) {
+        if (!(user.getSpecialization() == null || user.getSpecialization().equals(""))) {
+            switch (user.getSpecialization()) {
+                case "Computer Science":
+                    specialitySpinner.setSelection(0);
+                    if (!(user.getGroup() == null || user.getGroup().equals(""))) {
+                        switch (user.getGroup()) {
+                            case "CS-2000":
+                                groupSpinner.setSelection(0);
+                                break;
+                            case "CS-2001":
+                                groupSpinner.setSelection(1);
+                                break;
+                            case "CS-2002":
+                                groupSpinner.setSelection(2);
+                                break;
+                            case "CS-2003":
+                                groupSpinner.setSelection(3);
+                                break;
+                            case "CS-2004":
+                                groupSpinner.setSelection(4);
+                                break;
+                        }
+                    }
+                    break;
+                case "Software Engineering":
+                    specialitySpinner.setSelection(1);
+                    if (!(user.getGroup() == null || user.getGroup().equals(""))) {
+                        switch (user.getGroup()) {
+                            case "SE-2000":
+                                groupSpinner.setSelection(0);
+                                break;
+                            case "SE-2001":
+                                groupSpinner.setSelection(1);
+                                break;
+                            case "SE-2002":
+                                groupSpinner.setSelection(2);
+                                break;
+                            case "SE-2003":
+                                groupSpinner.setSelection(3);
+                                break;
+                            case "SE-2004":
+                                groupSpinner.setSelection(4);
+                                break;
+                        }
+                    }
+                    break;
+                case "Big Data Analysis":
+                    specialitySpinner.setSelection(2);
+                    if (!(user.getGroup() == null || user.getGroup().equals(""))) {
+                        switch (user.getGroup()) {
+                            case "BD-2000":
+                                groupSpinner.setSelection(0);
+                                break;
+                            case "BD-2001":
+                                groupSpinner.setSelection(1);
+                                break;
+                            case "BD-2002":
+                                groupSpinner.setSelection(2);
+                                break;
+                            case "BD-2003":
+                                groupSpinner.setSelection(3);
+                                break;
+                            case "BD-2004":
+                                groupSpinner.setSelection(4);
+                                break;
+                        }
+                    }
+                    break;
+                case "Media Technologies":
+                    specialitySpinner.setSelection(3);
+                    if (!(user.getGroup() == null || user.getGroup().equals(""))) {
+                        switch (user.getGroup()) {
+                            case "MT-2000":
+                                groupSpinner.setSelection(0);
+                                break;
+                            case "MT-2001":
+                                groupSpinner.setSelection(1);
+                                break;
+                            case "MT-2002":
+                                groupSpinner.setSelection(2);
+                                break;
+                            case "MT-2003":
+                                groupSpinner.setSelection(3);
+                                break;
+                            case "MT-2004":
+                                groupSpinner.setSelection(4);
+                                break;
+                        }
+                    }
+                    break;
+                case "Cyber Security":
+                    specialitySpinner.setSelection(4);
+                    if (!(user.getGroup() == null || user.getGroup().equals(""))) {
+                        switch (user.getGroup()) {
+                            case "CS-2000":
+                                groupSpinner.setSelection(0);
+                                break;
+                            case "CS-2001":
+                                groupSpinner.setSelection(1);
+                                break;
+                            case "CS-2002":
+                                groupSpinner.setSelection(2);
+                                break;
+                            case "CS-2003":
+                                groupSpinner.setSelection(3);
+                                break;
+                            case "CS-2004":
+                                groupSpinner.setSelection(4);
+                                break;
+                        }
+                    }
+                    break;
+                case "Telecommunication Systems":
+                    specialitySpinner.setSelection(5);
+                    if (!(user.getGroup() == null || user.getGroup().equals(""))) {
+                        switch (user.getGroup()) {
+                            case "TS-2000":
+                                groupSpinner.setSelection(0);
+                                break;
+                            case "TS-2001":
+                                groupSpinner.setSelection(1);
+                                break;
+                            case "TS-2002":
+                                groupSpinner.setSelection(2);
+                                break;
+                            case "TS-2003":
+                                groupSpinner.setSelection(3);
+                                break;
+                            case "TS-2004":
+                                groupSpinner.setSelection(4);
+                                break;
+                        }
+                    }
+                    break;
+                case "Smart Technologies":
+                    specialitySpinner.setSelection(6);
+                    if (!(user.getGroup() == null || user.getGroup().equals(""))) {
+                        switch (user.getGroup()) {
+                            case "ST-2000":
+                                groupSpinner.setSelection(0);
+                                break;
+                            case "ST-2001":
+                                groupSpinner.setSelection(1);
+                                break;
+                            case "ST-2002":
+                                groupSpinner.setSelection(2);
+                                break;
+                            case "ST-2003":
+                                groupSpinner.setSelection(3);
+                                break;
+                            case "ST-2004":
+                                groupSpinner.setSelection(4);
+                                break;
+                        }
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void setupSpecialitySpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_speciality, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        specialitySpinner.setAdapter(adapter);
+
+        specialitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedSpeciality = (String) parent.getItemAtPosition(position);
+                switch (selectedSpeciality) {
+                    case "Computer Science":
+                        setupCSGroupsSpinner();
+                        break;
+                    case "Software Engineering":
+                        setupSEGroupsSpinner();
+                        break;
+                    case "Big Data Analysis":
+                        setupBDGroupsSpinner();
+                        break;
+                    case "Media Technologies":
+                        setupMTGroupsSpinner();
+                        break;
+                    case "Cyber Security":
+                        setupITGroupsSpinner();
+                        break;
+                    case "Telecommunication Systems":
+                        setupTSGroupsSpinner();
+                        break;
+                    case "Smart Technologies":
+                        setupSTGroupsSpinner();
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupCSGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_cs, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupBDGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_bd, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupSEGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_se, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupMTGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_mt, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupITGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_it, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupTSGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_ts, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupSTGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(requireContext(), R.array.spinner_st, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
     private void updateGroup(String txtGroup) {
         HashMap<String, Object> updateDetails = new HashMap<>();
         updateDetails.put("group", txtGroup);
+        updateDetails.put("specialization", selectedSpeciality);
 
         rootRef.child(Config.users).child(user.getUserID()).updateChildren(updateDetails).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-//                changedGroupChangeCallback.
-//                d(txtGroup);
-                changedGroupChangeCallback.onGroupChanged(txtGroup);
-                Toast.makeText(getContext(), "Updated your group" +
-                        "", Toast.LENGTH_SHORT).show();
+                changedGroupChangeCallback.onGroupChanged(txtGroup, selectedSpeciality);
+                Toast.makeText(getContext(), "Updated your group", Toast.LENGTH_SHORT).show();
                 closeKeyboard();
                 dismiss();
             }
