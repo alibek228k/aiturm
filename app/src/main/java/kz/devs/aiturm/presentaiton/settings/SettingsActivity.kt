@@ -50,6 +50,9 @@ class SettingsActivity : LocaleManagerBaseActivity() {
         languageSpinner = findViewById(R.id.language_spinner)
         doneButton = findViewById(R.id.done_button)
         setSupportActionBar(toolbar)
+        toolbar?.setNavigationOnClickListener {
+            onBackPressed()
+        }
 
         setupLanguagePicker()
         setupDoneButton()

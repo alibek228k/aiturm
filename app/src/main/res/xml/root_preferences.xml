@@ -36,10 +36,10 @@
             android:title="Set price"
             app:showSeekBarValue="true"
             app:rbp_tickStart="0"
-            app:rbp_tickEnd="10000"
+            app:rbp_tickEnd="1000000"
             app:rbp_tickInterval="100"
             app:rbp_view_defaultLowValue="0"
-            app:rbp_view_defaultHighValue="10000"
+            app:rbp_view_defaultHighValue="50000"
             android:enabled="false"
             />
 
