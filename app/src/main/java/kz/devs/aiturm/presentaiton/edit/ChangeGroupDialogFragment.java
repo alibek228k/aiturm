@@ -136,19 +136,19 @@ public class ChangeGroupDialogFragment extends DialogFragment {
                     specialitySpinner.setSelection(0);
                     if (!(user.getGroup() == null || user.getGroup().equals(""))) {
                         switch (user.getGroup()) {
-                            case "CS-2000":
+                            case "IT-2000":
                                 groupSpinner.setSelection(0);
                                 break;
-                            case "CS-2001":
+                            case "IT-2001":
                                 groupSpinner.setSelection(1);
                                 break;
-                            case "CS-2002":
+                            case "IT-2002":
                                 groupSpinner.setSelection(2);
                                 break;
-                            case "CS-2003":
+                            case "IT-2003":
                                 groupSpinner.setSelection(3);
                                 break;
-                            case "CS-2004":
+                            case "IT-2004":
                                 groupSpinner.setSelection(4);
                                 break;
                         }

@@ -132,7 +132,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                 selectedSpeciality = (String) parent.getItemAtPosition(position);
                 switch (selectedSpeciality) {
                     case "Computer Science":
-                        setupCSGroupsSpinner();
+                        setupITGroupsSpinner();
                         break;
                     case "Software Engineering":
                         setupSEGroupsSpinner();
@@ -144,7 +144,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                         setupMTGroupsSpinner();
                         break;
                     case "Cyber Security":
-                        setupITGroupsSpinner();
+                        setupCSGroupsSpinner();
                         break;
                     case "Telecommunication Systems":
                         setupTSGroupsSpinner();
