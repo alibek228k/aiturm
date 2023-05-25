@@ -224,8 +224,8 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
             );
             deleteAccount.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Are you sure want to delete this account?");
-                builder.setPositiveButton("Yes", (dialogInterface, i) -> {
+                builder.setTitle(getString(R.string.sure_delete_account));
+                builder.setPositiveButton(R.string.yes, (dialogInterface, i) -> {
                     DeleteUserDialogDragment deleteUserDialogDragment = new DeleteUserDialogDragment();
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("USER", user);
@@ -233,7 +233,7 @@ public class EditProfileDialogFragment extends DialogFragment implements ChangeP
                     deleteUserDialogDragment.setTargetFragment(EditProfileDialogFragment.this, DIALOG_FRAGMENT_REQUEST_CODE);
                     deleteUserDialogDragment.show(getParentFragmentManager(), null);
                 });
-                builder.setNegativeButton("cancel", (dialogInterface, i) -> dialogInterface.dismiss());
+                builder.setNegativeButton(R.string.cancel, (dialogInterface, i) -> dialogInterface.dismiss());
                 builder.show();
             });
         } else {

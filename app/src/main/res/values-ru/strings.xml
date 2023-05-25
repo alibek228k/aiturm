@@ -170,7 +170,10 @@
     <string name="sent">Отправленные</string>
     <string name="request">Запрос</string>
     <string name="choose_type_of_post">Выберите тип вашего поста</string>
-    <string name="roommates">Соседи по комнате</string>
+    <string name="roommates">Сожители</string>
+    <string name="rooms">Комнаты</string>
+    <string name="users">Пользователи</string>
+    <string name="logout">Выйти</string>
     <string name="talk_about_yourself">Расскажите о себе</string>
     <string name="apartment_type_condominium">Кондоминиум</string>
     <string name="apartment_type_apartment">Апартаменты</string>
@@ -215,5 +218,9 @@
     <string name="server_could_not_be_found">Сервер не удалось найти. Пожалуйста, повторите попытку позже</string>
 
     <string name="user_has_been_removed">Пользователь %s был удален</string>
+
+    <string name="sure_delete_account">Вы уверены, что хотите удалить эту учетную запись?</string>
+
+    <string name="change_gender">Поменять пол</string>
 
 </resources>

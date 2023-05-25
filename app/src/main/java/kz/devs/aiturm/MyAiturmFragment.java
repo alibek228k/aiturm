@@ -188,7 +188,7 @@ public class MyAiturmFragment extends Fragment  implements LogAdapterToMyshroomi
 //
 
         ImageButton addCardButton = toolbar.findViewById(R.id.my_shroomies_add_card_btn);
-        addCardButton.setVisibility(View.VISIBLE);
+        addCardButton.setVisibility(View.GONE);
 
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());

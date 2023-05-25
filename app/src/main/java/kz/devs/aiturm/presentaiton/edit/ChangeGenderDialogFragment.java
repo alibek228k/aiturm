@@ -122,19 +122,16 @@ public class ChangeGenderDialogFragment extends DialogFragment {
                 }
             });
 
-            femaleRadioButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (isChecked) {
-                        currentGender = User.Gender.FEMALE;
-                    }
+            femaleRadioButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (isChecked) {
+                    currentGender = User.Gender.FEMALE;
                 }
             });
 
             doneButton.setOnClickListener(v -> {
                 if (currentGender != user.getGender()) {
                     new AlertDialog.Builder(getContext())
-                            .setTitle("Change gender")
+                            .setTitle(R.string.change_gender)
                             .setMessage("Are you sure to change gender?")
                             .setNegativeButton("No", (dialogInterface, i) -> {
                                 dialogInterface.dismiss();

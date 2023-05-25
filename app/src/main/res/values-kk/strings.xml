@@ -20,13 +20,13 @@
 
     <string name="name">Name</string>
 
-    <string name="requests">Requests</string>
+    <string name="requests">Сұраныстар</string>
 
     <string name="hello_world">Hello Square World!</string>
     <string name="api_key">AIzaSyCF5NRNtEAcNX0QAXquDQ68yCYXsLhp2Ao</string>
     <string name="Heading_discover">Discover</string>
     <string name="title_activity_group_chatting">GroupChattingActivity</string>
-    <string name="favorites">Favorites</string>
+    <string name="favorites">Ұнағандар</string>
     <string name="looks_like_you_have_no_favorite_apartment_posts">Looks like you have no favorite apartment posts....</string>
     <string name="NoPersonalPostText">Looks like you have no favorite personal posts yet...</string>
     <string name="user_have_not_preferences">The user has not specified any preferences</string>
@@ -50,9 +50,9 @@
 
     <string name="remove_member">Бөлмелесті жою</string>
 
-    <string name="you">You</string>
-    <string name="yes">Yes</string>
-    <string name="no">No</string>
+    <string name="you">Сіз</string>
+    <string name="yes">Иә</string>
+    <string name="no">Жоқ</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -161,7 +161,7 @@
     <string name="apartment">Apartment</string>
     <string name="personal">Personal</string>
     <string name="settings">Баптаулар</string>
-    <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy">Құпиялылық саясаты</string>
     <string name="go_to_my_aiturm">Go to My Aiturm</string>
     <string name="empty_sent_request_list">You haven\'t sent any requests yet, you can go to My aiturm and start sending request now.</string>
     <string name="add_a_post">Add a post</string>
@@ -170,7 +170,10 @@
     <string name="sent">Sent</string>
     <string name="request">Сұраныс</string>
     <string name="choose_type_of_post">Choose the type of your post</string>
-    <string name="roommates">Roommates</string>
+    <string name="roommates">Бөлмелестер</string>
+    <string name="rooms">Бөлмелер</string>
+    <string name="users">Пайдаланушылар</string>
+    <string name="logout">Шығу</string>
     <string name="talk_about_yourself">Talk about yourself</string>
     <string name="apartment_type_condominium">Condominium</string>
     <string name="apartment_type_apartment">Apartment</string>
@@ -199,7 +202,7 @@
     <string name="no_description_added">No description added</string>
 
     <string name="delete_post_message">Are you sure you want to delete the post?</string>
-    <string name="choose_the_language">Choose the language</string>
+    <string name="choose_the_language">Тілді таңдаңыз</string>
 
     <string name="grant_permissions_for_photos">Grant permissions to send photos</string>
 
@@ -216,5 +219,8 @@
 
     <string name="user_has_been_removed">%s жойылды</string>
 
+    <string name="sure_delete_account">Сіз бұл аккаунтты жойғыңыз келетініне сенімдісіз бе?</string>
+
+    <string name="change_gender">Жынысты өзгерту</string>
 
 </resources>

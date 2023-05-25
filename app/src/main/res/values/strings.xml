@@ -237,6 +237,9 @@
     <string name="request">Request</string>
     <string name="choose_type_of_post">Choose the type of your post</string>
     <string name="roommates">Roommates</string>
+    <string name="rooms">Rooms</string>
+    <string name="users">Users</string>
+    <string name="logout">Log out</string>
     <string name="talk_about_yourself">Talk about yourself</string>
     <string name="apartment_type_condominium">Condominium</string>
     <string name="apartment_type_apartment">Apartment</string>
@@ -281,5 +284,9 @@
     <string name="server_could_not_be_found">The server could not be found. Please try again later</string>
 
     <string name="user_has_been_removed">%s has been removed</string>
+
+    <string name="sure_delete_account">Are you sure want to delete this account?</string>
+
+    <string name="change_gender">Change gender</string>
 
 </resources>
