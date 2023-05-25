@@ -7,9 +7,12 @@ import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -53,13 +56,18 @@ public class FillOutDataActivity extends AppCompatActivity {
     private TextInputLayout lastNameInputLayout;
     private TextInputLayout patronymicNameInputLayout;
     private RadioGroup genderRadioGroup;
+    private Spinner specialitySpinner, groupSpinner;
+
+    private String selectedSpeciality;
+    private String specialityError;
+
+    private String selectedGroup;
+    private String groupError;
+
 
     private RadioButton maleRadioButton;
     private RadioButton femaleRadioButton;
     private TextInputLayout phoneNumberInputLayout;
-    private TextInputLayout specialityInputLayout;
-    private TextInputLayout groupInputLayout;
-
 
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
@@ -83,14 +91,15 @@ public class FillOutDataActivity extends AppCompatActivity {
         maleRadioButton = genderRadioGroup.findViewById(R.id.male_radio_button);
         femaleRadioButton = genderRadioGroup.findViewById(R.id.female_radio_button);
         phoneNumberInputLayout = findViewById(R.id.phone_sign_up);
-        specialityInputLayout = findViewById(R.id.speciality_sign_up);
-        groupInputLayout = findViewById(R.id.group_sign_up);
+        specialitySpinner = findViewById(R.id.speciality_spinner);
+        groupSpinner = findViewById(R.id.group_spinner);
 
         initFirebaseArguments();
         setupSignInMethod();
         setupToolbar();
         setupPhoneNumberFormatting();
         setupNextButton();
+        setupSpecialitySpinner();
     }
 
     private void setupSignInMethod() {
@@ -110,6 +119,173 @@ public class FillOutDataActivity extends AppCompatActivity {
                         .build();
                 break;
         }
+    }
+
+    private void setupSpecialitySpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_speciality, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        specialitySpinner.setAdapter(adapter);
+
+        specialitySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedSpeciality = (String) parent.getItemAtPosition(position);
+                switch (selectedSpeciality) {
+                    case "Computer Science":
+                        setupCSGroupsSpinner();
+                        break;
+                    case "Software Engineering":
+                        setupSEGroupsSpinner();
+                        break;
+                    case "Big Data Analysis":
+                        setupBDGroupsSpinner();
+                        break;
+                    case "Media Technologies":
+                        setupMTGroupsSpinner();
+                        break;
+                    case "Cyber Security":
+                        setupITGroupsSpinner();
+                        break;
+                    case "Telecommunication Systems":
+                        setupTSGroupsSpinner();
+                        break;
+                    case "Smart Technologies":
+                        setupSTGroupsSpinner();
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupCSGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_cs, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupBDGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_bd, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupSEGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_se, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupMTGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_mt, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupITGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_it, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupTSGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_ts, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+    }
+
+    private void setupSTGroupsSpinner() {
+        var adapter = ArrayAdapter.createFromResource(this, R.array.spinner_st, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        groupSpinner.setAdapter(adapter);
+
+        groupSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedGroup = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
     }
 
     private void setupToolbar() {
@@ -178,8 +354,8 @@ public class FillOutDataActivity extends AppCompatActivity {
         nextButton.setOnClickListener(view -> {
 
             String username = usernameInputLayout.getEditText().getText().toString().trim();
-            String speciality = specialityInputLayout.getEditText().getText().toString();
-            String group = groupInputLayout.getEditText().getText().toString().trim();
+            String speciality = selectedSpeciality;
+            String group = selectedGroup;
             String firstName = firstNameInputLayout.getEditText().getText().toString().trim();
             String lastName = lastNameInputLayout.getEditText().getText().toString().trim();
             String email = emailInputLayout.getEditText().getText().toString().trim().toLowerCase();
@@ -194,15 +370,17 @@ public class FillOutDataActivity extends AppCompatActivity {
             } else {
                 phoneNumberInputLayout.setError(null);
             }
-            if (speciality.isBlank()) {
-                specialityInputLayout.setError("This field can not ve empty!");
+            if (speciality != null || speciality.isBlank()) {
+                Toast.makeText(this, R.string.field_can_not_be_empty, Toast.LENGTH_SHORT).show();
+                specialityError = getString(R.string.field_can_not_be_empty);
             } else {
-                specialityInputLayout.setError(null);
+                specialityError = null;
             }
-            if (group.isBlank()) {
-                groupInputLayout.setError("This field can not ve empty!");
+            if (group != null || group.isBlank()) {
+                Toast.makeText(this, R.string.field_can_not_be_empty, Toast.LENGTH_SHORT).show();
+                groupError = getString(R.string.field_can_not_be_empty);
             } else {
-                groupInputLayout.setError(null);
+                groupError = null;
             }
 
             if (maleRadioButton.isChecked() || femaleRadioButton.isChecked()) {
@@ -219,8 +397,8 @@ public class FillOutDataActivity extends AppCompatActivity {
                 case MICROSOFT:
                     if (usernameInputLayout.getError() == null
                             && phoneNumberInputLayout.getError() == null &&
-                            specialityInputLayout.getError() == null &&
-                            groupInputLayout.getError() == null &&
+                            specialityError == null &&
+                            groupError == null &&
                             maleRadioButton.getError() == null &&
                             femaleRadioButton.getError() == null) {
                         signUpWithGoogleOrMicrosoft(username);
@@ -245,8 +423,8 @@ public class FillOutDataActivity extends AppCompatActivity {
 
                     if (usernameInputLayout.getError() == null &&
                             phoneNumberInputLayout.getError() == null &&
-                            specialityInputLayout.getError() == null &&
-                            groupInputLayout.getError() == null &&
+                            specialityError == null &&
+                            groupError == null &&
                             emailInputLayout.getError() == null &&
                             lastNameInputLayout.getError() == null &&
                             firstNameInputLayout.getError() == null &&
@@ -272,7 +450,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                     User user = new User();
                     user.setUsername(username);
                     user.setEmail(email);
-                    user.setGroup(groupInputLayout.getEditText().getText().toString());
+                    user.setGroup(selectedGroup);
                     user.setName(firstNameInputLayout.getEditText().getText().toString() + " " + lastNameInputLayout.getEditText().getText().toString() + " " + patronymicNameInputLayout.getEditText().getText().toString());
                     if (maleRadioButton.isChecked()) {
                         user.setGender(User.Gender.MALE);
@@ -280,8 +458,8 @@ public class FillOutDataActivity extends AppCompatActivity {
                         user.setGender(User.Gender.FEMALE);
                     }
                     user.setPhoneNumber(newPhoneNumber);
-                    user.setSpecialization(specialityInputLayout.getEditText().getText().toString());
-                    user.setGroup(groupInputLayout.getEditText().getText().toString());
+                    user.setSpecialization(selectedSpeciality);
+                    user.setGroup(selectedGroup);
                     Intent intent = new Intent(FillOutDataActivity.this, PasswordSignUpActivity.class);
                     intent.putExtra("USER", user);
                     intent.putExtra("SIGN_UP_METHOD", method);
@@ -308,7 +486,7 @@ public class FillOutDataActivity extends AppCompatActivity {
                         User user = new User();
                         user.setUsername(username);
                         user.setEmail(email);
-                        user.setGroup(groupInputLayout.getEditText().getText().toString());
+                        user.setGroup(selectedGroup);
                         user.setName(currentUser.getDisplayName());
                         if (maleRadioButton.isChecked()) {
                             user.setGender(User.Gender.MALE);
@@ -316,8 +494,8 @@ public class FillOutDataActivity extends AppCompatActivity {
                             user.setGender(User.Gender.FEMALE);
                         }
                         user.setPhoneNumber(newPhoneNumber);
-                        user.setSpecialization(specialityInputLayout.getEditText().getText().toString());
-                        user.setGroup(groupInputLayout.getEditText().getText().toString());
+                        user.setSpecialization(selectedSpeciality);
+                        user.setGroup(selectedGroup);
 
                         Intent intent = new Intent(FillOutDataActivity.this, PasswordSignUpActivity.class);
                         intent.putExtra("USER", user);

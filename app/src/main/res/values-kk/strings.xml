@@ -136,6 +136,7 @@
 
     <string name="field_should_contains_only_letters">This field must contain only letters</string>
 
+    <string name="field_can_not_be_empty">This field can not be empty!</string>
 
     <string name="publishing_post">Publishing your post!</string>
     <string name="add_users_to_group">Add users to your current group to add cards and manage your unit</string>

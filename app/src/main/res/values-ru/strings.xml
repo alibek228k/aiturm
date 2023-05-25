@@ -136,6 +136,7 @@
 
     <string name="field_should_contains_only_letters">Это поле должно содержать только буквы</string>
 
+    <string name="field_can_not_be_empty">This field can not be empty!</string>
 
     <string name="publishing_post">Публикация вашего поста!</string>
     <string name="add_users_to_group">Добавьте пользователей в текущую группу, чтобы добавлять карточки и управлять своим подразделением</string>

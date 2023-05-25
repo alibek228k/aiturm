@@ -51,9 +51,6 @@ class SettingsActivity : LocaleManagerBaseActivity() {
         doneButton = findViewById(R.id.done_button)
         setSupportActionBar(toolbar)
 
-        languagePickerTextView?.setOnClickListener {
-            registerForContextMenu(languagePickerTextView)
-        }
         setupLanguagePicker()
         setupDoneButton()
     }
@@ -61,7 +58,7 @@ class SettingsActivity : LocaleManagerBaseActivity() {
     private fun setupLanguagePicker() {
         ArrayAdapter.createFromResource(
             this,
-            R.array.spinner_language,
+            R.array.spinner_speciality,
             android.R.layout.simple_spinner_item
         ).also { adapter ->
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)

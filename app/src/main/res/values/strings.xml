@@ -43,6 +43,72 @@
         <item>Қазақша</item>
     </string-array>
 
+    <string-array name="spinner_speciality">
+        <item>Computer Science</item>
+        <item>Software Engineering</item>
+        <item>Big Data Analysis</item>
+        <item>Media Technologies</item>
+        <item>Cyber Security</item>
+        <item>Telecommunication Systems</item>
+        <item>Smart Technologies</item>
+    </string-array>
+
+    <string-array name="spinner_se">
+        <item>SE-2000</item>
+        <item>SE-2001</item>
+        <item>SE-2002</item>
+        <item>SE-2003</item>
+        <item>SE-2004</item>
+    </string-array>
+
+    <string-array name="spinner_cs">
+        <item>CS-2000</item>
+        <item>CS-2001</item>
+        <item>CS-2002</item>
+        <item>CS-2003</item>
+        <item>CS-2004</item>
+    </string-array>
+
+    <string-array name="spinner_mt">
+        <item>MT-2000</item>
+        <item>MT-2001</item>
+        <item>MT-2002</item>
+        <item>MT-2003</item>
+        <item>MT-2004</item>
+    </string-array>
+
+    <string-array name="spinner_bd">
+        <item>BD-2000</item>
+        <item>BD-2001</item>
+        <item>BD-2002</item>
+        <item>BD-2003</item>
+        <item>BD-2004</item>
+    </string-array>
+
+    <string-array name="spinner_it">
+        <item>IT-2000</item>
+        <item>IT-2001</item>
+        <item>IT-2002</item>
+        <item>IT-2003</item>
+        <item>IT-2004</item>
+    </string-array>
+
+    <string-array name="spinner_ts">
+        <item>TS-2000</item>
+        <item>TS-2001</item>
+        <item>TS-2002</item>
+        <item>TS-2003</item>
+        <item>TS-2004</item>
+    </string-array>
+
+    <string-array name="spinner_st">
+        <item>ST-2000</item>
+        <item>ST-2001</item>
+        <item>ST-2002</item>
+        <item>ST-2003</item>
+        <item>ST-2004</item>
+    </string-array>
+
     <string name="gallery">Gallery</string>
 
     <string name="remove_member">Remove member</string>
@@ -135,6 +201,8 @@
 
     <string name="field_should_contains_only_letters">This field must contain only letters</string>
 
+    <string name="field_can_not_be_empty">This field can not be empty!</string>
+
 
     <string name="publishing_post">Publishing your post!</string>
     <string name="add_users_to_group">Add users to your current group to add cards and manage your unit</string>
@@ -211,7 +279,7 @@
     <string name="cannot_connect_internet">Cannot connect to Internet</string>
 
     <string name="server_could_not_be_found">The server could not be found. Please try again later</string>
-    
+
     <string name="user_has_been_removed">%s has been removed</string>
 
 </resources>
