@@ -289,4 +289,6 @@
 
     <string name="change_gender">Change gender</string>
 
+    <string name="loading_progress_message">Loading</string>
+
 </resources>

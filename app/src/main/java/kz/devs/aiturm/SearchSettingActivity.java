@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.shroomies.R;
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class SearchSettingActivity extends AppCompatActivity {

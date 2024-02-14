@@ -17,8 +17,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.shroomies.R;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 

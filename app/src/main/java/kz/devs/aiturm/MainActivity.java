@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -23,7 +22,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -41,14 +39,12 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
+import kz.devs.aiturm.login.presentation.LoginActivity;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.post.PublishPostActivity;
 import kz.devs.aiturm.presentaiton.settings.SettingsActivity;
-import kz.devs.aiturm.utils.ContextUtils;
-import kz.garage.locale.LocaleManager;
 import kz.garage.locale.base.LocaleManagerBaseActivity;
 
 public class MainActivity extends LocaleManagerBaseActivity implements UserCallback {

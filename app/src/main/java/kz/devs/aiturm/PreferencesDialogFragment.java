@@ -17,8 +17,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.shroomies.R;
-
 import java.util.ArrayList;
 import java.util.List;
 

@@ -14,10 +14,10 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.shroomies.R;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import kz.devs.aiturm.Config;
+import kz.devs.aiturm.R;
 import kz.devs.aiturm.presentaiton.post.PublishPostFragment;
 
 

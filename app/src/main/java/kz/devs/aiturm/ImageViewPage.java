@@ -7,7 +7,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.example.shroomies.R;
 import com.google.android.material.snackbar.Snackbar;
 import com.otaliastudios.zoom.ZoomImageView;
 

@@ -223,4 +223,6 @@
 
     <string name="change_gender">Поменять пол</string>
 
+    <string name="loading_progress_message">Загрузка</string>
+
 </resources>

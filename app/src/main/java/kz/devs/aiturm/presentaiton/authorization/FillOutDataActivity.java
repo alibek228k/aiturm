@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -33,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import kz.devs.aiturm.Config;
 import kz.devs.aiturm.CustomToast;
 import kz.devs.aiturm.PasswordSignUpActivity;
+import kz.devs.aiturm.R;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 

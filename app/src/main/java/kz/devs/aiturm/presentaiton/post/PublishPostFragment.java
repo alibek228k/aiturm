@@ -22,7 +22,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.example.shroomies.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -35,6 +34,7 @@ import java.util.ArrayList;
 import kz.devs.aiturm.Config;
 import kz.devs.aiturm.GlideApp;
 import kz.devs.aiturm.PublishPostPreferencesFragment;
+import kz.devs.aiturm.R;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
 import kz.devs.aiturm.presentaiton.post.type.PostTypeDialogFragment;

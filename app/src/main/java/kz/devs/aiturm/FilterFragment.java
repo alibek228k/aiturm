@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.RadioGroup;
 
-import com.example.shroomies.R;
 
 public class FilterFragment extends DialogFragment {
     RadioGroup sortByRadioGroup;

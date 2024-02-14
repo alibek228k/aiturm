@@ -11,7 +11,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shroomies.R
 import com.google.android.gms.tasks.Task
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.tabs.TabLayout
@@ -19,7 +18,13 @@ import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import kz.devs.aiturm.*
+import kz.devs.aiturm.Apartment
+import kz.devs.aiturm.Config
+import kz.devs.aiturm.PersonalPostModel
+import kz.devs.aiturm.PersonalPostRecyclerAdapter
+import kz.devs.aiturm.R
+import kz.devs.aiturm.RecycleViewAdapterApartments
+import kz.devs.aiturm.UserProfileFragment
 
 class PostsDialogFragment : DialogFragment() {
 

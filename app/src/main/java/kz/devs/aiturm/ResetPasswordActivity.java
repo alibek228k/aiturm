@@ -8,10 +8,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.shroomies.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+
+import kz.devs.aiturm.login.presentation.LoginActivity;
 
 public class ResetPasswordActivity extends AppCompatActivity {
     private TextInputLayout emailPasswordRecoveryButton;

@@ -1,17 +1,11 @@
 package kz.devs.aiturm;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.AttributeSet;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.shroomies.R;
-
-import org.w3c.dom.Text;
 
 public class CustomLoadingProgressBar extends Dialog {
 

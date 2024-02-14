@@ -27,7 +27,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.example.shroomies.R;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -55,7 +54,6 @@ import kz.devs.aiturm.presentaiton.edit.ChangeEmailDialog;
 import kz.devs.aiturm.presentaiton.edit.ChangeGenderDialogFragment;
 import kz.devs.aiturm.presentaiton.edit.ChangeGroupDialogFragment;
 import kz.devs.aiturm.presentaiton.edit.ChangePhoneDialogFragment;
-import kz.devs.aiturm.presentaiton.edit.ChangeSpecialityDialogFragment;
 
 public class EditProfileDialogFragment extends DialogFragment implements ChangePhoneDialogFragment.PhoneChangeCallback, ChangeGenderDialogFragment.GenderChangeCallback, ChangeBioDialogFragment.BioChangeCallback, ChangeGroupDialogFragment.GroupChangeCallback, ChangeEmailDialog.EmailChangeCallback, ChangeUsernameDialog.UsernameChangeCallback, ChangeNameDialogFragment.NameChangedCallback {
 

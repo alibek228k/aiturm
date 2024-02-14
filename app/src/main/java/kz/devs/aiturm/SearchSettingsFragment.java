@@ -11,7 +11,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.SwitchPreferenceCompat;
 
-import com.example.shroomies.R;
 import com.nfx.android.rangebarpreference.RangeBarPreferenceCompat;
 
 public class SearchSettingsFragment extends PreferenceFragmentCompat {

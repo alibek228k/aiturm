@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_yellow_background"
     app:layoutDescription="@xml/activity_login_scene"
-    tools:context="kz.devs.aiturm.LoginActivity">
+    tools:context="kz.devs.aiturm.login.LoginActivity">
 
     <ImageView
         android:id="@+id/black_mashroom_logo"

@@ -8,8 +8,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.shroomies.R;
-
 public class CustomToast {
 
     private final AppCompatActivity activity;

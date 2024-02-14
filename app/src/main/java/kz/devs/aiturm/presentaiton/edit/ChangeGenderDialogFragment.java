@@ -24,7 +24,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.shroomies.R;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,6 +37,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import kz.devs.aiturm.Config;
+import kz.devs.aiturm.R;
 import kz.devs.aiturm.model.User;
 
 

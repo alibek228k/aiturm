@@ -223,4 +223,6 @@
 
     <string name="change_gender">Жынысты өзгерту</string>
 
+    <string name="loading_progress_message">Жүктелуде</string>
+
 </resources>

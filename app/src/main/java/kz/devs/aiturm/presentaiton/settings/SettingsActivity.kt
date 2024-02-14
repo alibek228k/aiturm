@@ -2,7 +2,6 @@ package kz.devs.aiturm.presentaiton.settings
 
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -10,15 +9,12 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import com.example.shroomies.R
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.imageview.ShapeableImageView
-import kz.devs.aiturm.MainActivity
+import kz.devs.aiturm.R
 import kz.devs.aiturm.presentaiton.SessionManager
-import kz.devs.aiturm.utils.ContextUtils
 import kz.garage.locale.base.LocaleManagerBaseActivity
-import java.util.*
+import java.util.Locale
 
 
 class SettingsActivity : LocaleManagerBaseActivity() {

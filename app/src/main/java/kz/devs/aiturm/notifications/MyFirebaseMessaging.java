@@ -13,7 +13,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import com.example.shroomies.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +28,7 @@ import kz.devs.aiturm.ChattingActivity;
 import kz.devs.aiturm.Config;
 import kz.devs.aiturm.GroupChattingActivity;
 import kz.devs.aiturm.MyAiturmActivity;
+import kz.devs.aiturm.R;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
 

@@ -28,7 +28,6 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import kz.devs.aiturm.localDatabase.ImagesPaths;
 import kz.devs.aiturm.localDatabase.ImagesPathsDatabase;
-import com.example.shroomies.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.storage.FirebaseStorage;

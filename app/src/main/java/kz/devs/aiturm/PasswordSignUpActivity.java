@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.shroomies.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -25,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Objects;
 
+import kz.devs.aiturm.login.presentation.LoginActivity;
 import kz.devs.aiturm.model.SignInMethod;
 import kz.devs.aiturm.model.User;
 import kz.devs.aiturm.presentaiton.SessionManager;
@@ -232,6 +232,6 @@ public class PasswordSignUpActivity extends AppCompatActivity {
                 .build();
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(PasswordSignUpActivity.this, gso);
         mGoogleSignInClient.signOut();
-        startActivity(LoginActivity.getInstance(PasswordSignUpActivity.this));
+        startActivity(LoginActivity.Companion.getInstance(PasswordSignUpActivity.this));
     }
 }

@@ -19,7 +19,6 @@
  import androidx.recyclerview.widget.LinearLayoutManager;
  import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
- import com.example.shroomies.R;
  import com.factor.bouncy.BouncyRecyclerView;
  import com.factor.bouncy.util.OnOverPullListener;
  import com.google.android.gms.tasks.OnCompleteListener;
