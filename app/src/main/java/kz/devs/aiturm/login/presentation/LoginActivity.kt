@@ -3,44 +3,40 @@ package kz.devs.aiturm.login.presentation
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.OAuthProvider
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kz.devs.aiturm.Config
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kz.devs.aiturm.CustomLoadingProgressBar
 import kz.devs.aiturm.CustomToast
 import kz.devs.aiturm.LoginPasswordActivity
 import kz.devs.aiturm.MainActivity
 import kz.devs.aiturm.R
 import kz.devs.aiturm.model.SignInMethod
-import kz.devs.aiturm.model.User
-import kz.devs.aiturm.presentaiton.SessionManager
 import kz.devs.aiturm.presentaiton.authorization.FillOutDataActivity
-import java.util.regex.Pattern
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LoginActivity : AppCompatActivity(), ValueEventListener {
+
+class LoginActivity : AppCompatActivity() {
 
     companion object {
+        private const val RC_SIGN_IN = 7
+
         fun getInstance(context: Context?): Intent {
             return Intent(context, LoginActivity::class.java)
         }
@@ -56,102 +52,38 @@ class LoginActivity : AppCompatActivity(), ValueEventListener {
             this,
             getString(R.string.loading_progress_message),
             R.raw.loading_animation
-        )
+        ).apply {
+            setCancelable(false)
+        }
     }
 
-    private var mGoogleSignInClient: GoogleSignInClient? = null
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var rootRef: DatabaseReference
-    private val RC_SIGN_IN = 7
-    private val pattern = Pattern.compile(Config.USERNAME_PATTERN)
-    private var method = SignInMethod.DEFAULT
+    private val viewModel: LoginViewModel by viewModel()
+
+    private val mGoogleSignInClient: GoogleSignInClient by inject()
+    private val mAuth: FirebaseAuth by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        initFirebaseArguments()
         setupSignUpButtons()
         setupLoginButton()
-    }
-
-    override fun onDataChange(snapshot: DataSnapshot) {
-        if (snapshot.exists()) {
-            val username = snapshot.getValue(String::class.java)
-            if (username == null) {
-                Log.d("MICROSOFT SIGN IN", "new user")
-                startActivity(FillOutDataActivity.getInstance(applicationContext, method))
-            } else {
-                val firebaseUser: FirebaseUser? = mAuth.currentUser
-                rootRef.child(Config.users).child(firebaseUser?.uid.orEmpty()).get()
-                    .addOnCompleteListener { task: Task<DataSnapshot> ->
-                        val user =
-                            task.result.getValue(
-                                User::class.java
-                            )
-                        user!!.userID = firebaseUser?.uid
-                        user.signInMethod = method
-                        val manager =
-                            SessionManager(this@LoginActivity)
-                        if (user.signInMethod != method) {
-                            val signInMethodMap =
-                                HashMap<String, Any>()
-                            signInMethodMap["signInMethod"] = method
-                            rootRef.child(Config.users).child(firebaseUser?.uid.orEmpty())
-                                .updateChildren(signInMethodMap).addOnCompleteListener(
-                                    OnCompleteListener<Void?> { task1: Task<Void?> ->
-                                        if (task1.isSuccessful) {
-                                            user.signInMethod = method
-                                            manager.removeUserData()
-                                            manager.saveData(user)
-                                        }
-                                    }).addOnFailureListener(OnFailureListener { e: Exception? ->
-                                    manager.removeUserData()
-                                    manager.saveData(user)
-                                })
-                        } else {
-                            user.signInMethod = method
-                            manager.removeUserData()
-                            manager.saveData(user)
-                        }
-                        manager.removeUserData()
-                        manager.saveData(user)
-                        startActivity(MainActivity.newInstance(this@LoginActivity))
-                        finish()
-                    }
-                Log.d("MICROSOFT SIGN IN", "not new user")
-            }
-        } else {
-            startActivity(FillOutDataActivity.getInstance(applicationContext, method))
-        }
-        customLoadingProgressBar.dismiss()
-    }
-
-    override fun onCancelled(error: DatabaseError) {
-        Log.e(
-            "getUserUsernameFromDatabase",
-            "getUserUsernameFromDatabase: onCancelled",
-            error.toException()
-        )
-        customLoadingProgressBar.dismiss()
+        observeUiEvent()
+        observeLoginResult()
     }
 
     private fun setupSignUpButtons() {
-        signupButton.setOnClickListener(View.OnClickListener { v: View? ->
+        signupButton.setOnClickListener {
             startActivity(
                 FillOutDataActivity.getInstance(applicationContext, SignInMethod.DEFAULT)
             )
-        })
-        googleSignInButton.setOnClickListener { v: View? ->
-            customLoadingProgressBar.show()
-            customLoadingProgressBar.setCancelable(false)
-            method = SignInMethod.GOOGLE
+        }
+
+        googleSignInButton.setOnClickListener {
             signInWithGoogle()
         }
-        microsoftSignInButton.setOnClickListener { v: View? ->
-            customLoadingProgressBar.show()
-            customLoadingProgressBar.setCancelable(false)
-            method = SignInMethod.MICROSOFT
+
+        microsoftSignInButton.setOnClickListener {
             signInWithMicrosoft()
         }
     }
@@ -175,30 +107,15 @@ class LoginActivity : AppCompatActivity(), ValueEventListener {
         return Patterns.EMAIL_ADDRESS.matcher(enteredEmail).matches()
     }
 
-    private fun initFirebaseArguments() {
-        mAuth = FirebaseAuth.getInstance()
-        rootRef = FirebaseDatabase.getInstance().reference
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-        mGoogleSignInClient = GoogleSignIn.getClient(this@LoginActivity, gso)
-    }
-
     private fun firebaseAuthWithGoogle(tokenID: String) {
         val credential = GoogleAuthProvider.getCredential(tokenID, null)
         mAuth.signInWithCredential(credential).addOnCompleteListener(
             this
         ) { task: Task<AuthResult?> ->
             if (task.isSuccessful) {
-                val user = mAuth.currentUser
-                if (user != null) {
-                    val userRef = FirebaseDatabase
-                        .getInstance()
-                        .getReference("users")
-                        .child(user.uid)
-                        .child("username")
-                    userRef.addListenerForSingleValueEvent(this)
+                val userId = task.getResult(ApiException::class.java)?.user?.uid
+                if (userId != null) {
+                    viewModel.dispatch(LoginViewModel.Action.OnSuccessfullyAuthenticated(userId))
                 } else {
                     CustomToast(
                         this@LoginActivity,
@@ -223,19 +140,13 @@ class LoginActivity : AppCompatActivity(), ValueEventListener {
         provider.addCustomParameter("prompt", "select_account")
         provider.addCustomParameter("login_hint", "")
         provider.addCustomParameter("tenant", "158f15f3-83e0-4906-824c-69bdc50d9d61")
-        val scopes: List<String> = listOf("mail.read", "calendars.read")
-        provider.setScopes(scopes)
+        provider.setScopes(listOf("mail.read", "calendars.read"))
         mAuth.startActivityForSignInWithProvider(this, provider.build())
-            .addOnSuccessListener { authResult: AuthResult? ->
+            .addOnSuccessListener {
                 customLoadingProgressBar.dismiss()
-                val user = mAuth.currentUser
-                if (user != null) {
-                    val userRef = FirebaseDatabase
-                        .getInstance()
-                        .getReference("users")
-                        .child(user.uid)
-                        .child("username")
-                    userRef.addListenerForSingleValueEvent(this)
+                val userId = it.user?.uid
+                if (userId != null) {
+                    viewModel.dispatch(LoginViewModel.Action.OnSuccessfullyAuthenticated(userId))
                 } else {
                     CustomToast(
                         this@LoginActivity,
@@ -258,7 +169,53 @@ class LoginActivity : AppCompatActivity(), ValueEventListener {
 
 
     private fun signInWithGoogle() {
-        val signInIntent = mGoogleSignInClient!!.signInIntent
-        startActivityForResult(signInIntent, RC_SIGN_IN)
+        startActivityForResult(mGoogleSignInClient.signInIntent, RC_SIGN_IN)
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                firebaseAuthWithGoogle(account.idToken!!)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@LoginActivity, e.toString(), Toast.LENGTH_SHORT).show()
+                customLoadingProgressBar.dismiss()
+            }
+        } else {
+            Toast.makeText(
+                this@LoginActivity,
+                "authentication failed, try again later$requestCode", Toast.LENGTH_SHORT
+            ).show()
+            customLoadingProgressBar.dismiss()
+        }
+    }
+
+    private fun observeUiEvent() = lifecycleScope.launch {
+        viewModel.uiState.collectLatest { event ->
+            when (event) {
+                LoginViewModel.Event.OnErrorOccurred -> {}
+                LoginViewModel.Event.NavigateToMainPage -> {
+                    startActivity(MainActivity.newInstance(this@LoginActivity))
+                    finish()
+                }
+                is LoginViewModel.Event.NavigateToFillOutActivity -> {
+                    startActivity(FillOutDataActivity.getInstance(this@LoginActivity, event.signInMethod))
+                }
+            }
+        }
+    }
+
+    private fun observeLoginResult() = lifecycleScope.launch {
+        viewModel.isLoading.collectLatest { isLoading ->
+            if (isLoading) {
+                customLoadingProgressBar.show()
+            } else {
+                customLoadingProgressBar.dismiss()
+            }
+        }
+    }
+
 }
