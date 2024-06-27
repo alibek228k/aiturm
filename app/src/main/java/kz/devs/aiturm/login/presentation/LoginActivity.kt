@@ -136,6 +136,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInWithMicrosoft() {
+        customLoadingProgressBar.show()
         val provider = OAuthProvider.newBuilder("microsoft.com")
         provider.addCustomParameter("prompt", "select_account")
         provider.addCustomParameter("login_hint", "")
@@ -169,6 +170,7 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun signInWithGoogle() {
+        customLoadingProgressBar.show()
         startActivityForResult(mGoogleSignInClient.signInIntent, RC_SIGN_IN)
     }
 
@@ -196,10 +198,17 @@ class LoginActivity : AppCompatActivity() {
     private fun observeUiEvent() = lifecycleScope.launch {
         viewModel.uiState.collectLatest { event ->
             when (event) {
-                LoginViewModel.Event.OnErrorOccurred -> {}
                 LoginViewModel.Event.NavigateToMainPage -> {
                     startActivity(MainActivity.newInstance(this@LoginActivity))
                     finish()
+                }
+                is LoginViewModel.Event.OnErrorOccurred -> {
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Authentication failed cause of: ${event.e.message}", Toast.LENGTH_SHORT
+                    ).show()
+
+                    event.e.printStackTrace()
                 }
                 is LoginViewModel.Event.NavigateToFillOutActivity -> {
                     startActivity(FillOutDataActivity.getInstance(this@LoginActivity, event.signInMethod))

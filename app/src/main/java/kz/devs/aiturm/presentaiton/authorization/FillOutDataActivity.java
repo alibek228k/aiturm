@@ -469,6 +469,8 @@ public class FillOutDataActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             } else {
+                System.out.println("Value failed value");
+                task.getException().printStackTrace();
                 new CustomToast(FillOutDataActivity.this, "We encountered a problem", R.drawable.ic_error_icon).showCustomToast();
                 registrationAborted();
             }

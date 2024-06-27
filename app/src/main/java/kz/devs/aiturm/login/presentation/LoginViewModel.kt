@@ -101,7 +101,10 @@ class LoginViewModel(
     }
 
     override fun onCancelled(error: DatabaseError) {
-        viewModelScope.launch { _isLoading.emit(false) }
+        viewModelScope.launch {
+            _isLoading.emit(false)
+            _uiState.emit(Event.OnErrorOccurred(error.toException()))
+        }
     }
 
     private fun successfullyAuthenticated(userId: String) {
@@ -119,8 +122,8 @@ class LoginViewModel(
     }
 
     sealed class Event {
-        object OnErrorOccurred : Event()
         object NavigateToMainPage : Event()
+        class OnErrorOccurred(val e: Exception) : Event()
         class NavigateToFillOutActivity(val signInMethod: SignInMethod) : Event()
     }
 }
